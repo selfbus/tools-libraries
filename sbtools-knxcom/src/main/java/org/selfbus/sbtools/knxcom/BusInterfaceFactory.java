@@ -2,8 +2,8 @@ package org.selfbus.sbtools.knxcom;
 
 import java.io.IOException;
 
-import org.selfbus.sbtools.common.SimpleConfig;
-import org.selfbus.sbtools.common.exception.FtsRuntimeException;
+import org.selfbus.sbtools.common.Config;
+import org.selfbus.sbtools.common.exception.SbToolsRuntimeException;
 import org.selfbus.sbtools.knxcom.internal.BusInterfaceImpl;
 import org.selfbus.sbtools.knxcom.link.Link;
 import org.selfbus.sbtools.knxcom.link.dummy.DummyLink;
@@ -40,7 +40,7 @@ public final class BusInterfaceFactory
          catch (final Exception e)
          {
             LoggerFactory.getLogger(BusInterfaceFactory.class).error("Failed to create bus interface", e);
-            throw new FtsRuntimeException(e);
+            throw new SbToolsRuntimeException(e);
          }
       }
 
@@ -58,19 +58,20 @@ public final class BusInterfaceFactory
 
    /**
     * Create the default bus interface. Automatically called on demand by
-    * {@link #getBusInterface()}. Uses the global {@link SimpleConfig configuration} to get
+    * {@link #getBusInterface()}. Uses the global {@link Config configuration} to get
     * the configured bus interface.
     * 
-    * @throws FtsRuntimeException if the bus interface cannot be opened
+    * @throws SbToolsRuntimeException if the bus interface cannot be opened
     */
    private static void createBusInterface()
    {
-      BusInterfaceImpl newBusInterface = new BusInterfaceImpl();
+      busInterface = new BusInterfaceImpl();
 
-      SimpleConfig cfg = SimpleConfig.getInstance();
-      setLinkType(newBusInterface, LinkType.valueOf(cfg.getStringValue("knxConnectionType")));
+      Config cfg = Config.getInstance();
+      String linkTypeStr = cfg.getStringValue("knxConnectionType");
 
-      busInterface = newBusInterface;
+      if (linkTypeStr != null && !linkTypeStr.isEmpty() && !"NONE".equalsIgnoreCase(linkTypeStr))
+         setLinkType(busInterface, LinkType.valueOf(linkTypeStr));
    }
 
    /**
@@ -89,13 +90,13 @@ public final class BusInterfaceFactory
    /**
     * Reopen the bus interface.
     * 
-    * @throws FtsRuntimeException if the bus interface cannot be opened
+    * @throws SbToolsRuntimeException if the bus interface cannot be opened
     */
    public synchronized static void reopenBusInterface()
    {
       if (busInterface != null)
       {
-         SimpleConfig cfg = SimpleConfig.getInstance();
+         Config cfg = Config.getInstance();
          setLinkType(busInterface, LinkType.valueOf(cfg.getStringValue("knxConnectionType")));
       }
    }
@@ -108,7 +109,7 @@ public final class BusInterfaceFactory
     */
    public synchronized static void setLinkType(BusInterfaceImpl busInterface, LinkType type)
    {
-      SimpleConfig cfg = SimpleConfig.getInstance();
+      Config cfg = Config.getInstance();
       Link link;
 
       if (type == LinkType.KNXNET_IP)
@@ -119,7 +120,7 @@ public final class BusInterfaceFactory
       {
          link = new Ft12SerialLink(cfg.getStringValue("knxConnectionSerial.port"));
       }
-      else throw new FtsRuntimeException("No bus interface configured");
+      else throw new SbToolsRuntimeException("No bus interface configured");
 
       try
       {
@@ -130,7 +131,7 @@ public final class BusInterfaceFactory
       }
       catch (IOException e)
       {
-         throw new FtsRuntimeException(e);
+         throw new SbToolsRuntimeException(e);
       }
    }
 

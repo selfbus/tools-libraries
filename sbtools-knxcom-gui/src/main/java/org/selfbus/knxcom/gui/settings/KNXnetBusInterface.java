@@ -12,7 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import org.selfbus.knxcom.gui.internal.I18n;
-import org.selfbus.sbtools.common.SimpleConfig;
+import org.selfbus.sbtools.common.Config;
 import org.selfbus.sbtools.knxcom.link.netip.KNXnetLink;
 
 /**
@@ -103,7 +103,7 @@ public class KNXnetBusInterface extends AbstractBusInterface
       c.fill = GridBagConstraints.VERTICAL;
       add(Box.createVerticalGlue(), c);
 
-      final SimpleConfig cfg = SimpleConfig.getInstance();
+      final Config cfg = Config.getInstance();
 
       String host = cfg.getStringValue(configKey + ".host");
       if (host == null || host.isEmpty())
@@ -121,7 +121,7 @@ public class KNXnetBusInterface extends AbstractBusInterface
     */
    public void apply()
    {
-      final SimpleConfig cfg = SimpleConfig.getInstance();
+      final Config cfg = Config.getInstance();
       cfg.put(configKey + ".host", inpHost.getText());
       cfg.put(configKey + ".port", inpPort.getText());
    }

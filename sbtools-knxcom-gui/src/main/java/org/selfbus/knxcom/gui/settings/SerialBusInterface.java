@@ -12,7 +12,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
 import org.selfbus.knxcom.gui.internal.I18n;
-import org.selfbus.sbtools.common.SimpleConfig;
+import org.selfbus.sbtools.common.Config;
 import org.selfbus.sbtools.knxcom.link.serial.Ft12SerialLink;
 import org.selfbus.sbtools.knxcom.link.serial.SerialPortUtil;
 
@@ -48,7 +48,7 @@ public class SerialBusInterface extends AbstractBusInterface
       c.fill = GridBagConstraints.HORIZONTAL;
       c.weightx = 10;
       c.gridx = 1;
-      c.gridy = ++gridY;
+      c.gridy = gridY;
       add(cboPort, c);
 
       c.gridx = 0;
@@ -89,7 +89,7 @@ public class SerialBusInterface extends AbstractBusInterface
       add(Box.createVerticalGlue(), c);
 
 
-      final SimpleConfig cfg = SimpleConfig.getInstance();
+      final Config cfg = Config.getInstance();
       final String cfgPortName = cfg.get(configKey + ".port");
 
       for (final String portName: SerialPortUtil.getPortNames())
@@ -104,7 +104,7 @@ public class SerialBusInterface extends AbstractBusInterface
     */
    public void apply()
    {
-      final SimpleConfig cfg = SimpleConfig.getInstance();
+      final Config cfg = Config.getInstance();
 
       Object sel = cboPort.getSelectedItem();
       cfg.put(configKey + ".port", sel == null ? "" : sel.toString());

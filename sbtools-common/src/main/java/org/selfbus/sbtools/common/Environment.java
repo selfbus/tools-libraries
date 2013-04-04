@@ -131,7 +131,7 @@ public final class Environment
    public static String getAppDir(final String homeDir, final String appName)
    {
       if (getInstance().osname.startsWith("linux"))
-         return homeDir + "/." + appName;
+         return homeDir + "/.config/" + appName;
       else return homeDir + "/" + appName;
    }
 

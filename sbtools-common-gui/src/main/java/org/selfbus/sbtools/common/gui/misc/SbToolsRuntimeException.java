@@ -1,16 +1,16 @@
-package org.selfbus.sbtools.common.exception;
+package org.selfbus.sbtools.common.gui.misc;
 
 /**
  * A {@link RuntimeException} of FTS.
  */
-public class FtsRuntimeException extends RuntimeException
+public class SbToolsRuntimeException extends RuntimeException
 {
-   private static final long serialVersionUID = 7341874561716525815L;
+   private static final long serialVersionUID = 1311874561716525815L;
 
    /**
     * Create an empty exception.
     */
-   public FtsRuntimeException()
+   public SbToolsRuntimeException()
    {
       super();
    }
@@ -20,7 +20,7 @@ public class FtsRuntimeException extends RuntimeException
     * 
     * @param message - the message.
     */
-   public FtsRuntimeException(String message)
+   public SbToolsRuntimeException(String message)
    {
       super(message);
    }
@@ -30,7 +30,7 @@ public class FtsRuntimeException extends RuntimeException
     * 
     * @param cause - the cause for the exception.
     */
-   public FtsRuntimeException(Throwable cause)
+   public SbToolsRuntimeException(Throwable cause)
    {
       super(cause);
    }
@@ -41,7 +41,7 @@ public class FtsRuntimeException extends RuntimeException
     * @param message - the message.
     * @param cause - the cause for the exception.
     */
-   public FtsRuntimeException(String message, Throwable cause)
+   public SbToolsRuntimeException(String message, Throwable cause)
    {
       super(message, cause);
    }

@@ -8,24 +8,28 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * A simple configuration class.
+ * The application's configuration.
  */
-public class SimpleConfig
+public class Config
 {
-   private static SimpleConfig instance;
+   private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
+   private static Config instance;
    private final Properties props = new Properties();
 
    /**
-    * Returns the global configuration object. A {@link SimpleConfig} object is
+    * Returns the global configuration object. A {@link Config} object is
     * created if no global configuration object exists.
     * 
     * @return The global configuration object instance.
     */
-   public static SimpleConfig getInstance()
+   public static Config getInstance()
    {
       if (instance == null)
-         return new SimpleConfig();
+         return new Config();
       return instance;
    }
 
@@ -45,7 +49,7 @@ public class SimpleConfig
     * 
     * @see #getInstance()
     */
-   public SimpleConfig()
+   public Config()
    {
       if (instance == null)
          instance = this;
@@ -165,6 +169,16 @@ public class SimpleConfig
    }
 
    /**
+    * Remove a configuration entry.
+    *
+    * @param key - the key.
+    */
+   public void remove(String key)
+   {
+      props.remove(key);
+   }
+
+   /**
     * Clear the configuration.
     * 
     * @see #init()
@@ -204,6 +218,7 @@ public class SimpleConfig
 
       try
       {
+         LOGGER.debug("Loading config {}", fileName);
          in = new FileInputStream(fileName);
          load(in);
       }
@@ -245,6 +260,7 @@ public class SimpleConfig
       FileOutputStream out = null;
       try
       {
+         LOGGER.debug("Saving config {}", fileName);
          out = new FileOutputStream(fileName);
          save(out);
       }

@@ -34,8 +34,11 @@
  </properties>
  <modules>
   <module>sbtools-common</module>
+  <module>sbtools-common-gui</module>
   <module>sbtools-knxcom</module>
   <module>sbtools-knxcom-gui</module>
+  <module>sbtools-vdio</module>
+  <module>sbtools-devtool</module>
  </modules>
  <dependencyManagement>
   <dependencies>
@@ -64,6 +67,11 @@
     <groupId>ch.qos.logback</groupId>
     <artifactId>logback-classic</artifactId>
     <version>1.0.9</version>
+   </dependency>
+   <dependency>
+    <groupId>org.jdesktop</groupId>
+    <artifactId>appframework</artifactId>
+    <version>1.0.3</version>
    </dependency>
   </dependencies>
  </dependencyManagement>

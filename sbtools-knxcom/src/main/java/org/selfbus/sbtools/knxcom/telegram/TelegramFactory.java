@@ -16,7 +16,7 @@ import org.selfbus.sbtools.knxcom.emi.EmiFrame;
 public final class TelegramFactory
 {
    /**
-    * Create a group telegram.
+    * Create a group-value-write telegram.
     * 
     * @param dest - the destination address
     * @param data - the payload

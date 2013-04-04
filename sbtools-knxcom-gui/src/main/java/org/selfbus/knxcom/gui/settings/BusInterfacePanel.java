@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
 import org.selfbus.knxcom.gui.internal.I18n;
-import org.selfbus.sbtools.common.SimpleConfig;
+import org.selfbus.sbtools.common.Config;
 import org.selfbus.sbtools.knxcom.BusInterfaceFactory;
 import org.selfbus.sbtools.knxcom.types.KNXConnectionType;
 
@@ -95,7 +95,7 @@ public final class BusInterfacePanel extends JPanel
          }
       });
 
-      final SimpleConfig cfg = SimpleConfig.getInstance();
+      final Config cfg = Config.getInstance();
 
       final String connTypeStr = cfg.get("knxConnectionType");
       for (KNXConnectionType type : KNXConnectionType.values())
@@ -137,7 +137,7 @@ public final class BusInterfacePanel extends JPanel
     */
    public void apply()
    {
-      final SimpleConfig cfg = SimpleConfig.getInstance();
+      final Config cfg = Config.getInstance();
       cfg.put("knxConnectionType", getSelectedConnectionType().toString());
 
       cfgSerial.apply();

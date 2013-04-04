@@ -9,7 +9,7 @@ import java.util.ResourceBundle;
  */
 public final class I18n
 {
-   private static final String BUNDLE_NAME = "common-messages";
+   private static final String BUNDLE_NAME = "sbtools-common/messages";
    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
    /**

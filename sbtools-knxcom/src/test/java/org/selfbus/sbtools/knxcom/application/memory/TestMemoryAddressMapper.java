@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 
 import org.junit.Test;
-import org.selfbus.sbtools.common.exception.FtsRuntimeException;
+import org.selfbus.sbtools.common.exception.SbToolsRuntimeException;
 import org.selfbus.sbtools.knxcom.application.memory.MemoryAddressMapper;
 import org.selfbus.sbtools.knxcom.application.memory.MemoryLocation;
 
@@ -23,7 +23,7 @@ public class TestMemoryAddressMapper
       assertEquals(MemoryLocation.MaskType, mapper.getMapping(MemoryLocation.MaskType).getLocation());
    }
 
-   @Test(expected = FtsRuntimeException.class)
+   @Test(expected = SbToolsRuntimeException.class)
    public void testMemoryAddressMapperNotFound() throws IOException
    {
       MemoryAddressMapper.getProperties(0xffff);

@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.selfbus.sbtools.common.exception.FtsRuntimeException;
+import org.selfbus.sbtools.common.exception.SbToolsRuntimeException;
 import org.selfbus.sbtools.knxcom.application.devicedescriptor.DeviceDescriptor0;
 
 /**
@@ -125,7 +125,7 @@ public final class MemoryAddressMapper
     * @param maskVersion - the mask version.
     * @return The resource bundle, or null if the bundle could not be loaded.
     *
-    * @throws FtsRuntimeException if the memory address mapping file could not be loaded.
+    * @throws SbToolsRuntimeException if the memory address mapping file could not be loaded.
     */
    public static Properties getProperties(int maskVersion)
    {
@@ -142,7 +142,7 @@ public final class MemoryAddressMapper
          in = loader.getResourceAsStream("src/main/resources/" + name);
 
          if (in == null)
-            throw new FtsRuntimeException("No memory address mapping file \"" + name + "\" found");
+            throw new SbToolsRuntimeException("No memory address mapping file \"" + name + "\" found");
       }
 
       final Properties props = new Properties();
@@ -152,7 +152,7 @@ public final class MemoryAddressMapper
       }
       catch (IOException e)
       {
-         throw new FtsRuntimeException("Failed to load address mapping file \"" + name + "\"", e);
+         throw new SbToolsRuntimeException("Failed to load address mapping file \"" + name + "\"", e);
       }
 
       return props;

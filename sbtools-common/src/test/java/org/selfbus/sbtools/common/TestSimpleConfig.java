@@ -11,7 +11,7 @@ import java.io.IOException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.selfbus.sbtools.common.SimpleConfig;
+import org.selfbus.sbtools.common.Config;
 
 public class TestSimpleConfig
 {
@@ -28,14 +28,14 @@ public class TestSimpleConfig
    @Before
    public final void setUp()
    {
-      SimpleConfig.disposeInstance();
+      Config.disposeInstance();
       tmpFile = null;
    }
 
    @After
    public final void tearDown()
    {
-      SimpleConfig.disposeInstance();
+      Config.disposeInstance();
 
       if (tmpFile != null && tmpFile.exists())
          tmpFile.delete();
@@ -44,16 +44,16 @@ public class TestSimpleConfig
    @Test
    public final void testGetInstance()
    {
-      final SimpleConfig cfg = SimpleConfig.getInstance();
+      final Config cfg = Config.getInstance();
 
-      assertNotNull(SimpleConfig.getInstance());
-      assertEquals(cfg, SimpleConfig.getInstance());
+      assertNotNull(Config.getInstance());
+      assertEquals(cfg, Config.getInstance());
    }
 
    @Test
    public final void testGetSetStringValue()
    {
-      final SimpleConfig cfg = new SimpleConfig();
+      final Config cfg = new Config();
 
       assertFalse(cfg.containsKey(""));
       assertEquals(null, cfg.get("key-1"));
@@ -76,7 +76,7 @@ public class TestSimpleConfig
    @Test
    public final void testGetSetIntValue()
    {
-      final SimpleConfig cfg = SimpleConfig.getInstance();
+      final Config cfg = Config.getInstance();
 
       assertFalse(cfg.containsKey(""));
       assertEquals(null, cfg.get("key-1"));
@@ -101,7 +101,7 @@ public class TestSimpleConfig
    @Test
    public final void testClear()
    {
-      final SimpleConfig cfg = SimpleConfig.getInstance();
+      final Config cfg = Config.getInstance();
 
       cfg.clear();
       assertFalse(cfg.containsKey("key-1"));
@@ -117,14 +117,14 @@ public class TestSimpleConfig
    @Test
    public final void testInit()
    {
-      final SimpleConfig cfg = SimpleConfig.getInstance();
+      final Config cfg = Config.getInstance();
       cfg.init();
    }
 
    @Test
    public final void testLoadSave() throws IOException
    {
-      final SimpleConfig cfg = SimpleConfig.getInstance();
+      final Config cfg = Config.getInstance();
       final String fname = getTempFileName();
 
       cfg.clear();
