@@ -19,9 +19,14 @@ public class TableInfo
    public final String name;
 
    /**
-    * The table fields.
+    * The table field names.
     */
-   public final List<String> fields = new ArrayList<String>(64);
+   public final List<String> fieldNames = new ArrayList<String>(32);
+
+   /**
+    * The table field types.
+    */
+   public final List<TableFieldType> fieldTypes = new ArrayList<TableFieldType>(32);
 
    /**
     * Create a table information.

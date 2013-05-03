@@ -1,6 +1,7 @@
 package org.selfbus.sbtools.devtool.tabs.test;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -9,6 +10,9 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -32,6 +36,7 @@ import org.selfbus.sbtools.devtool.internal.I18n;
 import org.selfbus.sbtools.devtool.project.ProjectListener;
 import org.selfbus.sbtools.devtool.project.model.Project;
 import org.selfbus.sbtools.devtool.project.model.test.Test;
+import org.selfbus.sbtools.devtool.project.model.test.TestStep;
 
 /**
  * A panel for editing the tests.
@@ -46,6 +51,7 @@ public class TestsPanel extends JSplitPane implements ProjectListener
    private final MutableIconTreeNode rootNode = new MutableIconTreeNode("/");
    private final JTree tree = new JTree(rootNode);
    private final JScrollPane treeView = new JScrollPane(tree);
+   private final Box detailsBox;
    private Object selectedObject;
 
    /**
@@ -66,13 +72,13 @@ public class TestsPanel extends JSplitPane implements ProjectListener
       listPanel.add(createToolBar(), BorderLayout.NORTH);
       listPanel.add(treeView, BorderLayout.CENTER);
 
-      JPanel detailsPanel = new JPanel(new BorderLayout());
-      detailsPanel.setBorder(BorderFactory.createLoweredSoftBevelBorder());
-      setRightComponent(detailsPanel);
+      detailsBox = new Box(BoxLayout.Y_AXIS);
+      detailsBox.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+      setRightComponent(detailsBox);
 
       tree.setRootVisible(false);
       tree.setCellRenderer(new IconTreeCellRenderer());
-      
+
       tree.addMouseListener(new MouseAdapter()
       {
          @Override
@@ -80,7 +86,7 @@ public class TestsPanel extends JSplitPane implements ProjectListener
          {
             if (e.getClickCount() == 2)
             {
-//               ProjectManager.getController().edit(selectedObject);
+               //               ProjectManager.getController().edit(selectedObject);
                e.consume();
             }
          }
@@ -132,12 +138,32 @@ public class TestsPanel extends JSplitPane implements ProjectListener
       for (Test test : tests)
       {
          MutableIconTreeNode node = new MutableIconTreeNode(test, true);
-//         node.setIcon(testIcon);
+         //         node.setIcon(testIcon);
          rootNode.add(node);
       }
 
       ((DefaultTreeModel) tree.getModel()).reload();
       TreeUtils.expandAll(tree);
+   }
+
+   /**
+    * Show the test in the details panel.
+    * 
+    * @param test - the test to show, may be null.
+    */
+   public void showTest(Test test)
+   {
+      detailsBox.removeAll();
+      
+      for (TestStep testStep : test.getSteps())
+      {
+         Component comp = testStep.createEditComponent();
+         if (comp != null)
+            detailsBox.add(comp);
+      }
+
+      detailsBox.add(Box.createGlue());
+      detailsBox.updateUI();
    }
 
    /**
@@ -147,6 +173,8 @@ public class TestsPanel extends JSplitPane implements ProjectListener
     */
    protected void objectSelected(Object obj)
    {
+      if (obj instanceof Test)
+         showTest((Test) obj);
    }
 
    /**
@@ -174,8 +202,7 @@ public class TestsPanel extends JSplitPane implements ProjectListener
    /**
     * Action: add a test
     */
-   private final BasicAction addTestAction = new BasicAction("Add",
-      I18n.getMessage("TestsPanel.Add.toolTip"),
+   private final BasicAction addTestAction = new BasicAction("Add", I18n.getMessage("TestsPanel.Add.toolTip"),
       ImageCache.getIcon("icons/add"))
    {
       private static final long serialVersionUID = 1L;
@@ -190,8 +217,7 @@ public class TestsPanel extends JSplitPane implements ProjectListener
    /**
     * Action: remove a test
     */
-   private final BasicAction removeTestAction = new BasicAction("Remove",
-      I18n.getMessage("TestsPanel.Remove.toolTip"),
+   private final BasicAction removeTestAction = new BasicAction("Remove", I18n.getMessage("TestsPanel.Remove.toolTip"),
       ImageCache.getIcon("icons/delete"))
    {
       private static final long serialVersionUID = 1L;

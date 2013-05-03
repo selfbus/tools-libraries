@@ -18,7 +18,7 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory
 {
-   private final static QName _VD_QNAME = new QName("", "VD");
+   private final static QName _VD_QNAME = new QName(null, "virtual_device");
 
    /**
     * Create a new ObjectFactory that can be used to create new instances of schema derived classes
@@ -33,17 +33,17 @@ public class ObjectFactory
     * Create an instance of {@link VirtualDeviceTables }
     * 
     */
-   public VD createVD()
-   {
-      return new VD();
-   }
+//   public VD createVD()
+//   {
+//      return new VD();
+//   }
 
    /**
-    * Create an instance of {@link JAXBElement }{@code <}{@link VirtualDeviceTables }{@code >}
+    * Create an instance of {@link JAXBElement }{@code <}{@link VD }{@code >}
     * 
     */
    @XmlElementDecl(namespace = "", name = "virtual_device")
-   public JAXBElement<VD> createProject(VD value)
+   public JAXBElement<VD> createVD(VD value)
    {
       return new JAXBElement<VD>(_VD_QNAME, VD.class, null, value);
    }

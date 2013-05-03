@@ -7,6 +7,8 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
 import org.xml.sax.EntityResolver;
@@ -25,6 +27,8 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public abstract class AbstractXmlReader implements XMLReader
 {
+   private static final Logger LOGGER = LoggerFactory.getLogger(AbstractXmlReader.class);
+
    protected final Map<String, Boolean> features = new HashMap<String, Boolean>();
    protected final Map<String, Object> properties = new HashMap<String, Object>();
 
@@ -39,16 +43,19 @@ public abstract class AbstractXmlReader implements XMLReader
       @Override
       public void warning(SAXParseException exception) throws SAXException
       {
+         LOGGER.info(exception.getMessage());
       }
 
       @Override
       public void fatalError(SAXParseException exception) throws SAXException
       {
+         LOGGER.error(exception.getMessage());
       }
 
       @Override
       public void error(SAXParseException exception) throws SAXException
       {
+         LOGGER.warn(exception.getMessage());
       }
    };
 
@@ -94,7 +101,6 @@ public abstract class AbstractXmlReader implements XMLReader
       finally
       {
          reader.close();
-         reader = null;
       }
    }
 

@@ -1,5 +1,6 @@
 package org.selfbus.sbtools.devtool.project.model.test;
 
+import java.awt.Component;
 import java.io.IOException;
 
 import org.selfbus.sbtools.knxcom.BusInterface;
@@ -23,4 +24,9 @@ public interface TestStep
     * @throws IOException in case of EIB communication problems
     */
    public boolean perform(BusInterface bus) throws IOException;
+
+   /**
+    * Create a GUI for configuring the test step.
+    */
+   public Component createEditComponent();
 }

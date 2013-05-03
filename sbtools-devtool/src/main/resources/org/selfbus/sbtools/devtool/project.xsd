@@ -23,6 +23,7 @@
   <xs:sequence>
    <xs:choice minOccurs="0" maxOccurs="unbounded">
     <xs:element name="writeGroupValue" type="WriteGroupValue"/>
+    <xs:element name="readGroupValue" type="ReadGroupValue"/>
    </xs:choice>
   </xs:sequence>
   <xs:attribute name="name" type="xs:string" />
@@ -45,6 +46,15 @@
   <xs:complexContent>
    <xs:extension base="AbstractGroupValue">
     <xs:attribute name="value" type="xs:string" />
+   </xs:extension>
+  </xs:complexContent>
+ </xs:complexType>
+
+ <xs:complexType name="ReadGroupValue">
+  <xs:complexContent>
+   <xs:extension base="AbstractGroupValue">
+    <xs:attribute name="value" type="xs:string" />
+    <xs:attribute name="operator" type="xs:string" />
    </xs:extension>
   </xs:complexContent>
  </xs:complexType>

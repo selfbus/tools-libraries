@@ -9,6 +9,7 @@
     <tests>
      <test name="Write-1">
       <writeGroupValue address="1/0/1" value="01" />
+      <readGroupValue address="1/0/1" value="01" operator="equals" />
      </test>
     </tests>
 </project>

@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -20,6 +21,7 @@ import org.junit.Test;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import test.model.Manufacturer;
 import test.model.VD;
 
 public class TestVdReader
@@ -39,7 +41,7 @@ public class TestVdReader
 
       VDReader vdReader = new VDReader();
       vdReader.setFeature("debug", true);
-      
+
       InputStream in = new FileInputStream("src/test/resources/test-device.vd_");
       SAXSource source = new SAXSource(vdReader, new InputSource(in));
 
@@ -51,5 +53,11 @@ public class TestVdReader
       assertNotNull(vd);
 
       assertEquals("3.19", vd.version);
+
+      List<Manufacturer> manufacturers = vd.manufacturers;
+      assertNotNull(manufacturers);
+      assertEquals(1, manufacturers.size());
+      assertEquals(1, manufacturers.get(0).id);
+      assertEquals("Test Company 1", manufacturers.get(0).name);
    }
 }

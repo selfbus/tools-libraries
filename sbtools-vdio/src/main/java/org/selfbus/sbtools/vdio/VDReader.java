@@ -3,7 +3,9 @@ package org.selfbus.sbtools.vdio;
 import java.io.BufferedReader;
 import java.io.IOException;
 
+import org.apache.commons.lang3.Validate;
 import org.selfbus.sbtools.vdio.internal.AbstractXmlReader;
+import org.selfbus.sbtools.vdio.internal.TableFieldType;
 import org.selfbus.sbtools.vdio.internal.TableInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +32,8 @@ public class VDReader extends AbstractXmlReader
    private static final String START_INDICATOR = "EX-IM";
    private static final String END_INDICATOR = "XXX";
 
-   private final AttributesImpl atts = new AttributesImpl();
+   private final AttributesImpl recordAtts = new AttributesImpl();
+   private final AttributesImpl tableAtts = new AttributesImpl();
    private BufferedReader reader;
    private String documentName;
    private String currentLine;
@@ -69,8 +72,8 @@ public class VDReader extends AbstractXmlReader
     */
    private void parseHeader() throws SAXException, IOException
    {
-      documentName = "unnamed";
-      atts.clear();
+      documentName = null;
+      recordAtts.clear();
 
       String line = reader.readLine();
       ++lineNo;
@@ -89,18 +92,23 @@ public class VDReader extends AbstractXmlReader
          String value = line.substring(2);
 
          if ("V".equals(type))
-            atts.addAttribute("", "version", "version", "xs:string", value);
+            recordAtts.addAttribute("", "version", "version", "xs:string", value);
          else if ("D".equals(type))
-            atts.addAttribute("", "created", "created", "xs:string", value);
+            recordAtts.addAttribute("", "created", "created", "xs:string", value);
          else if ("N".equals(type))
-            atts.addAttribute("", "name", "name", "xs:string", value);
+            recordAtts.addAttribute("", "name", "name", "xs:string", value);
          else if ("H".equals(type))
             documentName = value.toLowerCase();
          else if (line.length() > 2 && !" ".equals(line.substring(1, 2)))
             throw new SAXParseException("Malformed header line", locator);
       }
 
-      contentHandler.startElement("", documentName, documentName, atts);
+      Validate.notNull(documentName, "document name is undefined in the file header");
+      LOGGER.debug("Document is \"{}\"", documentName);
+
+      // OpenJDK bug?  Replacing the string constant "virtual_device" with
+      // the variable documentName breaks the reader.
+      contentHandler.startElement("", "virtual_device", documentName, recordAtts);
    }
 
    /**
@@ -116,14 +124,21 @@ public class VDReader extends AbstractXmlReader
       if (debug)
          LOGGER.debug("Parsing table {} {}", tableInfo.id, tableInfo.name);
 
+      tableAtts.clear();
+      String tableName = tableInfo.name;
+      contentHandler.startElement("", tableName, tableName, tableAtts);
+
       while (currentLine != null && !TABLE_SEPARATOR.equals(currentLine) && !END_INDICATOR.equals(currentLine))
       {
          String[] parts = currentLine.split(" ", 5);
          if (!"R".equals(parts[0]) || !"T".equals(parts[2]) || tableInfo.id != Integer.parseInt(parts[3]))
-            throw new SAXParseException("Malformed line, expected a R record start line for table " + tableInfo.id, locator);
+            throw new SAXParseException("Malformed line, expected a R record start line for table " + tableInfo.id,
+               locator);
 
          parseTableRecord();
       }
+
+      contentHandler.endElement("", tableName, tableName);
    }
 
    /**
@@ -149,7 +164,12 @@ public class VDReader extends AbstractXmlReader
             break;
 
          parts = line.split(" ", 6);
-         tableInfo.fields.add(parts[5].toLowerCase());
+         tableInfo.fieldNames.add(parts[5].toLowerCase());
+
+         TableFieldType fieldType = TableFieldType.valueOf(Integer.parseInt(parts[2]));
+         if (fieldType == null)
+            throw new SAXParseException("Unknown field type number: " + parts[2], locator);
+         tableInfo.fieldTypes.add(fieldType);
       }
    }
 
@@ -158,14 +178,12 @@ public class VDReader extends AbstractXmlReader
     */
    private void parseTableRecord() throws SAXException, IOException
    {
-      int numFields = tableInfo.fields.size();
+      int numFields = tableInfo.fieldNames.size();
       String value = "";
       String line = null;
 
-      atts.clear();
+      recordAtts.clear();
 
-      // FIXME
-      
       for (int i = 0; i <= numFields; )
       {
          line = reader.readLine();
@@ -183,15 +201,19 @@ public class VDReader extends AbstractXmlReader
          if (i == numFields)
             break;
 
-         if (i > 0)
+         if (i > 0 && !value.isEmpty())
          {
-            String name = tableInfo.fields.get(i - 1);
-            atts.addAttribute("", name, name, "xs:string", value);
+            String name = tableInfo.fieldNames.get(i - 1);
+            recordAtts.addAttribute("", name, name, tableInfo.fieldTypes.get(i - 1).xsType, value);
          }
 
          value = line;
          ++i;
       }
+
+      String recordName = tableInfo.name;
+      contentHandler.startElement("", recordName, recordName, recordAtts);
+      contentHandler.endElement("", recordName, recordName);
 
       currentLine = line;
    }
