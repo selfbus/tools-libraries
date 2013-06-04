@@ -38,11 +38,12 @@ public class TestVdReader
 
       Unmarshaller unmarshaller = context.createUnmarshaller();
       unmarshaller.setSchema(SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(schemaUrl));
+//      unmarshaller.setSchema(null);
 
       VDReader vdReader = new VDReader();
       vdReader.setFeature("debug", true);
 
-      InputStream in = new FileInputStream("src/test/resources/test-device.vd_");
+      InputStream in = new FileInputStream("src/test/resources/test-device-short.vd_");
       SAXSource source = new SAXSource(vdReader, new InputSource(in));
 
       @SuppressWarnings("unchecked")
@@ -53,11 +54,12 @@ public class TestVdReader
       assertNotNull(vd);
 
       assertEquals("3.19", vd.version);
+      assertEquals("/ETS/ETS_PDB/ets2.vd_", vd.name);
 
       List<Manufacturer> manufacturers = vd.manufacturers;
-      assertNotNull(manufacturers);
-      assertEquals(1, manufacturers.size());
+      assertNotNull("manufacturers!=null", manufacturers);
+      assertEquals(2, manufacturers.size());
       assertEquals(1, manufacturers.get(0).id);
-      assertEquals("Test Company 1", manufacturers.get(0).name);
+      assertEquals("Siemens", manufacturers.get(0).name);
    }
 }

@@ -7,15 +7,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
  * A project.
  */
-@XmlRootElement
-@XmlType(name = "VD", propOrder = {})
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlType(propOrder = {})
+@XmlAccessorType(XmlAccessType.FIELD)
 public class VD
 {
    @XmlAttribute
@@ -34,4 +32,8 @@ public class VD
    @XmlElementWrapper(name = "functional_entity")
    @XmlElement(name = "functional_entity")
    public List<FunctionalEntity> functionalEntities;
+
+   public VD()
+   {
+   }
 }

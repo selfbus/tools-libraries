@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
+ <xs:element name="virtual_device" type="VD" />
+
  <xs:complexType name="Manufacturer">
   <xs:attribute name="manufacturer_name" type="xs:string" />
   <xs:attribute name="manufacturer_id" type="xs:int" />
@@ -592,7 +594,5 @@
   <xs:attribute name="created" type="xs:string" />
   <xs:attribute name="version" type="xs:string" />
  </xs:complexType>
-
- <xs:element name="virtual_device" type="VD" />
 
 </xs:schema>

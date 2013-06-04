@@ -40,6 +40,7 @@ public class VDReader extends AbstractXmlReader
    private TableInfo tableInfo;
    private boolean debug;
 
+   
    /**
     * {@inheritDoc}
     */
@@ -52,7 +53,6 @@ public class VDReader extends AbstractXmlReader
       debug = features.get("debug");
 
       contentHandler.startDocument();
-
       parseHeader();
 
       while (!atEnd())
@@ -60,7 +60,7 @@ public class VDReader extends AbstractXmlReader
          parseTable();
       }
 
-      contentHandler.endElement("", documentName, documentName);
+      contentHandler.endElement(null, documentName, documentName);
       contentHandler.endDocument();
    }
 
@@ -98,7 +98,7 @@ public class VDReader extends AbstractXmlReader
          else if ("N".equals(type))
             recordAtts.addAttribute("", "name", "name", "xs:string", value);
          else if ("H".equals(type))
-            documentName = value.toLowerCase();
+            documentName = value.toLowerCase().intern();
          else if (line.length() > 2 && !" ".equals(line.substring(1, 2)))
             throw new SAXParseException("Malformed header line", locator);
       }
@@ -106,9 +106,7 @@ public class VDReader extends AbstractXmlReader
       Validate.notNull(documentName, "document name is undefined in the file header");
       LOGGER.debug("Document is \"{}\"", documentName);
 
-      // OpenJDK bug?  Replacing the string constant "virtual_device" with
-      // the variable documentName breaks the reader.
-      contentHandler.startElement("", "virtual_device", documentName, recordAtts);
+      contentHandler.startElement("", documentName, documentName, recordAtts);
    }
 
    /**
@@ -125,8 +123,8 @@ public class VDReader extends AbstractXmlReader
          LOGGER.debug("Parsing table {} {}", tableInfo.id, tableInfo.name);
 
       tableAtts.clear();
-      String tableName = tableInfo.name;
-      contentHandler.startElement("", tableName, tableName, tableAtts);
+      String tableName = tableInfo.name.intern();
+      contentHandler.startElement(null, tableName, tableName, tableAtts);
 
       while (currentLine != null && !TABLE_SEPARATOR.equals(currentLine) && !END_INDICATOR.equals(currentLine))
       {
@@ -138,7 +136,7 @@ public class VDReader extends AbstractXmlReader
          parseTableRecord();
       }
 
-      contentHandler.endElement("", tableName, tableName);
+      contentHandler.endElement(null, tableName, tableName);
    }
 
    /**
@@ -164,7 +162,7 @@ public class VDReader extends AbstractXmlReader
             break;
 
          parts = line.split(" ", 6);
-         tableInfo.fieldNames.add(parts[5].toLowerCase());
+         tableInfo.fieldNames.add(parts[5].toLowerCase().intern());
 
          TableFieldType fieldType = TableFieldType.valueOf(Integer.parseInt(parts[2]));
          if (fieldType == null)
@@ -211,9 +209,10 @@ public class VDReader extends AbstractXmlReader
          ++i;
       }
 
-      String recordName = tableInfo.name;
-      contentHandler.startElement("", recordName, recordName, recordAtts);
-      contentHandler.endElement("", recordName, recordName);
+      String recordName = tableInfo.name.intern();
+//      LOGGER.debug("Record {}", recordName);
+      contentHandler.startElement(null, recordName, recordName, recordAtts);
+      contentHandler.endElement(null, recordName, recordName);
 
       currentLine = line;
    }

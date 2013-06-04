@@ -20,7 +20,6 @@ import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * A {@link XMLReader XML reader} for VD files.
@@ -37,7 +36,7 @@ public abstract class AbstractXmlReader implements XMLReader
 
    protected DTDHandler dtdHandler;
    protected EntityResolver resolver;
-   protected ContentHandler contentHandler = new DefaultHandler();
+   protected ContentHandler contentHandler;
    protected ErrorHandler errorHandler = new ErrorHandler()
    {
       @Override
