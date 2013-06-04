@@ -11,6 +11,55 @@
  <description>Serial communication sniffer</description>
  <build>
   <plugins>
+   <plugin>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <configuration>
+     <source>1.7</source>
+     <target>1.7</target>
+     <encoding>UTF-8</encoding>
+    </configuration>
+   </plugin>
+   <plugin>
+    <artifactId>maven-jar-plugin</artifactId>
+    <version>2.3</version>
+    <configuration>
+     <finalName>sniffer</finalName>
+     <archive>
+      <manifest>
+       <addClasspath>true</addClasspath>
+       <mainClass>org.selfbus.sbtools.sniffer.Sniffer</mainClass>
+      </manifest>
+      <manifestEntries>
+       <Version>${project.version}</Version>
+      </manifestEntries>
+     </archive>
+    </configuration>
+   </plugin>
+   <plugin>
+    <artifactId>maven-assembly-plugin</artifactId>
+    <executions>
+     <execution>
+      <id>make zip</id>
+      <phase>package</phase>
+      <goals>
+       <goal>single</goal>
+      </goals>
+     </execution>
+    </executions>
+    <configuration>
+     <finalName>sniffer-${project.version}</finalName>
+     <ignorePermissions>false</ignorePermissions>
+     <appendAssemblyId>false</appendAssemblyId>
+     <archive>
+      <manifest>
+       <mainClass>org.selfbus.sbtools.sniffer.Sniffer</mainClass>
+      </manifest>
+     </archive>
+     <descriptors>
+      <descriptor>assembly.xml</descriptor>
+     </descriptors>
+    </configuration>
+   </plugin>
   </plugins>
  </build>
  <dependencies>
