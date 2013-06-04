@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<toolbars id="MainToolBars">
+ <toolbar id="File">
+  <action id="org.selfbus.sbtools.sniffer.actions.ExitAction" />
+  <separator />
+  <action id="org.selfbus.sbtools.sniffer.actions.OpenRecordingAction" />
+ </toolbar>
+ <toolbar id="Edit">
+  <action id="org.selfbus.sbtools.sniffer.actions.ClearAction" />
+ </toolbar>
+</toolbars>
