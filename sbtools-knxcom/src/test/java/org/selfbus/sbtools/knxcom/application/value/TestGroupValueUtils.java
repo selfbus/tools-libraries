@@ -27,10 +27,10 @@ public class TestGroupValueUtils
    {
       Object o;
 
-      o = GroupValueUtils.fromBytes(HexString.valueOf("0C FB"), DataPointType.SHORT_FLOAT);
+      o = GroupValueUtils.fromBytes(HexString.valueOf("00 0C FB"), DataPointType.SHORT_FLOAT);
       assertEquals(25.5f, (float) o, 0.001);
 
-      o = GroupValueUtils.fromBytes(HexString.valueOf("03 7C"), DataPointType.SHORT_FLOAT);
+      o = GroupValueUtils.fromBytes(HexString.valueOf("00 03 7C"), DataPointType.SHORT_FLOAT);
       assertEquals(8.92f, (float) o, 0.001);
    }
 
