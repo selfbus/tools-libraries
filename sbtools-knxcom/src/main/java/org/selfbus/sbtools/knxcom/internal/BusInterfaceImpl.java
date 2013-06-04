@@ -135,7 +135,7 @@ public class BusInterfaceImpl implements BusInterface
     */
    private void close(boolean normal, String reason)
    {
-      LOGGER.info("closing bus interface - " + reason);
+      LOGGER.info("Closing bus interface - " + reason);
 
       link.removeListener(receiver);
       receiver.quit();
@@ -334,6 +334,10 @@ public class BusInterfaceImpl implements BusInterface
                if (active)
                   processFrameEvent(receiveQueue.poll());
             }
+         }
+         catch (Exception e)
+         {
+            LOGGER.error("Uncaught exception during bus frame processing", e);
          }
          finally
          {

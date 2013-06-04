@@ -106,7 +106,7 @@ public class XmlToolBarFactory
 
       final NodeList toolBarNodes = doc.getElementsByTagName("toolbar");
       //      final String mainToolBarId = getNodeAttr(doc.getDocumentElement(), "id");
-      final JToolBar mainToolBar = new ToolBar();
+      final JToolBar toolBar = new ToolBar();
 
       for (int toolBarIdx = 0; toolBarIdx < toolBarNodes.getLength(); ++toolBarIdx)
       {
@@ -114,7 +114,7 @@ public class XmlToolBarFactory
          //         final String toolBarId = getNodeAttr(toolBarNode, "id");
 
          if (toolBarIdx > 0)
-            mainToolBar.addSeparator();
+            toolBar.addSeparator();
 
          final NodeList itemNodes = toolBarNode.getChildNodes();
          for (int itemIdx = 0; itemIdx < itemNodes.getLength(); ++itemIdx)
@@ -124,14 +124,14 @@ public class XmlToolBarFactory
 
             if (itemType.equals("separator"))
             {
-               mainToolBar.addSeparator();
+               toolBar.addSeparator();
             }
             else if (itemType.equals("action"))
             {
                final String actionId = getNodeAttr(itemNode, "id");
                try
                {
-                  mainToolBar.add(actionFactory.getAction(actionId));
+                  toolBar.add(actionFactory.getAction(actionId));
                }
                catch (ActionCreationException e)
                {
@@ -139,13 +139,13 @@ public class XmlToolBarFactory
 
                   final JLabel lbl = new JLabel(" [?] ");
                   lbl.setToolTipText("?" + actionId + "?");
-                  mainToolBar.add(lbl);
+                  toolBar.add(lbl);
                }
             }
          }
       }
 
-      return mainToolBar;
+      return toolBar;
    }
 
    /**
@@ -168,5 +168,13 @@ public class XmlToolBarFactory
       }
 
       return attr.getNodeValue();
+   }
+
+   /**
+    * @return The action factory.
+    */
+   public ActionFactory getActionFactory()
+   {
+      return actionFactory;
    }
 }

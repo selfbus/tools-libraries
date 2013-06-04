@@ -8,6 +8,7 @@ import org.selfbus.sbtools.knxcom.event.CloseEvent;
 import org.selfbus.sbtools.knxcom.internal.AbstractListenableLink;
 import org.selfbus.sbtools.knxcom.link.Link;
 import org.selfbus.sbtools.knxcom.types.LinkMode;
+import org.selfbus.sbtools.knxcom.types.LinkType;
 
 /**
  * A dummy KNX connection that does nothing.
@@ -64,6 +65,15 @@ public class DummyLink extends AbstractListenableLink implements Link
    public LinkMode getLinkMode()
    {
       return mode;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public LinkType getLinkType()
+   {
+      return LinkType.NONE;
    }
 
    /**

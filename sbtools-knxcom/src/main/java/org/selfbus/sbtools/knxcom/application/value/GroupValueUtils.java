@@ -1,5 +1,6 @@
 package org.selfbus.sbtools.knxcom.application.value;
 
+import org.apache.commons.lang3.Validate;
 import org.selfbus.sbtools.common.HexString;
 
 /**
@@ -27,8 +28,10 @@ public final class GroupValueUtils
 
       Class<?> valueClass = type.getValueClass();
       if (valueClass != null && value.getClass() != valueClass)
+      {
          throw new IllegalArgumentException("the value is of the type " + value.getClass()
             + " but must be of the type " + valueClass);
+      }
 
       switch (type)
       {
@@ -40,6 +43,19 @@ public final class GroupValueUtils
 
          case UNSIGNED_SHORT:
             return intToBytes((Integer) value, 2);
+
+         case SHORT_FLOAT:
+            float f = 100f * (float) value; 
+            int exp = 0;
+            while (f > 2047 || f < -2048)
+            {
+               ++exp;
+               f /= 2;
+            }
+            Validate.isTrue(exp <= 15, "value too large for SHORT_FLOAT");
+            int ival = (int) f;
+            if (ival < 0) exp |= 16;
+            return intToBytes((exp << 11) | (ival & 2047), 2);
 
          default:
             throw new IllegalArgumentException("Unsupported datapoint type " + type + " for value " + value);
@@ -69,10 +85,17 @@ public final class GroupValueUtils
             return Boolean.valueOf(data[0] != (byte) 0);
 
          case UNSIGNED_BYTE:
-            return Integer.valueOf(data[0] & 255);
+            return Integer.valueOf(data[1] & 255);
 
          case UNSIGNED_SHORT:
-            return Integer.valueOf(bytesToInt(data, 0, 2));
+            return Integer.valueOf(bytesToInt(data, 1, 2));
+
+         case SHORT_FLOAT:
+            int ival = bytesToInt(data, 1, 2);
+            int m = ival & 2047;
+            if ((ival & 0x8000) == 0x8000) m = -m;
+            int exp = (ival >> 11) & 15;
+            return m * 0.01f * (1 << exp);
 
          default:
             throw new IllegalArgumentException("Unsupported datapoint type " + type + " for raw-data "

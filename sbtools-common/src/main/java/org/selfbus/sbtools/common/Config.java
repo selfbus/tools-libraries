@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +20,7 @@ public class Config
    private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
    private static Config instance;
    private final Properties props = new Properties();
+   private String fileName;
 
    /**
     * Returns the global configuration object. A {@link Config} object is
@@ -134,6 +136,14 @@ public class Config
    }
 
    /**
+    * @return The file name of the configuration, or null if unknown.
+    */
+   public String getFileName()
+   {
+      return fileName;
+   }
+   
+   /**
     * Get the configuration value for the given key.
     * 
     * @param key - the key to get the value for.
@@ -226,6 +236,8 @@ public class Config
       {
          if (in != null)
             in.close();
+
+         this.fileName = fileName;
       }
    }
 
@@ -243,8 +255,25 @@ public class Config
    public void load(InputStream in) throws IOException
    {
       props.load(in);
+      fileName = null;
    }
 
+   /**
+    * Save the configuration to the same file that it was loaded from or saved
+    * last time.
+    *
+    * @throws SecurityException if a security manager exists and its
+    *            <code>checkWrite</code> method denies write access to the file.
+    * @throws IOException if writing the configuration list to the specified
+    *            output stream throws an <tt>IOException</tt>.
+    * @throws NullPointerException if the file name is not set.
+    */
+   public void save() throws IOException
+   {
+      Validate.notNull(fileName);
+      save(fileName);
+   }
+   
    /**
     * Save the configuration to the file fileName.
     * 
@@ -263,6 +292,8 @@ public class Config
          LOGGER.debug("Saving config {}", fileName);
          out = new FileOutputStream(fileName);
          save(out);
+
+         this.fileName = fileName;
       }
       finally
       {
@@ -283,5 +314,6 @@ public class Config
    public void save(OutputStream out) throws IOException
    {
       props.store(out, Environment.getAppName() + " configuration");
+      this.fileName = null;
    }
 }

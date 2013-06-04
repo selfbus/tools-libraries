@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -97,6 +98,36 @@ public class Accordion extends JPanel implements ActionListener
    }
 
    /**
+    * Add a listener that is called when the bar's button is clicked.
+    * 
+    * @param name The name of the outlook bar
+    * @param listener - the listener to add
+    */
+   public void addBarListener(String name, ActionListener listener)
+   {
+      BarInfo barInfo = this.bars.get(name);
+      if (barInfo != null)
+      {
+         barInfo.getButton().addActionListener(listener);
+      }
+   }
+
+   /**
+    * Remove a listener from the outlook bar.
+    * 
+    * @param name The name of the outlook bar
+    * @param listener - the listener to remove
+    */
+   public void removeBarListener(String name, ActionListener listener)
+   {
+      BarInfo barInfo = this.bars.get(name);
+      if (barInfo != null)
+      {
+         barInfo.getButton().removeActionListener(listener);
+      }
+   }
+
+   /**
     * Returns the index of the currently visible bar (zero-based)
     * 
     * @return The index of the currently visible bar
@@ -104,6 +135,22 @@ public class Accordion extends JPanel implements ActionListener
    public int getVisibleBar()
    {
       return this.visibleBar;
+   }
+
+   /**
+    * @return True if the accordion contains no outlook bars.
+    */
+   public boolean isEmpty()
+   {
+      return this.bars.isEmpty();
+   }
+
+   /**
+    * @return The names of the outlook bars.
+    */
+   public Set<String> getBarNames()
+   {
+      return this.bars.keySet();
    }
 
    /**
@@ -120,7 +167,7 @@ public class Accordion extends JPanel implements ActionListener
          render();
       }
    }
-
+   
    /**
     * Causes the outlook bar component to rebuild itself; this means that it rebuilds the top and
     * bottom panels of bars as well as making the currently selected bar's panel visible
@@ -233,6 +280,7 @@ public class Accordion extends JPanel implements ActionListener
          this.name = name;
          this.component = component;
          this.button = new JButton(name);
+         setButtonStyle();
       }
 
       /**
@@ -247,6 +295,13 @@ public class Accordion extends JPanel implements ActionListener
          this.name = name;
          this.component = component;
          this.button = new JButton(name, icon);
+         setButtonStyle();
+      }
+
+      private void setButtonStyle()
+      {
+         button.setFocusable(false);
+         button.setOpaque(false);
       }
 
       /**

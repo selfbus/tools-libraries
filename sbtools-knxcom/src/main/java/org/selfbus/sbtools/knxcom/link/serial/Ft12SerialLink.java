@@ -25,6 +25,7 @@ import org.selfbus.sbtools.knxcom.exception.KNXAckTimeoutException;
 import org.selfbus.sbtools.knxcom.exception.KNXPortClosedException;
 import org.selfbus.sbtools.knxcom.internal.AbstractListenableLink;
 import org.selfbus.sbtools.knxcom.types.LinkMode;
+import org.selfbus.sbtools.knxcom.types.LinkType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -232,12 +233,29 @@ public class Ft12SerialLink extends AbstractListenableLink
    }
 
    /**
+    * @return The name of the serial port.
+    */
+   public String getPortName()
+   {
+      return portName;
+   }
+
+   /**
     * {@inheritDoc}
     */
    @Override
    public LinkMode getLinkMode()
    {
       return mode;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public LinkType getLinkType()
+   {
+      return LinkType.SERIAL_FT12;
    }
 
    /**

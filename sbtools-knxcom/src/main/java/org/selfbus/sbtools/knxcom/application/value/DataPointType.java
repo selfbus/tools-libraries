@@ -27,7 +27,7 @@ public enum DataPointType
    BOOL(1, Boolean.class, true),
 
    /**
-    * 2 bit data point type. This is a {@link #Bool boolean} type with an additional control bit.
+    * 2 bit data point type. This is a {@link #BOOL boolean} type with an additional control bit.
     * Used for switch control, step control, ...
     * <p>
     * 00 - no control 01 - no control 10 - control, off 11 - control, on

@@ -210,7 +210,7 @@ public class DevTool extends SingleFrameApplication
       {
          super.initialize(args);
 
-         Environment.setAppName("DevTool");
+         Environment.setAppName(getClass().getSimpleName());
          File appDir = new File(Environment.getAppDir());
          getContext().getLocalStorage().setDirectory(appDir);
 

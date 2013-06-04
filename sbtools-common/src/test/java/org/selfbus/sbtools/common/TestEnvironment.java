@@ -13,12 +13,13 @@ import org.selfbus.sbtools.common.Environment;
 
 public class TestEnvironment
 {
-   private String appDirName;
+   private String appDirName, defaultOsName;
 
    @Before
    public final void setUp()
    {
       Environment.disposeInstance();
+      defaultOsName = System.getProperty("os.name");
       appDirName = null;
    }
 
@@ -26,6 +27,7 @@ public class TestEnvironment
    public final void tearDown()
    {
       Environment.disposeInstance();
+      System.setProperty("os.name", defaultOsName);
 
       if (appDirName != null && !appDirName.isEmpty())
       {
@@ -40,20 +42,20 @@ public class TestEnvironment
    {
       Environment.init();
       assertNotNull(Environment.getInstance());
-      assertEquals("fts", Environment.getAppName());
+      assertEquals("sbtools", Environment.getAppName());
    }
 
    @Test
    public final void testLinux()
    {
       Environment.disposeInstance();
-      System.setProperty("os.name", "Linux x86_64");
+      System.setProperty("os.name", "Linux");
 
       assertEquals("linux", Environment.getOS());
       assertEquals("/tmp", Environment.getTempDir());
       assertNotNull(Environment.getHomeDir());
       assertNotNull(Environment.getAppDir());
-      assertEquals("home/.appName", Environment.getAppDir("home", "appName"));
+      assertEquals("home/.config/appName", Environment.getAppDir("home", "appName"));
    }
 
    @Test

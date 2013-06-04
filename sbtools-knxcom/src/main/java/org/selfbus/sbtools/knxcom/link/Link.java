@@ -52,6 +52,11 @@ public interface Link
    public LinkMode getLinkMode();
 
    /**
+    * @return the link type.
+    */
+   public LinkType getLinkType();
+
+   /**
     * Send an EMI frame to the bus.
     * 
     * @param frame - the frame to send.

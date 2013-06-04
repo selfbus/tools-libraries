@@ -213,4 +213,12 @@ public class XmlMenuFactory
 
       return menu;
    }
+
+   /**
+    * @return The action factory.
+    */
+   public ActionFactory getActionFactory()
+   {
+      return actionFactory;
+   }
 }

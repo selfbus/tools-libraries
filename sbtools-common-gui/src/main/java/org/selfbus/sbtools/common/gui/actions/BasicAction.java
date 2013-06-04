@@ -37,7 +37,7 @@ public abstract class BasicAction extends AbstractAction
       putValue(Action.SHORT_DESCRIPTION, toolTipText);
 
       final int idx = name.indexOf('&');
-      if (idx >= 0)
+      if (idx >= 0 && name.length() > 1)
       {
          putValue(Action.MNEMONIC_KEY, (int) name.codePointAt(idx + 1));
          name = name.substring(0, idx) + name.substring(idx + 1);

@@ -39,6 +39,7 @@ import org.selfbus.sbtools.knxcom.link.netip.types.ServiceType;
 import org.selfbus.sbtools.knxcom.link.netip.types.StatusCode;
 import org.selfbus.sbtools.knxcom.link.netip.types.TransportType;
 import org.selfbus.sbtools.knxcom.types.LinkMode;
+import org.selfbus.sbtools.knxcom.types.LinkType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -309,6 +310,15 @@ public final class KNXnetLink extends AbstractListenableLink implements Link
    public LinkMode getLinkMode()
    {
       return mode;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public LinkType getLinkType()
+   {
+      return LinkType.KNXNET_IP;
    }
 
    /**

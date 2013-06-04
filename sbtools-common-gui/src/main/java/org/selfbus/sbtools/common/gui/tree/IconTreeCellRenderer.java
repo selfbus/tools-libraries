@@ -1,5 +1,6 @@
 package org.selfbus.sbtools.common.gui.tree;
 
+import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.Icon;
@@ -30,5 +31,14 @@ public class IconTreeCellRenderer extends DefaultTreeCellRenderer
       }
 
       return this;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Color getBorderSelectionColor()
+   {
+      return getBackgroundSelectionColor();
    }
 }
