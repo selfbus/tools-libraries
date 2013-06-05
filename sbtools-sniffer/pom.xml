@@ -8,6 +8,7 @@
  </parent>
  <artifactId>sbtools-sniffer</artifactId>
  <name>sbtools-sniffer</name>
+ <version>0.3-SNAPSHOT</version>
  <description>Serial communication sniffer</description>
  <build>
   <plugins>
@@ -66,12 +67,12 @@
   <dependency>
    <groupId>org.selfbus.sbtools</groupId>
    <artifactId>sbtools-common</artifactId>
-   <version>${project.version}</version>
+   <version>${project.parent.version}</version>
   </dependency>
   <dependency>
    <groupId>org.selfbus.sbtools</groupId>
    <artifactId>sbtools-common-gui</artifactId>
-   <version>${project.version}</version>
+   <version>${project.parent.version}</version>
   </dependency>
   <dependency>
    <groupId>org.jdesktop</groupId>
