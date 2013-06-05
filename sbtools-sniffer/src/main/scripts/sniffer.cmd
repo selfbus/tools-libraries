@@ -1,4 +1,14 @@
-rem LPC-debugger start script for Windows with 32bit Java
+@echo off
+setlocal
 
-PATH=%PATH%;contrib\rxtx\win32
-java -cp libs -jar libs\sbtools-sniffer*.jar
+cd libs
+set CLASSPATH=%CLASSPATH%;.
+java -jar sbtools-sniffer-*.jar org.selfbus.sbtools.devtool.DevTool
+
+if %ERRORLEVEL% neq 0 (
+   echo.
+   echo Please note: this application requires Java 7
+   echo (This notice might not be related to the problem above)
+   echo.
+   pause
+)

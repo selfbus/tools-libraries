@@ -2,7 +2,7 @@ package org.selfbus.sbtools.sniffer.serial;
 
 import gnu.io.SerialPort;
 
-import org.selfbus.sbtools.sniffer.internal.I18n;
+import org.selfbus.sbtools.sniffer.misc.I18n;
 
 /**
  * Serial transmission stop bits.

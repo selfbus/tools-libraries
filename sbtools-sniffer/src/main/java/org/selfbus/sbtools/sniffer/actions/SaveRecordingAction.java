@@ -19,21 +19,21 @@ import org.selfbus.sbtools.sniffer.filter.RecordingFileFilter;
 import org.selfbus.sbtools.sniffer.misc.I18n;
 
 /**
- * Open a recording file.
+ * Save a recording file.
  */
-public final class OpenRecordingAction extends BasicAction
+public final class SaveRecordingAction extends BasicAction
 {
-   private static final long serialVersionUID = -8293395896565603621L;
+   private static final long serialVersionUID = -156959508941638583L;
 
    /**
     * Create an action object.
     */
-   public OpenRecordingAction()
+   public SaveRecordingAction()
    {
-      super(I18n.getMessage("OpenRecordingAction.name"), I18n.getMessage("OpenRecordingAction.toolTip"),
-            ImageCache.getIcon("icons/fileopen"));
+      super(I18n.getMessage("SaveRecordingAction.name"), I18n.getMessage("SaveRecordingAction.toolTip"),
+            ImageCache.getIcon("icons/filesave"));
 
-      putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('O', InputEvent.CTRL_DOWN_MASK));
+      putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('S', InputEvent.CTRL_DOWN_MASK));
    }
 
    /**
@@ -54,20 +54,23 @@ public final class OpenRecordingAction extends BasicAction
       dlg.addChoosableFileFilter(fileFilter);
       dlg.addChoosableFileFilter(dlg.getAcceptAllFileFilter());
       dlg.setFileFilter(fileFilter);
-      dlg.setDialogTitle(I18n.getMessage("OpenRecordingAction.title"));
+      dlg.setDialogTitle(I18n.getMessage("SaveRecordingAction.title"));
 
       if (dlg.showOpenDialog(mainWin) != JFileChooser.APPROVE_OPTION)
          return;
 
-      final File file = dlg.getSelectedFile();
+      File file = dlg.getSelectedFile();
       if (file == null) return;
 
       cfg.put("recording.lastDir", file.getParent());
 
+      if (!file.getName().toLowerCase().endsWith(".snif"))
+         file = new File(file.getPath() + ".snif");
+
       try
       {
          mainWin.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-         Sniffer.getInstance().loadRecording(file);
+         Sniffer.getInstance().saveRecording(file);
       }
       finally
       {

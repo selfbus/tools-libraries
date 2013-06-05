@@ -8,7 +8,7 @@ import javax.swing.KeyStroke;
 import org.selfbus.sbtools.common.gui.actions.BasicAction;
 import org.selfbus.sbtools.common.gui.misc.ImageCache;
 import org.selfbus.sbtools.sniffer.Sniffer;
-import org.selfbus.sbtools.sniffer.internal.I18n;
+import org.selfbus.sbtools.sniffer.misc.I18n;
 
 /**
  * Clear the log.

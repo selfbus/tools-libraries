@@ -4,8 +4,12 @@
   <action id="org.selfbus.sbtools.sniffer.actions.ExitAction" />
   <separator />
   <action id="org.selfbus.sbtools.sniffer.actions.OpenRecordingAction" />
+  <action id="org.selfbus.sbtools.sniffer.actions.SaveRecordingAction" />
  </toolbar>
  <toolbar id="Edit">
   <action id="org.selfbus.sbtools.sniffer.actions.ClearAction" />
+ </toolbar>
+ <toolbar id="Misc">
+  <action id="org.selfbus.sbtools.sniffer.actions.AboutAction" />
  </toolbar>
 </toolbars>

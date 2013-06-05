@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A wrapper class for accessing serial ports.
  */
+@Deprecated
 public class SerialPortWrapper
 {
    private static final Logger LOGGER = LoggerFactory.getLogger(SerialPortWrapper.class);
@@ -87,7 +88,7 @@ public class SerialPortWrapper
          serialPort = null;
 
          final CommPortIdentifier portIdent = CommPortIdentifier.getPortIdentifier(portName);
-         serialPort = (SerialPort) portIdent.open("sbtools", 500);
+         serialPort = (SerialPort) portIdent.open("sniffer", 500);
 
          serialPort.setSerialPortParams(baudRate, dataBits, stopBits, parity);
          serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_NONE);
@@ -191,7 +192,7 @@ public class SerialPortWrapper
    public void setReceiveTimeout(int time) throws UnsupportedCommOperationException
    {
       serialPort.enableReceiveTimeout(time);
-      serialPort.enableReceiveThreshold(1024);
+      serialPort.enableReceiveThreshold(1);
    }
 
    /**
@@ -205,6 +206,7 @@ public class SerialPortWrapper
    public void addEventListener(SerialPortEventListener listener) throws TooManyListenersException
    {
       serialPort.addEventListener(listener);
+      serialPort.notifyOnDataAvailable(true);
    }
 
    /**

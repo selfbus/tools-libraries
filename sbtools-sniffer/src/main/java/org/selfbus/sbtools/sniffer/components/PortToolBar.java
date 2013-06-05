@@ -13,7 +13,7 @@ import javax.swing.SwingUtilities;
 
 import org.selfbus.sbtools.common.Config;
 import org.selfbus.sbtools.common.gui.components.Dialogs;
-import org.selfbus.sbtools.sniffer.internal.I18n;
+import org.selfbus.sbtools.sniffer.misc.I18n;
 import org.selfbus.sbtools.sniffer.serial.Parity;
 import org.selfbus.sbtools.sniffer.serial.SerialPortUtil;
 import org.selfbus.sbtools.sniffer.serial.Stop;
@@ -37,7 +37,8 @@ public class PortToolBar extends JToolBar
    private final JComboBox<Parity> parityCombo = new JComboBox<Parity>();
    private final Set<ActionListener> connectListeners = new CopyOnWriteArraySet<ActionListener>();
    private final Set<ActionListener> disconnectListeners = new CopyOnWriteArraySet<ActionListener>();
-   private boolean connected, havePorts;
+   private boolean connected;
+   private int numPorts;
 
    /**
     * Create a tool bar for configuration of the serial ports, including the connect/disconnect
@@ -106,9 +107,9 @@ public class PortToolBar extends JToolBar
    protected void setupComboBoxes()
    {
       String[] portNames = SerialPortUtil.getPortNames();
-      havePorts = portNames.length > 0;
+      numPorts = portNames.length;
 
-      if (havePorts)
+      if (numPorts > 0)
       {
          for (String portName : portNames)
          {
@@ -121,6 +122,13 @@ public class PortToolBar extends JToolBar
          recvCombo.addItem(I18n.getMessage("PortToolBar.noPorts"));
          sendCombo.addItem(I18n.getMessage("PortToolBar.noPorts"));
          connectButton.setEnabled(false);
+      }
+
+      if (numPorts == 1)
+      {
+         recvCombo.removeAll();
+         recvCombo.addItem(I18n.getMessage("PortToolBar.noPorts"));
+         recvCombo.setEnabled(false);
       }
 
       for (int baudRate : SerialPortUtil.getBaudRates())
@@ -185,11 +193,11 @@ public class PortToolBar extends JToolBar
     */
    public void writeConfig(Config config)
    {
-      if (havePorts)
-      {
+      if (numPorts > 0)
          config.put("sendPort", getSendPort());
+
+      if (numPorts > 1)
          config.put("recvPort", getRecvPort());
-      }
 
       config.put("baudRate", getBaudRate());
       config.put("dataBits", getDataBits());
@@ -202,7 +210,7 @@ public class PortToolBar extends JToolBar
     */
    public String getSendPort()
    {
-      if (havePorts)
+      if (numPorts > 0)
          return (String) sendCombo.getSelectedItem();
       return null;
    }
@@ -212,7 +220,7 @@ public class PortToolBar extends JToolBar
     */
    public String getRecvPort()
    {
-      if (havePorts)
+      if (numPorts > 1)
          return (String) recvCombo.getSelectedItem();
       return null;
    }
@@ -298,7 +306,7 @@ public class PortToolBar extends JToolBar
    public void initConnected(boolean connected)
    {
       this.connected = connected;
-      setEnabled(!connected && havePorts);
+      setEnabled(!connected && numPorts > 0);
 
       if (connected)
          connectButton.setLabel(I18n.getMessage("PortToolBar.disconnect"));
@@ -322,8 +330,8 @@ public class PortToolBar extends JToolBar
    @Override
    public void setEnabled(boolean enable)
    {
-      recvCombo.setEnabled(enable);
       sendCombo.setEnabled(enable);
+      recvCombo.setEnabled(enable && numPorts > 1);
       baudCombo.setEnabled(enable);
       dataBitsCombo.setEnabled(enable);
       stopBitsCombo.setEnabled(enable);

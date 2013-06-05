@@ -6,7 +6,7 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 import org.selfbus.sbtools.common.gui.utils.FileUtils;
-import org.selfbus.sbtools.sniffer.internal.I18n;
+import org.selfbus.sbtools.sniffer.misc.I18n;
 
 /**
  * A {@link JFileChooser} file-filter for project files.

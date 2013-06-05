@@ -86,9 +86,10 @@ public class SnifReader
             data[idx - 2] = (byte) val;
          }
 
-         records.add(new Record(dir, data, when));
+         records.add(new Record(when.getTime(), dir, data, data.length));
       }
 
+      reader.close();
       return records;
    }
 

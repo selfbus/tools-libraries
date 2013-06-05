@@ -1,4 +1,4 @@
-package org.selfbus.sbtools.sniffer.internal;
+package org.selfbus.sbtools.sniffer.misc;
 
 import java.text.MessageFormat;
 import java.util.MissingResourceException;

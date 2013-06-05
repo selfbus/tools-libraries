@@ -35,6 +35,15 @@
    <directoryMode>0755</directoryMode>
    <fileMode>0755</fileMode>
   </fileSet>
+  <fileSet>
+   <directory>src/test/resources/examples</directory>
+   <includes>
+    <include>*.snif</include>
+   </includes>
+   <outputDirectory>/examples</outputDirectory>
+   <directoryMode>0755</directoryMode>
+   <fileMode>0644</fileMode>
+  </fileSet>
  </fileSets>
  <dependencySets>
   <dependencySet>

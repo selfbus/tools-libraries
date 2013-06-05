@@ -47,7 +47,7 @@
      </execution>
     </executions>
     <configuration>
-     <finalName>sniffer-${project.version}</finalName>
+     <!-- <finalName>sniffer-${project.version}</finalName> -->
      <ignorePermissions>false</ignorePermissions>
      <appendAssemblyId>false</appendAssemblyId>
      <archive>

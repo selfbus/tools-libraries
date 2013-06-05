@@ -1,21 +1,24 @@
 package org.selfbus.sbtools.sniffer;
 
-import gnu.io.SerialPortEvent;
-import gnu.io.SerialPortEventListener;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.TooManyListenersException;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
@@ -27,6 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -43,12 +47,15 @@ import org.selfbus.sbtools.common.gui.window.XmlToolBarFactory;
 import org.selfbus.sbtools.sniffer.components.NewlineMode;
 import org.selfbus.sbtools.sniffer.components.PortToolBar;
 import org.selfbus.sbtools.sniffer.components.RecordsListCellRenderer;
-import org.selfbus.sbtools.sniffer.internal.I18n;
 import org.selfbus.sbtools.sniffer.layout.MultiLineFlowLayout;
+import org.selfbus.sbtools.sniffer.misc.I18n;
+import org.selfbus.sbtools.sniffer.model.Direction;
 import org.selfbus.sbtools.sniffer.model.Record;
 import org.selfbus.sbtools.sniffer.model.SnifReader;
+import org.selfbus.sbtools.sniffer.model.SnifWriter;
 import org.selfbus.sbtools.sniffer.serial.Parity;
-import org.selfbus.sbtools.sniffer.serial.SerialPortWrapper;
+import org.selfbus.sbtools.sniffer.serial.PortReader;
+import org.selfbus.sbtools.sniffer.serial.ReceivedByte;
 import org.selfbus.sbtools.sniffer.serial.Stop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,21 +74,37 @@ public final class Sniffer extends SingleFrameApplication
    private final JComboBox<NewlineMode> newlineCombo = new JComboBox<NewlineMode>();
    private JTextField newlineTimeField = new JTextField();
 
-   private NewlineMode newlineMode = NewlineMode.NONE;
-   private int newlineTime = 0;
-   private Font monoFont;
-
    private final DefaultListModel<Record> recordsModel = new DefaultListModel<Record>();
    private final JList<Record> recordsList = new JList<Record>(recordsModel);
    private final JScrollPane recordsPane = new JScrollPane(recordsList);
    private RecordsListCellRenderer recordsCellRenderer;
-   
-   private SerialPortWrapper sendPort = new SerialPortWrapper();
-   private SerialPortWrapper recvPort = new SerialPortWrapper();
+
+   // The queue for receiving bytes for both send and receive direction
+   private final Queue<ReceivedByte> readQueue = new ArrayBlockingQueue<ReceivedByte>(8192);
+
+   // Refresh interval for the records when data arrives, in milliseconds
+   private int refreshInterval = 100;
+
+   // Mode for automatic newline
+   private NewlineMode newlineMode = NewlineMode.NONE;
+
+   // Milliseconds for automatic newline
+   private int newlineTime = 0;
+
+   // The port reader for sending
+   private PortReader sendPortReader = new PortReader(Direction.SEND, readQueue);
+
+   // The port reader for receiving
+   private PortReader recvPortReader = new PortReader(Direction.RECV, readQueue);
+
+   // The records
+   private List<Record> records = Collections.synchronizedList(new ArrayList<Record>());
+
+   private boolean running = true;
+   private Font monoFont;
 
    private Config config = Config.getInstance();
    private String configFileName;
-   private ArrayList<Record> records;
 
    /**
     * Start the sniffer.
@@ -150,8 +173,22 @@ public final class Sniffer extends SingleFrameApplication
          toolBarPanel.add(createNewlineToolBar());
          toolBarPanel.add(createScrollToolBar());
 
-         portToolBar.addConnectListener(connectListener);
-         portToolBar.addDisconnectListener(disconnectListener);
+         portToolBar.addConnectListener(new ActionListener()
+         {
+            @Override
+            public void actionPerformed(ActionEvent ev)
+            {
+               connect();
+            }
+         });
+         portToolBar.addDisconnectListener(new ActionListener()
+         {
+            @Override
+            public void actionPerformed(ActionEvent ev)
+            {
+               disconnect();
+            }
+         });
 
          try
          {
@@ -293,8 +330,7 @@ public final class Sniffer extends SingleFrameApplication
          @Override
          public void actionPerformed(ActionEvent ev)
          {
-            if (autoScrollCheck.isSelected())
-               recordsList.ensureIndexIsVisible(recordsModel.getSize() - 1);
+            autoScroll();
          }
       });
 
@@ -310,16 +346,18 @@ public final class Sniffer extends SingleFrameApplication
       try
       {
          applyConfig();
+         queueReaderThread.start();
 
-         InputStream in = getClass().getClassLoader().getResourceAsStream("example1.snif");
-         if (in != null)
-         {
-            SnifReader reader = new SnifReader();
-            records = reader.read(in);
-            setRecords(records);
-         }
+//         // Load example recording
+//         InputStream in = getClass().getClassLoader().getResourceAsStream("example1.snif");
+//         if (in != null)
+//         {
+//            SnifReader reader = new SnifReader();
+//            records = reader.read(in);
+//            setRecords(records);
+//         }
       }
-      catch (RuntimeException | IOException e)
+      catch (RuntimeException e)
       {
          Dialogs.showExceptionDialog(e, I18n.getMessage("Error.startup"));
       }
@@ -352,7 +390,7 @@ public final class Sniffer extends SingleFrameApplication
    protected void shutdown()
    {
       portToolBar.writeConfig(config);
-      config.put("connected", sendPort.isOpened() && recvPort.isOpened() ? 1 : 0);
+      config.put("connected", sendPortReader.isOpened() && sendPortReader.isOpened() ? 1 : 0);
       config.put("view.ascii", viewAsciiCheck.isSelected() ? 1 : 0);
       config.put("view.hex", viewHexCheck.isSelected() ? 1 : 0);
       config.put("newlineMode", newlineMode.name());
@@ -360,11 +398,14 @@ public final class Sniffer extends SingleFrameApplication
       config.put("autoScroll", autoScrollCheck.isSelected() ? 1 : 0);
 
       saveConfig();
-
-      sendPort.close();
-      recvPort.close();
-
       super.shutdown();
+
+//      getMainFrame().setVisible(false);
+
+      running = false;
+      sendPortReader.close();
+      sendPortReader.close();
+      queueReaderThread.interrupt();
    }
 
    /**
@@ -415,6 +456,7 @@ public final class Sniffer extends SingleFrameApplication
    public void clear()
    {
       recordsModel.clear();
+      records.clear();
    }
 
    /**
@@ -437,10 +479,15 @@ public final class Sniffer extends SingleFrameApplication
     */
    public void loadRecording(File file)
    {
+      disconnect();
+      portToolBar.initConnected(false);
+
+      LOGGER.debug("Loading {}", file);
+
       try
       {
          SnifReader reader = new SnifReader();
-         records = reader.read(file);
+         records = Collections.synchronizedList(reader.read(file));
          setRecords(records);
       }
       catch (RuntimeException | IOException e)
@@ -449,6 +496,242 @@ public final class Sniffer extends SingleFrameApplication
       }
    }
 
+   /**
+    * Save the recorded data.
+    *
+    * @param file - the file to write to
+    */
+   public void saveRecording(File file)
+   {
+      LOGGER.debug("Saving {}", file);
+
+      SnifWriter writer = new SnifWriter();
+      try
+      {
+         writer.write(file, records);
+      }
+      catch (RuntimeException | IOException e)
+      {
+         Dialogs.showExceptionDialog(e, I18n.formatMessage("Error.write", file.toString()));
+      }
+   }
+
+   /**
+    * Open the connection.
+    */
+   public void connect()
+   {
+      try
+      {
+         getMainFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+         Validate.isTrue(!sendPortReader.isOpened());
+         Validate.isTrue(!recvPortReader.isOpened());
+   
+         int baudRate = portToolBar.getBaudRate();
+         int dataBits = portToolBar.getDataBits();
+         Stop stop = portToolBar.getStopBits();
+         Parity parity = portToolBar.getParity();
+   
+         clear();
+   
+         try
+         {
+            String portName = portToolBar.getSendPort();
+            Validate.notNull(portName, "No sender port selected");
+            LOGGER.info("Opening send port {}: {}/{}/{}/{}", new Object[] { portName, baudRate, dataBits, stop, parity });
+            sendPortReader.open(portName, baudRate, dataBits, stop, parity);
+   
+            portName = portToolBar.getRecvPort();
+            Validate.notNull(portName, "No receiver port selected");
+            LOGGER.info("Opening recv port {}: {}/{}/{}/{}", new Object[] { portName, baudRate, dataBits, stop, parity });
+            recvPortReader.open(portName, baudRate, dataBits, stop, parity);
+         }
+         catch (IOException e)
+         {
+            sendPortReader.close();
+            recvPortReader.close();
+   
+            throw new RuntimeException(e);
+         }
+      }
+      finally
+      {
+         getMainFrame().setCursor(Cursor.getDefaultCursor());
+      }
+   }
+
+   /**
+    * Close the connection.
+    */
+   public void disconnect()
+   {
+      try
+      {
+         getMainFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+         LOGGER.info("Closing ports");
+
+         sendPortReader.close();
+         recvPortReader.close();
+      }
+      finally
+      {
+         getMainFrame().setCursor(Cursor.getDefaultCursor());
+      }
+   }
+
+   /**
+    * Handle auto scroll
+    */
+   public void autoScroll()
+   {
+      if (!running || !autoScrollCheck.isSelected())
+         return;
+
+      int lastIndex = recordsModel.getSize() - 1;
+
+      JViewport viewport = recordsPane.getViewport();
+      Rectangle rect = recordsList.getCellBounds(lastIndex - 1, lastIndex - 1);
+      if (rect == null) return;
+
+      // The location of the view-port relative to the table
+      Point pt = viewport.getViewPosition(); 
+
+      // Translate the cell location so that it is relative to the view, assuming
+      // the northwest corner of the view is (0,0) 
+      rect.setLocation(rect.x - pt.x, rect.y - pt.y);
+      rect.x = 0;
+      rect.width = 1;
+
+      if (new Rectangle(viewport.getExtentSize()).intersects(rect))
+         recordsList.ensureIndexIsVisible(lastIndex);
+   }
+
+   /**
+    * Runnable for reading the received bytes from the read queue and adding them
+    * to the model.
+    */
+   protected final Runnable queueReader = new Runnable()
+   {
+      private final int bufferSize = 256;
+      private Record lastRecord = null;
+      private boolean needUpdate = false;
+      private boolean wantLineBreak;
+      private long lastUpdate = 0;
+
+      @Override
+      public void run()
+      {
+         LOGGER.debug("receive queue thread started");
+
+         while (running)
+         {
+            final ReceivedByte rec = readQueue.poll();
+            if (rec == null)
+            {
+               if (needUpdate && lastRecord != null)
+               {
+                  long now = System.currentTimeMillis();
+                  if (now - lastUpdate >= refreshInterval)
+                  {
+                     lastUpdate = now;
+                     needUpdate = false;
+
+                     try
+                     {
+                        SwingUtilities.invokeAndWait(new Runnable()
+                        {
+                           @Override
+                           public void run()
+                           {
+                              recordsModel.setElementAt(lastRecord, recordsModel.getSize() - 1);
+                              autoScroll();
+                           }
+                        });
+                     }
+                     catch (InvocationTargetException | InterruptedException e)
+                     {
+                        LOGGER.error("records update failed", e);
+                     }
+                  }
+               }
+               else
+               {
+                  try
+                  {
+                     Thread.sleep(50);
+                  }
+                  catch (InterruptedException e)
+                  {
+                  }
+               }
+               continue;
+            }
+
+            long when = rec.time;
+            final boolean newRecord = (lastRecord == null ||
+                                       lastRecord.direction != rec.direction ||
+                                       (newlineTime > 0 && when - lastRecord.time >= newlineTime) ||
+                                       lastRecord.length >= bufferSize);
+            if (newRecord)
+            {
+               lastRecord = new Record(rec.time, rec.direction, new byte[bufferSize], 0);
+               records.add(lastRecord);
+            }
+
+            lastRecord.data[lastRecord.length++] = (byte) rec.data;
+            wantLineBreak = newlineMode.matches(lastRecord.data, lastRecord.length);
+
+            if (newRecord || wantLineBreak || when - lastUpdate >= refreshInterval)
+            {
+               lastUpdate = when;
+               needUpdate = false;
+
+               try
+               {
+                  SwingUtilities.invokeAndWait(new Runnable()
+                  {
+                     @Override
+                     public void run()
+                     {
+                        if (newRecord) recordsModel.addElement(lastRecord);
+                        else recordsModel.setElementAt(lastRecord, recordsModel.getSize() - 1);
+                        autoScroll();
+                     }
+                  });
+               }
+               catch (InvocationTargetException | InterruptedException e)
+               {
+                  LOGGER.error("list update failed", e);
+               }
+            }
+            else needUpdate = true;
+
+            if (wantLineBreak) lastRecord = null;
+         }
+
+         LOGGER.debug("receive queue thread terminated");
+      }
+   };
+   protected final Thread queueReaderThread = new Thread(queueReader, "queue-reader");
+
+   /**
+    * Create an altered color.
+    * 
+    * @param c - the color to alter
+    * @param rf - the factor for red
+    * @param gf - the factor for green
+    * @param bf - the factor for blue
+    * @return The new color
+    */
+   protected Color createTintedColor(Color c, float rf, float gf, float bf)
+   {
+      int r = Math.max(0, Math.min(255, (int)(c.getRed() * rf)));
+      int g = Math.max(0, Math.min(255, (int)(c.getGreen() * gf)));
+      int b = Math.max(0, Math.min(255, (int)(c.getBlue() * bf)));
+      return new Color(r, g, b);
+   }
+   
    /**
     * Listener for changing the view settings.
     */
@@ -459,106 +742,30 @@ public final class Sniffer extends SingleFrameApplication
       {
          recordsCellRenderer = new RecordsListCellRenderer(viewAsciiCheck.isSelected(), viewHexCheck.isSelected());
 
-         Color baseColor = recordsList.getBackground();
-         float tint = 0.95f;
-         int newRed = Math.min(255, (int)(baseColor.getRed() * tint));
-         int newGreen = Math.min(255, (int)(baseColor.getGreen() * tint));
-         int newBlue = Math.min(255, (int)(baseColor.getBlue() * tint));
-         Color sendColor = new Color(newRed, newGreen, baseColor.getBlue());
-         Color recvColor = new Color(newRed, baseColor.getGreen(), newBlue);
+         Color bgColor = recordsList.getBackground();
+         Color fgColor = recordsList.getForeground();
+
+         Color dateColor = fgColor.brighter().brighter();
+         Color sendColor = createTintedColor(bgColor, 0.95f, 0.95f, 1f);
+         Color recvColor = createTintedColor(bgColor, 0.95f, 1f, 0.95f);
+         Color ctrlColor = createTintedColor(bgColor, 0.8f, 0.8f, 1.8f);
+         Color hexColor = createTintedColor(fgColor, 0.7f, 2.5f, 0.7f);
 
          recordsCellRenderer.setFont(monoFont);         
-         recordsCellRenderer.setDateColor(recordsList.getForeground().brighter().brighter());
+         recordsCellRenderer.setDateColor(dateColor);
          recordsCellRenderer.setSendColor(sendColor);
          recordsCellRenderer.setRecvColor(recvColor);
+         recordsCellRenderer.setCtrlColor(ctrlColor);
+
+         if (viewAsciiCheck.isSelected())
+            recordsCellRenderer.setHexColor(hexColor);
 
          recordsList.setCellRenderer(recordsCellRenderer);
 
          recordsList.setCellRenderer(recordsCellRenderer);
          recordsList.setModel(recordsModel);
-      }
-   };
 
-   /**
-    * Connect the ports, using the values of the port tool bar.
-    */
-   protected final ActionListener connectListener = new ActionListener()
-   {
-      @Override
-      public void actionPerformed(ActionEvent ev)
-      {
-         Validate.isTrue(!sendPort.isOpened());
-         Validate.isTrue(!recvPort.isOpened());
-
-         int baudRate = portToolBar.getBaudRate();
-         int dataBits = portToolBar.getDataBits();
-         Stop stop = portToolBar.getStopBits();
-         Parity parity = portToolBar.getParity();
-
-         try
-         {
-            String portName = portToolBar.getSendPort();
-            Validate.notNull(portName, "No sender port selected");
-            LOGGER.info("Opening send port {}: {}/{}/{}/{}", new Object[] { portName, baudRate, dataBits, stop, parity });
-            sendPort.open(portName, baudRate, dataBits, stop.id, parity.id);
-            sendPort.addEventListener(sendEventListener);
-
-            portName = portToolBar.getRecvPort();
-            Validate.notNull(portName, "No receiver port selected");
-            LOGGER.info("Opening recv port {}: {}/{}/{}/{}", new Object[] { portName, baudRate, dataBits, stop, parity });
-            recvPort.open(portName, baudRate, dataBits, stop.id, parity.id);
-            recvPort.addEventListener(recvEventListener);
-         }
-         catch (TooManyListenersException | IOException e)
-         {
-            throw new RuntimeException(e);
-         }
-         finally
-         {
-            sendPort.close();
-            recvPort.close();
-         }
-      }
-   };
-
-   /**
-    * Disconnect the ports.
-    */
-   protected final ActionListener disconnectListener = new ActionListener()
-   {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-         LOGGER.info("Closing ports");
-
-         sendPort.close();
-         recvPort.close();
-      }
-   };
-
-   /**
-    * Listener for events on the sender port.
-    */
-   protected final SerialPortEventListener sendEventListener = new SerialPortEventListener()
-   {
-      @Override
-      public void serialEvent(SerialPortEvent e)
-      {
-         // TODO Auto-generated method stub
-         
-      }
-   };
-
-   /**
-    * Listener for events on the receiver port.
-    */
-   protected final SerialPortEventListener recvEventListener = new SerialPortEventListener()
-   {
-      @Override
-      public void serialEvent(SerialPortEvent e)
-      {
-         // TODO Auto-generated method stub
-         
+         autoScroll();
       }
    };
 }
