@@ -115,6 +115,8 @@ public class PortToolBar extends JToolBar
 
       if (numPorts > 0)
       {
+         recvCombo.addItem(null);
+
          for (String portName : portNames)
          {
             recvCombo.addItem(portName);
@@ -199,9 +201,11 @@ public class PortToolBar extends JToolBar
    {
       if (numPorts > 0)
          config.put("sendPort", getSendPort());
+      else config.remove("sendPort");
 
-      if (numPorts > 1)
+      if (getRecvPort() != null)
          config.put("recvPort", getRecvPort());
+      else config.remove("recvPort");
 
       config.put("baudRate", getBaudRate());
       config.put("dataBits", getDataBits());
