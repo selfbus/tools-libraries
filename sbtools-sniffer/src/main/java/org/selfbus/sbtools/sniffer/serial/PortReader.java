@@ -104,31 +104,6 @@ public class PortReader implements Runnable
       LOGGER.debug("Closing serial port " + portName);
 
       portName = null;
-
-      try
-      {
-         // Enable a receive timeout, to avoid hangs during close
-         port.enableReceiveTimeout(100);
-      }
-      catch (Exception e)
-      {
-      }
-
-      try
-      {
-         if (inputStream != null)
-            inputStream.close();
-      }
-      catch (IOException e)
-      {
-      }
-
-      if (port != null)
-      {
-         port.removeEventListener();
-         port.close();
-         port = null;
-      }
    }
 
    /**
@@ -163,6 +138,31 @@ public class PortReader implements Runnable
       catch (IOException e)
       {
          LOGGER.error("failed to read from " + portName, e);
+      }
+
+      try
+      {
+         // Enable a receive timeout, to avoid hangs during close
+         port.enableReceiveTimeout(100);
+      }
+      catch (Exception e)
+      {
+      }
+
+      try
+      {
+         if (inputStream != null)
+            inputStream.close();
+      }
+      catch (IOException e)
+      {
+      }
+
+      if (port != null)
+      {
+         port.removeEventListener();
+         port.close();
+         port = null;
       }
 
       LOGGER.debug("reader thread terminated");
