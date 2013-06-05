@@ -543,9 +543,12 @@ public final class Sniffer extends SingleFrameApplication
             sendPortReader.open(portName, baudRate, dataBits, stop, parity);
    
             portName = portToolBar.getRecvPort();
-            Validate.notNull(portName, "No receiver port selected");
-            LOGGER.info("Opening recv port {}: {}/{}/{}/{}", new Object[] { portName, baudRate, dataBits, stop, parity });
-            recvPortReader.open(portName, baudRate, dataBits, stop, parity);
+            if (portName != null)
+            {
+               Validate.notNull(portName, "No receiver port selected");
+               LOGGER.info("Opening recv port {}: {}/{}/{}/{}", new Object[] { portName, baudRate, dataBits, stop, parity });
+               recvPortReader.open(portName, baudRate, dataBits, stop, parity);
+            }
          }
          catch (IOException e)
          {

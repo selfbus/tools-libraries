@@ -130,7 +130,7 @@ public class PortToolBar extends JToolBar
 
       if (numPorts == 1)
       {
-         recvCombo.removeAll();
+         recvCombo.removeAllItems();
          recvCombo.addItem(I18n.getMessage("PortToolBar.noPorts"));
          recvCombo.setEnabled(false);
       }
