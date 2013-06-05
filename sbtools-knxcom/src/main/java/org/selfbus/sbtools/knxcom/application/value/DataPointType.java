@@ -1,7 +1,6 @@
 package org.selfbus.sbtools.knxcom.application.value;
 
 import org.selfbus.sbtools.knxcom.application.ApplicationType;
-import org.selfbus.sbtools.knxcom.application.value.TestGroupValueUtils;
 
 /**
  * Data point types for group value data exchange, e.g. with
