@@ -1,11 +1,13 @@
 package org.selfbus.sbtools.sniffer.components;
 
 import java.awt.Button;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JToolBar;
@@ -63,9 +65,11 @@ public class PortToolBar extends JToolBar
 
       add(new JLabel(" " + I18n.getMessage("PortToolBar.send")));
       add(sendCombo);
+      sendCombo.addActionListener(enableConnectListener);
 
       add(new JLabel(" " + I18n.getMessage("PortToolBar.recv")));
       add(recvCombo);
+      recvCombo.addActionListener(enableConnectListener);
 
       add(new JLabel(" " + I18n.getMessage("PortToolBar.baud")));
       add(baudCombo);
@@ -377,4 +381,33 @@ public class PortToolBar extends JToolBar
    {
       connectListeners.remove(l);
    }
+
+   /**
+    * A listener that enables/disables the connect button, depending on
+    * the selection in the tool bar.
+    */
+   private ActionListener enableConnectListener = new ActionListener()
+   {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+         String sendPort = getSendPort();
+         String recvPort = getRecvPort();
+
+         boolean enabled = numPorts > 0;
+         if (sendPort == recvPort || (sendPort != null && sendPort.equals(recvPort)))
+         {
+            sendCombo.setBorder(BorderFactory.createLineBorder(Color.RED));
+            recvCombo.setBorder(BorderFactory.createLineBorder(Color.RED));
+            enabled = false;
+         }
+         else
+         {
+            sendCombo.setBorder(null);
+            recvCombo.setBorder(null);
+         }
+
+         connectButton.setEnabled(enabled);
+      }
+   };
 }

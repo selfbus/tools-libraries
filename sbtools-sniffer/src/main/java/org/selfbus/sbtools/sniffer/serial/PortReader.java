@@ -103,7 +103,6 @@ public class PortReader implements Runnable
 
       LOGGER.debug("Closing serial port " + portName);
 
-      readerThread.interrupt();
       portName = null;
 
       try
