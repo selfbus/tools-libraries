@@ -26,7 +26,7 @@
    <fileMode>0644</fileMode>
   </fileSet>
   <fileSet>
-   <directory>src/main/scripts</directory>
+   <directory>target</directory>
    <includes>
     <include>*.sh</include>
     <include>*.cmd</include>

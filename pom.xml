@@ -3,7 +3,7 @@
  <groupId>org.selfbus.sbtools</groupId>
  <artifactId>parent</artifactId>
  <version>0.2-SNAPSHOT</version>
- <name>Selfbus Tools</name>
+ <name>sbtools-parent</name>
  <packaging>pom</packaging>
  <organization>
   <name>The Selfbus Project</name>

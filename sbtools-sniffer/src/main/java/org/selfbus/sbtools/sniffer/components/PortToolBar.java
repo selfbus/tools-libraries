@@ -2,6 +2,7 @@ package org.selfbus.sbtools.sniffer.components;
 
 import java.awt.Button;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Set;
@@ -85,6 +86,10 @@ public class PortToolBar extends JToolBar
 
       setupComboBoxes();
 
+      // Workaround for Windows which renders the combo boxes too small
+      sendCombo.setPreferredSize(new Dimension(Math.max(80, sendCombo.getPreferredSize().width), sendCombo.getPreferredSize().height));
+      recvCombo.setPreferredSize(new Dimension(Math.max(80, recvCombo.getPreferredSize().width), recvCombo.getPreferredSize().height));
+
       initConnected(false);
       connectButton.addActionListener(new ActionListener()
       {
@@ -119,8 +124,8 @@ public class PortToolBar extends JToolBar
 
          for (String portName : portNames)
          {
-            recvCombo.addItem(portName);
             sendCombo.addItem(portName);
+            recvCombo.addItem(portName);
          }
       }
       else

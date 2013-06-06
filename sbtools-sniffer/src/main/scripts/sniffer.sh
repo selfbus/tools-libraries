@@ -9,5 +9,4 @@ if [ -n "$topDir" ]; then
 fi
 
 set -x
-exec java -cp libs -jar libs/sbtools-sniffer*.jar $*
-
+exec java -cp libs -jar libs/MAIN_JAR $*

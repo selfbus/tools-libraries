@@ -3,7 +3,7 @@ setlocal
 
 cd libs
 set CLASSPATH=%CLASSPATH%;.
-java -jar sbtools-sniffer-0.3-SNAPSHOT.jar org.selfbus.sbtools.devtool.DevTool
+java -jar MAIN_JAR
 
 if %ERRORLEVEL% neq 0 (
    echo.
