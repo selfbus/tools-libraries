@@ -84,7 +84,7 @@
      </execution>
     </executions>
     <configuration>
-     <!-- <finalName>${project.build.finalName}</finalName> -->
+     <finalName>${project.build.finalName}-${maven.build.timestamp}</finalName>
      <ignorePermissions>false</ignorePermissions>
      <appendAssemblyId>false</appendAssemblyId>
      <archive>
