@@ -1,7 +1,4 @@
 #!/bin/sh
-#
-# LPC-debugger start script for Unix like operating systems
-#
 
 topDir=`dirname $0`
 if [ -n "$topDir" ]; then

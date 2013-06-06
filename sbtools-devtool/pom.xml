@@ -10,17 +10,28 @@
  <artifactId>sbtools-devtool</artifactId>
  <name>sbtools-devtool</name>
  <description>A tool for developing and testing EIB devices</description>
+ <properties>
+  <mainClass>org.selfbus.sbtools.devtool.DevTool</mainClass>
+ </properties>
  <build>
   <plugins>
+   <plugin>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <configuration>
+     <source>1.7</source>
+     <target>1.7</target>
+     <encoding>UTF-8</encoding>
+    </configuration>
+   </plugin>
    <plugin>
     <artifactId>maven-jar-plugin</artifactId>
     <version>2.3</version>
     <configuration>
-     <finalName>sbtools-devtool</finalName>
+     <finalName>${project.build.finalName}</finalName>
      <archive>
       <manifest>
        <addClasspath>true</addClasspath>
-       <mainClass>org.selfbus.sbtools.devtool.DevTool</mainClass>
+       <mainClass>${mainClass}</mainClass>
       </manifest>
       <manifestEntries>
        <Version>${project.version}</Version>
@@ -29,10 +40,43 @@
     </configuration>
    </plugin>
    <plugin>
-    <artifactId>maven-assembly-plugin</artifactId>
+    <groupId>com.google.code.maven-replacer-plugin</groupId>
+    <artifactId>replacer</artifactId>
+    <version>1.5.1</version> <!-- 1.5.2 is broken -->
     <executions>
      <execution>
-      <id>make shared resources</id>
+      <phase>prepare-package</phase>
+      <goals>
+       <goal>replace</goal>
+      </goals>
+     </execution>
+    </executions>
+    <configuration>
+     <ignoreMissingFile>false</ignoreMissingFile>
+     <includes>
+      <include>src/main/scripts/*</include>
+     </includes>
+     <outputDir>target</outputDir>
+     <preserveDir>false</preserveDir>
+     <replacements>
+      <replacement>
+       <token>MAIN_CLASS</token>
+       <value>${mainClass}</value>
+      </replacement>
+      <replacement>
+       <token>MAIN_JAR</token>
+       <value>${project.build.finalName}.jar</value>
+      </replacement>
+     </replacements>
+    </configuration>
+   </plugin>
+   <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-assembly-plugin</artifactId>
+    <version>2.4</version>
+    <executions>
+     <execution>
+      <id>make zip</id>
       <phase>package</phase>
       <goals>
        <goal>single</goal>
@@ -40,12 +84,12 @@
      </execution>
     </executions>
     <configuration>
-     <finalName>sbtools-devtool-${project.version}-${maven.build.timestamp}</finalName>
+     <finalName>${project.build.finalName}-${maven.build.timestamp}</finalName>
      <ignorePermissions>false</ignorePermissions>
      <appendAssemblyId>false</appendAssemblyId>
      <archive>
       <manifest>
-       <mainClass>org.selfbus.sbtools.devtool.DevTool</mainClass>
+       <mainClass>${mainClass}</mainClass>
       </manifest>
      </archive>
      <descriptors>

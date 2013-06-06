@@ -6,4 +6,4 @@ if [ -n "$topDir" ]; then
 fi
 
 set -x
-java -cp 'libs/*' org.selfbus.sbtools.devtool.DevTool $*
+exec java -cp libs -jar libs/MAIN_JAR $*
