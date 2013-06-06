@@ -70,6 +70,7 @@ public final class Sniffer extends SingleFrameApplication
    private final PortToolBar portToolBar = new PortToolBar("ports");
    private final JCheckBox viewAsciiCheck = new JCheckBox(I18n.getMessage("ToolBar.viewAscii"));
    private final JCheckBox viewHexCheck = new JCheckBox(I18n.getMessage("ToolBar.viewHex"));
+   private final JCheckBox viewDecimalCheck = new JCheckBox(I18n.getMessage("ToolBar.viewDecimal"));
    private final JCheckBox autoScrollCheck = new JCheckBox(I18n.getMessage("ToolBar.autoScroll"));
    private final JComboBox<NewlineMode> newlineCombo = new JComboBox<NewlineMode>();
    private JTextField newlineTimeField = new JTextField();
@@ -237,6 +238,9 @@ public final class Sniffer extends SingleFrameApplication
       viewHexCheck.addActionListener(changeViewListener);
       toolBar.add(viewHexCheck);
 
+      viewDecimalCheck.addActionListener(changeViewListener);
+      toolBar.add(viewDecimalCheck);
+
       return toolBar;
    }
 
@@ -353,8 +357,14 @@ public final class Sniffer extends SingleFrameApplication
 //         if (in != null)
 //         {
 //            SnifReader reader = new SnifReader();
-//            records = reader.read(in);
-//            setRecords(records);
+//            try
+//            {
+//               records = reader.read(in);
+//               setRecords(records);
+//            }
+//            catch (IOException e)
+//            {
+//            }
 //         }
       }
       catch (RuntimeException e)
@@ -372,6 +382,7 @@ public final class Sniffer extends SingleFrameApplication
 
       viewAsciiCheck.setSelected(config.getIntValue("view.ascii", 0) == 1);
       viewHexCheck.setSelected(config.getIntValue("view.hex", 1) == 1);
+      viewDecimalCheck.setSelected(config.getIntValue("view.decimal", 0) == 1);
       changeViewListener.actionPerformed(null);
 
       newlineMode = NewlineMode.valueOf(config.getStringValue("newlineMode", "NONE"));
@@ -393,6 +404,7 @@ public final class Sniffer extends SingleFrameApplication
       config.put("connected", sendPortReader.isOpened() && sendPortReader.isOpened() ? 1 : 0);
       config.put("view.ascii", viewAsciiCheck.isSelected() ? 1 : 0);
       config.put("view.hex", viewHexCheck.isSelected() ? 1 : 0);
+      config.put("view.decimal", viewDecimalCheck.isSelected() ? 1 : 0);
       config.put("newlineMode", newlineMode.name());
       config.put("newlineTime", newlineTime);
       config.put("autoScroll", autoScrollCheck.isSelected() ? 1 : 0);
@@ -743,7 +755,8 @@ public final class Sniffer extends SingleFrameApplication
       @Override
       public void actionPerformed(ActionEvent ev)
       {
-         recordsCellRenderer = new RecordsListCellRenderer(viewAsciiCheck.isSelected(), viewHexCheck.isSelected());
+         recordsCellRenderer = new RecordsListCellRenderer(viewAsciiCheck.isSelected(),
+            viewHexCheck.isSelected(), viewDecimalCheck.isSelected());
 
          Color bgColor = recordsList.getBackground();
          Color fgColor = recordsList.getForeground();
@@ -753,12 +766,14 @@ public final class Sniffer extends SingleFrameApplication
          Color recvColor = createTintedColor(bgColor, 0.95f, 1f, 0.95f);
          Color ctrlColor = createTintedColor(bgColor, 0.8f, 0.8f, 1.8f);
          Color hexColor = createTintedColor(fgColor, 0.7f, 2.5f, 0.7f);
+         Color decColor = createTintedColor(fgColor, 2.5f, 0.8f, 0.8f);
 
          recordsCellRenderer.setFont(monoFont);         
          recordsCellRenderer.setDateColor(dateColor);
          recordsCellRenderer.setSendColor(sendColor);
          recordsCellRenderer.setRecvColor(recvColor);
          recordsCellRenderer.setCtrlColor(ctrlColor);
+         recordsCellRenderer.setDecimalColor(decColor);
 
          if (viewAsciiCheck.isSelected())
             recordsCellRenderer.setHexColor(hexColor);

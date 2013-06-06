@@ -26,43 +26,55 @@ import com.jgoodies.forms.layout.FormLayout;
  */
 public class RecordsListCellRenderer implements ListCellRenderer<Record>
 {
-   private final FormLayout layout = new FormLayout("4dlu, l:p,4dlu, l:p,4dlu, f:p:g, 4dlu", 
-      "1dlu, p, p, 1dlu");
+   private final FormLayout layout;
 
-   private final JPanel panel = new JPanel(layout);
+   private final JPanel panel;
    private final JLabel dateLabel = new JLabel();
    private final JLabel dirLabel = new JLabel();
    private final JLabel asciiLabel = new JLabel();
    private final JLabel hexLabel = new JLabel();
+   private final JLabel decimalLabel = new JLabel();
    private final DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss.SSS");
    private final Icon sendIcon = ImageCache.getIcon("icons/direction-send");
    private final Icon recvIcon = ImageCache.getIcon("icons/direction-recv");
 
    private Color sendColor, recvColor;
-   private String ctrlColorStr;
+   private String ctrlColorStr = "#004", decimalColorStr = "#ffcccc";
    private boolean showAscii;
    private boolean showHex;
-   
+   private boolean showDecimal;
+   private int rows;
+
    /**
     * Create a list cell renderer for {@link Record}s.
     */
    public RecordsListCellRenderer()
    {
-      this(false, true);
+      this(false, true, false);
    }
    
    /**
     * Create a list cell renderer for {@link Record}s.
     *
-    * @param ascii - true to show data as ASCII characters
-    * @param hex - true to show data as hex bytes
+    * @param showAscii - true to show data as ASCII characters
+    * @param showHex - true to show data as hex byte values
+    * @param showDecimal - true to show data as decimal byte values
     */
-   public RecordsListCellRenderer(boolean showAscii, boolean showHex)
+   public RecordsListCellRenderer(boolean showAscii, boolean showHex, boolean showDecimal)
    {
       super();
+
       this.showAscii = showAscii;
       this.showHex = showHex;
+      this.showDecimal = showDecimal;
 
+      if (showAscii) ++rows;
+      if (showHex) ++rows;
+      if (showDecimal) ++rows;
+      
+      layout = new FormLayout("4dlu, l:p,4dlu, l:p,4dlu, f:p:g, 4dlu", "1dlu, p, p, p, 1dlu");
+      panel = new JPanel(layout);
+      
       CellConstraints cc = new CellConstraints();
 
       dateLabel.setOpaque(false);
@@ -76,25 +88,13 @@ public class RecordsListCellRenderer implements ListCellRenderer<Record>
       hexLabel.setOpaque(false);
       hexLabel.setHorizontalTextPosition(JLabel.LEFT);
 
-      if (showAscii && showHex)
-      {
-         panel.add(dateLabel, cc.xywh(2, 2, 1, 3));
-         panel.add(dirLabel, cc.xywh(4, 2, 1, 3));
-         panel.add(hexLabel, cc.xy(6, 2));
-         panel.add(asciiLabel, cc.xy(6, 3));
+      panel.add(dateLabel, cc.xywh(2, 2, 1, 1));
+      panel.add(dirLabel, cc.xywh(4, 2, 1, 1));
 
-         
-      }
-      else
-      {
-         panel.add(dateLabel, cc.xy(2, 2));
-         panel.add(dirLabel, cc.xy(4, 2));
-
-         if (showAscii)
-            panel.add(asciiLabel, cc.xy(6, 2));
-         else if (showHex)
-            panel.add(hexLabel, cc.xy(6, 2));
-      }
+      int row = 2;
+      if (showAscii)   panel.add(asciiLabel, cc.xy(6, row++));
+      if (showHex)     panel.add(hexLabel, cc.xy(6, row++));
+      if (showDecimal) panel.add(decimalLabel, cc.xy(6, row++));
    }
 
    /**
@@ -106,11 +106,14 @@ public class RecordsListCellRenderer implements ListCellRenderer<Record>
    {
       dateLabel.setFont(font);
 
-      if (showAscii && showHex)
+      if (rows >= 3)
+         font = font.deriveFont(font.getSize() * 0.8f);
+      else if (rows >= 2)
          font = font.deriveFont(font.getSize() * 0.9f);
 
       asciiLabel.setFont(font);
       hexLabel.setFont(font);
+      decimalLabel.setFont(font);
    }
 
    /**
@@ -154,6 +157,16 @@ public class RecordsListCellRenderer implements ListCellRenderer<Record>
    }
 
    /**
+    * Set the background color for decimal numbers.
+    * 
+    * @param c - the color to set.
+    */
+   public void setDecimalColor(Color c)
+   {
+      decimalColorStr = String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue());
+   }
+
+   /**
     * Set the foreground color for hex characters.
     * 
     * @param c - the color to set.
@@ -190,8 +203,9 @@ public class RecordsListCellRenderer implements ListCellRenderer<Record>
          StringBuilder stringBuilder = new StringBuilder();
          for (int i = 0; i < value.length; ++i)
          {
-            stringBuilder.append(String.format("%02x", value.data[i] & 255));
+            stringBuilder.append(String.format("%02X", value.data[i] & 255));
             stringBuilder.append(' ');
+            if (showDecimal) stringBuilder.append(' ');
          }
          hexLabel.setText(stringBuilder.toString().toUpperCase());
       }
@@ -211,18 +225,34 @@ public class RecordsListCellRenderer implements ListCellRenderer<Record>
 
                stringBuilder.append(String.format("%02X", value.data[i] & 255));
                stringBuilder.append("</i>");
-
-               if (showHex) stringBuilder.append("&nbsp;");
             }
             else
             {
                stringBuilder.append(ch);
-               if (showHex) stringBuilder.append("&nbsp;&nbsp;");
             }
+
+            if (showDecimal) stringBuilder.append("&nbsp;&nbsp;&nbsp;");
+            else if (showHex) stringBuilder.append("&nbsp;&nbsp;");
          }
 
          stringBuilder.append("</html>");
          asciiLabel.setText(stringBuilder.toString().toUpperCase());
+      }
+
+      if (showDecimal)
+      {
+         StringBuilder stringBuilder = new StringBuilder("<html>");
+         String pre = "<font color=\"" + decimalColorStr + "\">";
+         String post = "</font>&nbsp;";
+         for (int i = 0; i < value.length; ++i)
+         {
+            stringBuilder.append(pre);
+            stringBuilder.append(String.format("%03d", value.data[i] & 255));
+            stringBuilder.append(post);
+         }
+
+         stringBuilder.append("</font></html>");
+         decimalLabel.setText(stringBuilder.toString().toUpperCase());
       }
 
       return panel;
