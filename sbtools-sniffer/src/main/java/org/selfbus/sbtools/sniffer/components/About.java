@@ -3,7 +3,10 @@ package org.selfbus.sbtools.sniffer.components;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Window;
+import java.io.IOException;
+import java.net.URL;
 import java.text.MessageFormat;
+import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -31,7 +34,7 @@ public class About extends Dialog
       super(owner);
 
       setTitle(I18n.getMessage("About.title"));
-      setSize(600, 500);
+      setSize(600, 600);
 
       final Container body = getBodyPane();
       body.setLayout(new BorderLayout());
@@ -44,23 +47,13 @@ public class About extends Dialog
       sb.append("<html><body style=\"background-color:transparent;\">");
       sb.append("<h1>").append(htmlEncode(I18n.getMessage("About.productName"))).append("</h1>");
 
-//      final Properties props = Application.getInstance().getManifestProperties();
-//      final String version = props.getProperty("Version");
-//      final String revision = props.getProperty("SCM-Revision");
-//      if (version != null || revision != null)
-//      {
-//         if (version != null)
-//         {
-//            sb.append(MessageFormat.format(htmlEncode(I18n.getMessage("About.Version")), version, null));
-//         }
-//         if (revision != null)
-//         {
-//            if (version != null)
-//               sb.append(", ");
-//            sb.append(MessageFormat.format(htmlEncode(I18n.getMessage("About.Revision")), revision, null));
-//         }
-//         sb.append("<br /><br />");
-//      }
+      final Properties props = getManifestProperties();
+      final String version = props.getProperty("Version");
+      if (version != null)
+      {
+         sb.append(MessageFormat.format(htmlEncode(I18n.getMessage("About.version")), version, null));
+         sb.append("<br /><br />");
+      }
 
       sb.append("<i>").append(htmlEncode(I18n.getMessage("About.copyright"))).append("</i><br /><br />");
 
@@ -113,5 +106,31 @@ public class About extends Dialog
    {
       return str.replace("&", "&amp;").replace("'", "&rsquo;").replace("\"", "&quot;").replace("<", "&lt;")
          .replace(">", "&gt;").replace("\n", "<br />");
+   }
+
+
+   /**
+    * @return the manifest's properties of the main JAR of FTS.
+    */
+   public Properties getManifestProperties()
+   {
+      Properties manifestProps = new Properties();
+
+      try
+      {
+         final String classContainer = getClass().getProtectionDomain().getCodeSource().getLocation().toString();
+
+         if (classContainer.toLowerCase().endsWith(".jar"))
+         {
+            final URL manifestUrl = new URL("jar:" + classContainer + "!/META-INF/MANIFEST.MF");
+            manifestProps.load(manifestUrl.openStream());
+         }
+      }
+      catch (IOException e)
+      {
+         Dialogs.formatExceptionMessage(e, "Failed to load the manifest from the application's jar");
+      }
+
+      return manifestProps;
    }
 }
