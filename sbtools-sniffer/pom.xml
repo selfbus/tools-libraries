@@ -7,7 +7,7 @@
  </parent>
  <artifactId>sbtools-sniffer</artifactId>
  <name>sbtools-sniffer</name>
- <version>0.4-SNAPSHOT</version>
+ <version>0.5-SNAPSHOT</version>
  <description>Serial communication sniffer</description>
  <properties>
   <mainClass>org.selfbus.sbtools.sniffer.Sniffer</mainClass>
