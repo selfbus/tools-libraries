@@ -228,7 +228,10 @@ public class RecordsListCellRenderer implements ListCellRenderer<Record>
             }
             else
             {
-               stringBuilder.append(ch).append("&nbsp;");
+               stringBuilder.append(ch);
+
+               if (showDecimal || showHex)
+                  stringBuilder.append("&nbsp;");
             }
 
             if (showDecimal) stringBuilder.append("&nbsp;&nbsp;");
