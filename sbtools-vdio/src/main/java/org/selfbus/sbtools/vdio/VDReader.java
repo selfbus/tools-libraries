@@ -196,14 +196,14 @@ public class VDReader extends AbstractXmlReader
             continue;
          }
 
-         if (i == numFields)
-            break;
-
          if (i > 0 && !value.isEmpty())
          {
             String name = tableInfo.fieldNames.get(i - 1);
             recordAtts.addAttribute("", name, name, tableInfo.fieldTypes.get(i - 1).xsType, value);
          }
+
+         if (i == numFields)
+            break;
 
          value = line;
          ++i;

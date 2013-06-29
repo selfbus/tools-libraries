@@ -211,7 +211,7 @@
  <xs:complexType name="ParameterAtomicType">
   <xs:attribute name="atomic_type_number" type="xs:int" />
   <xs:attribute name="atomic_type_name" type="xs:string" />
-  <xs:attribute name="atomic_type" type="xs:string" />
+  <xs:attribute name="dispattr" type="xs:string" />
  </xs:complexType>
 
  <xs:complexType name="ParameterType">
