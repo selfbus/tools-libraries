@@ -64,7 +64,6 @@ public final class TreeUtils
       if (expand) tree.expandPath(parent);
       else tree.collapsePath(parent);
    }
-   
 
    /**
     * Create a list of all children (and their children) of the given tree node.
