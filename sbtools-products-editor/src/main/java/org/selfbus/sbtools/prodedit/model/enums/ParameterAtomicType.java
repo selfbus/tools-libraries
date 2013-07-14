@@ -7,45 +7,60 @@ import org.selfbus.sbtools.prodedit.internal.I18n;
  */
 public enum ParameterAtomicType
 {
+   // WARNING: do not change the order of the enum values.
+   // They must come in the same order as in ETS.
+
    /**
     * No parameter type. Used for labels and pages in the parameter editor.
     */
-   NONE(' ', null),
+   NONE(' ', "none", null),
 
    /**
     * Unsigned integer.
     */
-   UNSIGNED('+', Integer.class),
+   UNSIGNED('+', "unsigned", Integer.class),
 
    /**
     * Signed integer.
     */
-   SIGNED('-', Integer.class),
+   SIGNED('-', "signed", Integer.class),
 
    /**
     * String.
     */
-   STRING('$', String.class),
+   STRING('$', "string", String.class),
 
    /**
     * Enumeration.
     */
-   ENUM('Y', Integer.class),
+   ENUM('Y', "enum", Integer.class),
 
    /**
     * Long enumeration.
     */
-   LONG_ENUM('Z', Integer.class);
+   LONG_ENUM('Z', "long enum", Integer.class),
+
+   /**
+    * Floating point.
+    */
+   FLOAT('B', "floating point", Float.class),
+
+   /**
+    * Floating point enumeration.
+    */
+   FLOAT_ENUM('C', "floating point enum", Float.class);
 
    private final char dispAttr;
    private final Class<?> parameterClass;
+   private final String name;
 
    /*
     * Internal constructor.
     */
-   private ParameterAtomicType(char dispAttr, Class<?> parameterClass)
+   private ParameterAtomicType(char dispAttr, String name, Class<?> parameterClass)
    {
       this.dispAttr = dispAttr;
+      this.name = name;
       this.parameterClass = parameterClass;
    }
 
@@ -55,6 +70,14 @@ public enum ParameterAtomicType
    public char getDispAttr()
    {
       return dispAttr;
+   }
+
+   /**
+    * @return The name.
+    */
+   public String getName()
+   {
+      return name;
    }
 
    /**

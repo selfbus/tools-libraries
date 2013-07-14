@@ -7,6 +7,9 @@
   <action id="org.selfbus.sbtools.prodedit.actions.SaveProjectAction" />
   <action id="org.selfbus.sbtools.prodedit.actions.SaveProjectAsAction" />
   <separator />
+  <action id="org.selfbus.sbtools.prodedit.actions.ImportProjectAction" />
+  <action id="org.selfbus.sbtools.prodedit.actions.ExportProjectAction" />
+  <separator />
   <action id="org.selfbus.sbtools.prodedit.actions.ExitAction" />
  </menu>
  <menu id="View" />

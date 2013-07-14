@@ -54,9 +54,9 @@ public class ProjectWriter
 
       try
       {
-         final JAXBContext context = JAXBContext.newInstance("org.selfbus.sbtools.devtool.project.model");
+         final JAXBContext context = JAXBContext.newInstance("org.selfbus.sbtools.prodedit.model.global");
 
-         final String schemaFileName = "org/selfbus/sbtools/devtool/project.xsd";
+         final String schemaFileName = "org/selfbus/sbtools/prodedit/project.xsd";
          final URL schemaUrl = getClass().getClassLoader().getResource(schemaFileName);
          if (schemaUrl == null)
             throw new RuntimeException("Schema file not found in class path: " + schemaFileName);

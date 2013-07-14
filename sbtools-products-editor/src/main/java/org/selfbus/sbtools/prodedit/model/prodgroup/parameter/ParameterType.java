@@ -1,7 +1,4 @@
-package org.selfbus.sbtools.prodedit.model.prodgroup;
-
-import java.util.HashSet;
-import java.util.Set;
+package org.selfbus.sbtools.prodedit.model.prodgroup.parameter;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -10,21 +7,23 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
+import org.selfbus.sbtools.prodedit.internal.I18n;
 import org.selfbus.sbtools.prodedit.model.enums.ParameterAtomicType;
 import org.selfbus.sbtools.prodedit.model.interfaces.Identifiable;
+import org.selfbus.sbtools.prodedit.utils.IdentifiableUtils;
 
 import com.jgoodies.binding.beans.Model;
+import com.jgoodies.common.collect.ArrayListModel;
 
 /**
- * The type of a program's parameter. The parameter type is used to group
- * parameters of the same type that can have the same range of values.
- *
- * The parameter type holds e.g. the possible values for a parameter and
- * minimum/maximum values for numbers.
- *
+ * The type of a program's parameter. The parameter type is used to group parameters of the same
+ * type that can have the same range of values.
+ * 
+ * The parameter type holds e.g. the possible values for a parameter and minimum/maximum values for
+ * numbers.
+ * 
  * What one would expect here, which type a parameter is, contains the class
- * {@link ParameterAtomicType}, which can be access with
- * {@link #getAtomicType()}.
+ * {@link ParameterAtomicType}, which can be access with {@link #getAtomicType()}.
  */
 @XmlType(propOrder = {})
 @XmlAccessorType(XmlAccessType.NONE)
@@ -64,7 +63,7 @@ public class ParameterType extends Model implements Identifiable
 
    @XmlElementWrapper(name = "values")
    @XmlElement(name = "value")
-   private Set<ParameterValue> values;
+   private ArrayListModel<ParameterValue> values;
 
    /**
     * Create an empty parameter type.
@@ -75,7 +74,7 @@ public class ParameterType extends Model implements Identifiable
 
    /**
     * Create a parameter type.
-    *
+    * 
     * @param atomicType - the parameter's atomic type.
     */
    public ParameterType(ParameterAtomicType atomicType)
@@ -85,7 +84,7 @@ public class ParameterType extends Model implements Identifiable
 
    /**
     * Create a parameter type.
-    *
+    * 
     * @param atomicType - the parameter's atomic type.
     * @param name - the name
     */
@@ -154,7 +153,9 @@ public class ParameterType extends Model implements Identifiable
     */
    public void setName(String name)
    {
+      String oldName = this.name;
       this.name = name;
+      firePropertyChange("name", oldName, name);
    }
 
    /**
@@ -232,7 +233,7 @@ public class ParameterType extends Model implements Identifiable
    /**
     * @return the allowed values or null if no specific allowed values are set.
     */
-   public Set<ParameterValue> getValues()
+   public ArrayListModel<ParameterValue> getValues()
    {
       return values;
    }
@@ -245,7 +246,7 @@ public class ParameterType extends Model implements Identifiable
    public void addValue(ParameterValue value)
    {
       if (values == null)
-         values = new HashSet<ParameterValue>();
+         values = new ArrayListModel<ParameterValue>();
 
       values.add(value);
    }
@@ -255,9 +256,50 @@ public class ParameterType extends Model implements Identifiable
     * 
     * @param values - the allowed values to set.
     */
-   public void setValues(Set<ParameterValue> values)
+   public void setValues(ArrayListModel<ParameterValue> values)
    {
       this.values = values;
+   }
+
+   /**
+    * Create a new value.
+    * 
+    * @return The created value
+    */
+   public ParameterValue createValue()
+   {
+      int id = IdentifiableUtils.createUniqueId(getValues());
+
+      String langId = I18n.getMessage("Project.languageId");
+      String label = I18n.formatMessage("ParameterType.newValue", Integer.toString(id));
+
+      ParameterValue value = new ParameterValue(id);
+      value.setIntValue(0);
+      value.getLabel().setText(langId, label);
+      value.setOrder(values.isEmpty() ? 1 : values.get(values.size() - 1).getOrder() + 1);
+
+      values.add(value);
+      return value;
+   }
+
+   /**
+    * Find the parameter value with the given {@link ParameterValue#getIntValue() integer value}.
+    * 
+    * @param val - the integer value to find.
+    * @return The first matching parameter value, or null if not found.
+    */
+   public ParameterValue findValueByInt(Integer val)
+   {
+      if (values == null || val == null)
+         return null;
+
+      for (ParameterValue value : values)
+      {
+         if (val.equals(value.getIntValue()))
+            return value;
+      }
+
+      return null;
    }
 
    /**
@@ -302,7 +344,7 @@ public class ParameterType extends Model implements Identifiable
 
    /**
     * Set the size of the parameter in bits.
-    *
+    * 
     * @param size the size to set
     */
    public void setSize(int size)

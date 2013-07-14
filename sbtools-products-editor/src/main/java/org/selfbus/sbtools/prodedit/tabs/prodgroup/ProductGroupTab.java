@@ -29,6 +29,7 @@ import org.selfbus.sbtools.prodedit.tabs.internal.AbstractAccordionDetailsTab;
 import org.selfbus.sbtools.prodedit.tabs.internal.MixedCategoryElem;
 import org.selfbus.sbtools.prodedit.tabs.prodgroup.general.ApplicationProgramElem;
 import org.selfbus.sbtools.prodedit.tabs.prodgroup.general.VirtualDeviceElem;
+import org.selfbus.sbtools.prodedit.tabs.prodgroup.parameter.ParametersElem;
 import org.selfbus.sbtools.prodedit.utils.FontUtils;
 
 import com.jgoodies.binding.adapter.BasicComponentFactory;
@@ -96,6 +97,7 @@ public class ProductGroupTab extends AbstractAccordionDetailsTab implements Clos
 
             applicationProgramElem.setDevice(device);
             parameterTypesElem.setDevice(device);
+            parametersElem.setDevice(device);
          }
       });
 
@@ -125,7 +127,7 @@ public class ProductGroupTab extends AbstractAccordionDetailsTab implements Clos
       toolBar.add(lbl);
       toolBar.add(Box.createHorizontalStrut(8));
 
-      currentDeviceCombo.setPreferredSize(new Dimension(200, currentDeviceCombo.getPreferredSize().height));
+      currentDeviceCombo.setPreferredSize(new Dimension(400, currentDeviceCombo.getPreferredSize().height));
       toolBar.add(currentDeviceCombo);
 
       addDeviceButton = new JButton(addDeviceAction);

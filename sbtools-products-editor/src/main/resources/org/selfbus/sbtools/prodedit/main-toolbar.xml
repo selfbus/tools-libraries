@@ -8,6 +8,9 @@
   <separator />
   <action id="org.selfbus.sbtools.prodedit.actions.SaveProjectAction" />
   <action id="org.selfbus.sbtools.prodedit.actions.SaveProjectAsAction" />
+  <separator />
+  <action id="org.selfbus.sbtools.prodedit.actions.ImportProjectAction" />
+  <action id="org.selfbus.sbtools.prodedit.actions.ExportProjectAction" />
  </toolbar>
  <toolbar id="Settings">
   <action id="org.selfbus.sbtools.prodedit.actions.SettingsAction" />

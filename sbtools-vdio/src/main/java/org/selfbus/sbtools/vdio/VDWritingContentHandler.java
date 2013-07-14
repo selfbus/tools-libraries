@@ -142,7 +142,15 @@ public class VDWritingContentHandler extends DefaultHandler
             value = value.replaceAll("\n", "\n\\\\\\\\");
          }
 
-         out.println(value);
+         String prefix = "";
+         while (value.length() > 80)
+         {
+            out.println(prefix + value.substring(0, 80));
+            value = value.substring(80);
+            prefix = "\\\\";
+         }
+
+         out.println(prefix + value);
       }
    }
 
@@ -157,7 +165,7 @@ public class VDWritingContentHandler extends DefaultHandler
       {
          VDTableColumn col = table.columns.get(i);
 
-         out.println("C" + i + " T" + table.id + " " + col.type + " " + col.length + " "
+         out.println("C" + (i + 1) + " T" + table.id + " " + col.type + " " + col.length + " "
             + (col.nullAllowed ? "Y" : "N") + " " + col.name);
       }
    }

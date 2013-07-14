@@ -49,13 +49,17 @@ public class Project
    private String name;
 
    @XmlAttribute
-   private String defaultLanguage;
+   private String defaultLangId;
 
    @XmlAttribute
    private int defaultManufacturerId;
 
    @XmlAttribute
    private int nextFuncEntityId = 1;
+
+   public Project()
+   {
+   }
 
    /**
     * @return The default manufacturer ID
@@ -165,9 +169,22 @@ public class Project
    }
 
    /**
+    * Create a new functional entity with a default name.
+    * 
+    * @param parent - the parent functional entity, may be null
+    * 
+    * @return The new functional entity.
+    */
+   public FunctionalEntity createFunctionalEntity(FunctionalEntity parent)
+   {
+      String name = I18n.formatMessage("FunctionalEntity.newName", Integer.toString(nextFuncEntityId));
+      return createFunctionalEntity(name, parent);
+   }
+
+   /**
     * Create a new functional entity.
     * 
-    * @param name - the name
+    * @param name - the name of the functional entity
     * @param parent - the parent functional entity, may be null
     * 
     * @return The new functional entity.
@@ -182,7 +199,7 @@ public class Project
       }
       else
       {
-         parent.childs.add(e);
+         parent.add(e);
       }
 
       projectService.fireProjectChanged();
@@ -196,7 +213,7 @@ public class Project
     */
    public void removeFunctionalEntity(FunctionalEntity funcEntity)
    {
-      funcEntities.remove(funcEntity.id);
+      funcEntities.remove(funcEntity.getId());
       projectService.fireProjectChanged();
    }
 
@@ -230,10 +247,10 @@ public class Project
    {
       for (FunctionalEntity e : funcEntities)
       {
-         if (e.id == id)
+         if (e.getId() == id)
             return e;
 
-         e = findFunctionalEntity(e.childs, id);
+         e = findFunctionalEntity(e.getChilds(), id);
          if (e != null)
             return e;
       }
@@ -267,21 +284,21 @@ public class Project
    }
 
    /**
-    * @return The default language
+    * @return The ID of the default language
     */
-   public String getDefaultLanguage()
+   public String getDefaultLangId()
    {
-      return defaultLanguage;
+      return defaultLangId;
    }
 
    /**
-    * Set the default language.
+    * Set the ID of the default language.
     * 
-    * @param langID - the ID of the language
+    * @param id - the ID of the language
     */
-   public void setDefaultLanguage(String langID)
+   public void setDefaultLangId(String id)
    {
-      this.defaultLanguage = langID;
+      this.defaultLangId = id;
    }
 
    /**

@@ -20,6 +20,9 @@ public class VD
    public String name;
 
    @XmlAttribute
+   public String comment;
+
+   @XmlAttribute
    public String created;
 
    @XmlAttribute
@@ -67,7 +70,7 @@ public class VD
 
    @XmlElementWrapper(name = "virtual_device")
    @XmlElement(name = "virtual_device")
-   public List<VirtualDevice> virtualDevices;
+   public List<VdVirtualDevice> virtualDevices;
 
    @XmlElementWrapper(name = "mask_entry")
    @XmlElement(name = "mask_entry")
@@ -144,4 +147,38 @@ public class VD
    @XmlElementWrapper(name = "device_parameter")
    @XmlElement(name = "device_parameter")
    public List<VdDeviceParameter> deviceParameters;
+
+   /**
+    * Find a catalog entry by ID.
+    * 
+    * @param id - the ID to find
+    * @return The found object or null if not found.
+    */
+   public VdCatalogEntry findCatalogEntry(int id)
+   {
+      for (VdCatalogEntry e : catalogEntries)
+      {
+         if (e.getId() == id)
+            return e;
+      }
+      
+      return null;
+   }
+
+   /**
+    * Find an application program by ID.
+    * 
+    * @param id - the ID to find
+    * @return The found object or null if not found.
+    */
+   public VdApplicationProgram findProgram(int id)
+   {
+      for (VdApplicationProgram e : programs)
+      {
+         if (e.getId() == id)
+            return e;
+      }
+      
+      return null;
+   }
 }

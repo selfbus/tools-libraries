@@ -1,9 +1,11 @@
-package org.selfbus.sbtools.prodedit.model.prodgroup;
+package org.selfbus.sbtools.prodedit.model;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
+
+import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
 
 
 /**

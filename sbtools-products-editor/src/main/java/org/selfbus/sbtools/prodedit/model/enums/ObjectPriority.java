@@ -49,11 +49,20 @@ public enum ObjectPriority
    }
 
    /**
+    * @return the name
+    */
+   @Override
+   public String toString()
+   {
+      return name;
+   }
+
+   /**
     * Constructor.
     */
    private ObjectPriority()
    {
-      this.name = I18n.getMessage(name());
+      this.name = I18n.getMessage("ObjectPriority." + name());
    }
 
    /**

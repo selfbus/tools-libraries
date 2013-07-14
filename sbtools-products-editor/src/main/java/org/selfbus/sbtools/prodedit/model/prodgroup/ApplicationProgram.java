@@ -1,5 +1,6 @@
 package org.selfbus.sbtools.prodedit.model.prodgroup;
 
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -8,9 +9,17 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
 import org.selfbus.sbtools.prodedit.internal.I18n;
+import org.selfbus.sbtools.prodedit.model.common.MultiLingualText;
 import org.selfbus.sbtools.prodedit.model.enums.ParameterAtomicType;
 import org.selfbus.sbtools.prodedit.model.interfaces.Identifiable;
+import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.AbstractParameterNode;
+import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.Parameter;
+import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterRootNode;
+import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterTreeModel;
+import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterType;
 import org.selfbus.sbtools.prodedit.utils.IdentifiableUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.jgoodies.binding.beans.Model;
 import com.jgoodies.common.collect.ArrayListModel;
@@ -24,6 +33,7 @@ import com.jgoodies.common.collect.ArrayListModel;
 @XmlAccessorType(XmlAccessType.NONE)
 public class ApplicationProgram extends Model implements Identifiable
 {
+   private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationProgram.class);
    private static final long serialVersionUID = 2365607976221764138L;
 
    @XmlAttribute(name = "program_id", required = true)
@@ -41,17 +51,8 @@ public class ApplicationProgram extends Model implements Identifiable
    @XmlAttribute(name = "program_version")
    private String version;
 
-   @XmlAttribute(name = "program_version_number")
-   private Integer versionNumber;
-
-   @XmlAttribute(name = "linkable")
-   private boolean linkable;
-
    @XmlAttribute(name = "device_type")
    private int deviceType;
-
-   @XmlAttribute(name = "pei_type")
-   private int peiType;
 
    @XmlAttribute(name = "address_tab_size")
    private int addrTabSize;
@@ -68,38 +69,17 @@ public class ApplicationProgram extends Model implements Identifiable
    @XmlAttribute(name = "commstab_size")
    private int commsTabSize;
 
-   @XmlAttribute(name = "program_serial_number")
-   private String serial;
-
-   @XmlAttribute(name = "manufacturer_id", required = true)
-   private int manufacturerId;
-
-   @XmlAttribute(name = "eeprom_data")
+   // @XmlAttribute(name = "eeprom_data")
    private byte[] eepromData;
 
    @XmlAttribute(name = "data_length")
    private int eepromDataLength;
 
-   @XmlAttribute(name = "s91_file")
-   private int s19FileName;
-
-   @XmlAttribute(name = "map_file")
-   private int mapFileName;
-
-   @XmlAttribute(name = "assembler_id")
-   private int assemblerId;
-
-   @XmlAttribute(name = "help_file_name")
-   private int helpFileName;
-
    @XmlAttribute(name = "contextId")
    private int contextId;
 
-   @XmlAttribute(name = "dynamic_management")
-   private boolean dynamicManagement;
-
    @XmlAttribute(name = "program_type")
-   private int programType;
+   private int typeId;
 
    @XmlAttribute(name = "ram_size")
    private int ramSize;
@@ -119,24 +99,19 @@ public class ApplicationProgram extends Model implements Identifiable
    @XmlAttribute(name = "number_of_polling_groups")
    private int numPollingGroups;
 
-   @XmlElementWrapper(name = "parameters")
-   @XmlElement(name = "parameter")
-   private ArrayListModel<Parameter> parameters = new ArrayListModel<Parameter>();
+   @XmlElement(name = "parameters")
+   private ParameterTreeModel parameterTree;
 
    @XmlElementWrapper(name = "parameter_types")
    @XmlElement(name = "parameter_type")
    private ArrayListModel<ParameterType> parameterTypes = new ArrayListModel<ParameterType>();
-
-   @XmlElementWrapper(name = "communication_objects")
-   @XmlElement(name = "communication_object")
-   private ArrayListModel<CommunicationObject> communicationObjects = new ArrayListModel<CommunicationObject>();
 
    @XmlElementWrapper(name = "s19_blocks")
    @XmlElement(name = "s19_block")
    private final ArrayListModel<S19Block> s19Blocks = new ArrayListModel<S19Block>();
 
    @XmlElement(name = "description")
-   private MultiLingualText description;
+   private MultiLingualText description = new MultiLingualText();
 
    /**
     * Create an empty program object.
@@ -150,14 +125,12 @@ public class ApplicationProgram extends Model implements Identifiable
     * 
     * @param id - the database ID of the object.
     * @param name - the name of the object.
-    * @param manufacturerId - the manufacturer.
     * @param maskId - the mask.
     */
-   public ApplicationProgram(int id, String name, int manufacturerId, int maskId)
+   public ApplicationProgram(int id, String name, int maskId)
    {
       this.id = id;
       this.name = name;
-      this.manufacturerId = manufacturerId;
       this.maskId = maskId;
    }
 
@@ -167,14 +140,6 @@ public class ApplicationProgram extends Model implements Identifiable
    public int getId()
    {
       return id;
-   }
-
-   /**
-    * @return the program id as string
-    */
-   public String getIdStr()
-   {
-      return Integer.toString(id);
    }
 
    /**
@@ -249,22 +214,6 @@ public class ApplicationProgram extends Model implements Identifiable
    }
 
    /**
-    * @return the linkable flag.
-    */
-   public boolean isLinkable()
-   {
-      return linkable;
-   }
-
-   /**
-    * @param linkable the linkable to set
-    */
-   public void setLinkable(boolean linkable)
-   {
-      this.linkable = linkable;
-   }
-
-   /**
     * The device type. Is written to the KNX device also.
     * 
     * @return the device type.
@@ -282,24 +231,6 @@ public class ApplicationProgram extends Model implements Identifiable
    public void setDeviceType(int deviceType)
    {
       this.deviceType = deviceType;
-   }
-
-   /**
-    * @return the type of the physical external interface (PEI).
-    */
-   public int getPeiType()
-   {
-      return peiType;
-   }
-
-   /**
-    * Set the type of the physical external interface (PEI).
-    * 
-    * @param peiType - the PEI type to set.
-    */
-   public void setPeiType(int peiType)
-   {
-      this.peiType = peiType;
    }
 
    /**
@@ -393,37 +324,22 @@ public class ApplicationProgram extends Model implements Identifiable
    }
 
    /**
-    * @return the serial
+    * @return The parameter tree model.
     */
-   public String getSerial()
+   public ParameterTreeModel getParameterTreeModel()
    {
-      return serial;
+      return parameterTree;
    }
 
    /**
-    * @param serial the serial to set
+    * @return The root of the parameter tree model.
     */
-   public void setSerial(String serial)
+   public ParameterRootNode getParameterRoot()
    {
-      this.serial = serial;
-   }
+      if (parameterTree == null)
+         parameterTree = new ParameterTreeModel();
 
-   /**
-    * @return the manufacturer.
-    */
-   public int getManufacturerId()
-   {
-      return manufacturerId;
-   }
-
-   /**
-    * Set the manufacturer.
-    * 
-    * @param manufacturerId - the manufacturer to set.
-    */
-   public void setManufacturerId(int manufacturerId)
-   {
-      this.manufacturerId = manufacturerId;
+      return parameterTree.getRoot();
    }
 
    /**
@@ -433,45 +349,49 @@ public class ApplicationProgram extends Model implements Identifiable
     * 
     * @return the parameter, or null if not found.
     */
-   public Parameter getParameter(int id)
+   public AbstractParameterNode getParameter(int id)
    {
-      if (parameters == null)
+      if (parameterTree == null)
          return null;
 
-      for (final Parameter param : parameters)
-      {
-         if (param.getId() == id)
-            return param;
-      }
-
-      return null;
+      return parameterTree.findById(id);
    }
 
    /**
-    * Add a parameter to the program.
+    * Add a top-level parameter to the program.
     * 
     * @param param - the parameter to add.
     */
-   public void addParameter(Parameter param)
+   public void addParameter(AbstractParameterNode param)
    {
-      if (parameters == null)
-         parameters = new ArrayListModel<Parameter>();
+      if (parameterTree == null)
+         parameterTree = new ParameterTreeModel();
 
-      parameters.add(param);
-//      param.setProgram(this);
+      parameterTree.getRoot().addChild(param);
    }
 
    /**
-    * Remove a parameter from the program.
+    * Add a parameter type to the program.
+    * 
+    * @param paramType - the parameter type to add.
+    */
+   public void addParameterType(ParameterType paramType)
+   {
+      if (parameterTypes == null)
+         parameterTypes = new ArrayListModel<ParameterType>();
+
+      parameterTypes.add(paramType);
+   }
+
+   /**
+    * Remove a top-level parameter from the program.
     * 
     * @param param - the parameter to remove.
     */
    public void removeParameter(Parameter param)
    {
-      if (parameters != null)
-         parameters.remove(param);
-
-//      param.setProgram(null);
+      if (parameterTree != null)
+         parameterTree.getRoot().removeChild(param);
    }
 
    /**
@@ -479,49 +399,8 @@ public class ApplicationProgram extends Model implements Identifiable
     */
    public void removeAllParameters()
    {
-      if (parameters != null)
-      {
-//         for (final Parameter param : parameters)
-//            param.setProgram(null);
-
-         parameters.clear();
-      }
-   }
-
-   /**
-    * Set the parameters of the program.
-    * 
-    * @param parameters - the parameters to set.
-    */
-   public void setParameters(ArrayListModel<Parameter> parameters)
-   {
-      this.parameters = parameters;
-   }
-
-   /**
-    * @return the parameters of the program.
-    */
-   public ArrayListModel<Parameter> getParameters()
-   {
-      return parameters;
-   }
-
-   /**
-    * Set the communication objects of the program.
-    * 
-    * @param communicationObjects the set of communication objects.
-    */
-   public void setCommunicationObjects(ArrayListModel<CommunicationObject> communicationObjects)
-   {
-      this.communicationObjects = communicationObjects;
-   }
-
-   /**
-    * @return the communication objects of the program.
-    */
-   public ArrayListModel<CommunicationObject> getCommunicationObjects()
-   {
-      return communicationObjects;
+      if (parameterTree != null)
+         parameterTree.getRoot().removeChilds();
    }
 
    /**
@@ -540,40 +419,39 @@ public class ApplicationProgram extends Model implements Identifiable
       this.eepromData = eepromData;
    }
 
-   /**
-    * @return the dynamicManagement
-    */
-   public boolean isDynamicManagement()
+   @XmlAttribute(name = "eeprom_data")
+   String getEepromDataStr()
    {
-      return dynamicManagement;
+      return DatatypeConverter.printHexBinary(eepromData).toLowerCase();
+   }
+
+   void setEepromDataStr(String str)
+   {
+      eepromData = DatatypeConverter.parseHexBinary(str);
    }
 
    /**
-    * @param dynamicManagement the dynamicManagement to set
-    */
-   public void setDynamicManagement(boolean dynamicManagement)
-   {
-      this.dynamicManagement = dynamicManagement;
-   }
-
-   /**
-    * Get the program type. The program type is a 16 bit number that is unique
+    * Get the program type ID. The program type ID is a 16 bit number that is unique
     * for a specific manufacturer. It can be used to identify the program that
     * is running in a BCU.
     * 
-    * @return The program type
+    * @return The program type ID
     */
-   public int getProgramType()
+   public int getTypeId()
    {
-      return programType;
+      return typeId;
    }
 
    /**
-    * @param programType the programType to set
+    * Set the program type ID. The program type ID is a 16 bit number that is unique
+    * for a specific manufacturer. It can be used to identify the program that
+    * is running in a BCU.
+    *
+    * @param id - the program type ID to set
     */
-   public void setProgramType(int programType)
+   public void setTypeId(int id)
    {
-      this.programType = programType;
+      this.typeId = id;
    }
 
    /**
@@ -653,7 +531,31 @@ public class ApplicationProgram extends Model implements Identifiable
     */
    public ArrayListModel<ParameterType> getParameterTypes()
    {
+      if (parameterTypes == null)
+         parameterTypes = new ArrayListModel<ParameterType>();
+
       return parameterTypes;
+   }
+
+   /**
+    * Get a parameter type.
+    *
+    * @param id - the ID of the parameter type
+    * @return The parameter type, or null if not found.
+    */
+   public ParameterType getParameterType(int id)
+   {
+      if (parameterTypes == null)
+         return null;
+
+      for (ParameterType paramType : parameterTypes)
+      {
+         if (paramType.getId() == id)
+            return paramType;
+      }
+
+      LOGGER.info("Parameter type #{} not found", id);
+      return null;
    }
 
    /**
@@ -723,10 +625,7 @@ public class ApplicationProgram extends Model implements Identifiable
          return false;
 
       final ApplicationProgram oo = (ApplicationProgram) o;
-
-      return id == oo.id && peiType == oo.peiType && deviceType == oo.deviceType
-            && (version == null ? oo.version == null : version.equals(oo.version))
-            && maskId == oo.maskId;
+      return id == oo.id;
    }
 
    /**

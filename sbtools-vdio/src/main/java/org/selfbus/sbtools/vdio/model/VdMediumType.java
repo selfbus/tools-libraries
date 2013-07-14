@@ -21,6 +21,27 @@ public class VdMediumType
    @XmlAttribute(name = "medium_type_short_name", required = true)
    private String shortName;
 
+   @XmlAttribute(name = "standard_system_id_level")
+   private String standardSystemIdLevel;
+
+   @XmlAttribute(name = "system_id_length")
+   private Integer systemIdLength;
+
+   @XmlAttribute(name = "dcy_f_individual")
+   private Double dcyFindividual;
+
+   @XmlAttribute(name = "dcy_g_individual")
+   private Double dcyGindividual;
+
+   @XmlAttribute(name = "dcy_f_group")
+   private Double dcyFgroup;
+
+   @XmlAttribute(name = "dcy_g_group")
+   private Double dcyGgroup;
+
+   @XmlAttribute(name = "duty_cycle_calculation")
+   private Integer dutyCycleCalculation;
+
    /**
     * Create a medium-type object.
     */

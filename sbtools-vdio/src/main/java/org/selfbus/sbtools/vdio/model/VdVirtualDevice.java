@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * A virtual device. This is a device as it could be added to a project.
  */
-@XmlType(propOrder = {})
+@XmlType(name = "VirtualDevice", propOrder = {})
 @XmlAccessorType(XmlAccessType.NONE)
-public class VirtualDevice
+public class VdVirtualDevice
 {
    @XmlAttribute(name = "virtual_device_id", required = true)
    private int id;
@@ -19,13 +19,13 @@ public class VirtualDevice
    private Integer symbolId;
 
    @XmlAttribute(name = "catalog_entry_id", required = true)
-   public int catalogEntryId;
+   private int catalogEntryId;
 
    @XmlAttribute(name = "program_id", required = true)
    private int programId;
 
    @XmlAttribute(name = "functional_entity_id", required = true)
-   public int functionalEntityId;
+   private int functionalEntityId;
 
    @XmlAttribute(name = "virtual_device_name", required = true)
    private String name = "";
@@ -39,10 +39,13 @@ public class VirtualDevice
    @XmlAttribute(name = "product_type_id", required = true)
    private int productTypeId;
 
+   @XmlAttribute(name = "medium_types")
+   private String mediumTypes;
+
    /**
     * Create an empty virtual-device object.
     */
-   public VirtualDevice()
+   public VdVirtualDevice()
    {
    }
 
@@ -54,7 +57,7 @@ public class VirtualDevice
     * @param functionalEntityId - the functional entity ID.
     * @param catalogEntry - the catalog entry.
     */
-   public VirtualDevice(int id, String name, int functionalEntityId, int catalogEntryId)
+   public VdVirtualDevice(int id, String name, int functionalEntityId, int catalogEntryId)
    {
       this.id = id;
       this.name = name;
@@ -207,6 +210,22 @@ public class VirtualDevice
    }
 
    /**
+    * @return the mediumTypes
+    */
+   public String getMediumTypes()
+   {
+      return mediumTypes;
+   }
+
+   /**
+    * @param mediumTypes the mediumTypes to set
+    */
+   public void setMediumTypes(String mediumTypes)
+   {
+      this.mediumTypes = mediumTypes;
+   }
+
+   /**
     * {@inheritDoc}
     */
    @Override
@@ -223,9 +242,9 @@ public class VirtualDevice
    {
       if (o == this)
          return true;
-      if (!(o instanceof VirtualDevice))
+      if (!(o instanceof VdVirtualDevice))
          return false;
-      final VirtualDevice oo = (VirtualDevice) o;
+      final VdVirtualDevice oo = (VdVirtualDevice) o;
       return id == oo.id;
    }
 }

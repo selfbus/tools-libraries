@@ -1,5 +1,6 @@
 package org.selfbus.sbtools.vdio.model;
 
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -56,9 +57,8 @@ public class VdMask
    private int routeCountAddress;
 
    @XmlAttribute(name = "manufacturer_id_protected", required = true)
-   private boolean manufacturerIdProtected;
+   private int manufacturerIdProtected;
 
-   @XmlAttribute(name = "mask_eeprom_data")
    private byte[] maskEepromData;
 
    @XmlAttribute(name = "mask_version_name")
@@ -95,10 +95,10 @@ public class VdMask
    private Integer peiProgramRCS;
 
    @XmlAttribute(name = "port_a_ddr")
-   private Integer portAddr;
+   private Integer portADdr;
 
    @XmlAttribute(name = "port_address_protected", required = true)
-   private boolean portAddressProtected;
+   private int portAddressProtected;
 
    @XmlAttribute(name = "medium_type_number")
    private Integer mediumTypeNumber;
@@ -107,7 +107,7 @@ public class VdMask
    private Integer mediumTypeNumber2;
 
    @XmlAttribute(name = "bcu_type_number")
-   private int bcuTypeId;
+   private Integer bcuTypeId;
 
    /**
     * @return the id
@@ -354,7 +354,7 @@ public class VdMask
     */
    public boolean isManufacturerIdProtected()
    {
-      return manufacturerIdProtected;
+      return manufacturerIdProtected == 1;
    }
 
    /**
@@ -362,7 +362,7 @@ public class VdMask
     */
    public void setManufacturerIdProtected(boolean manufacturerIdProtected)
    {
-      this.manufacturerIdProtected = manufacturerIdProtected;
+      this.manufacturerIdProtected = manufacturerIdProtected ? 1 : 0;
    }
 
    /**
@@ -379,6 +379,17 @@ public class VdMask
    public void setMaskEepromData(byte[] maskEepromData)
    {
       this.maskEepromData = maskEepromData;
+   }
+
+   @XmlAttribute(name = "mask_eeprom_data")
+   String getMaskEepromDataStr()
+   {
+      return DatatypeConverter.printHexBinary(maskEepromData).toLowerCase();
+   }
+
+   void setMaskEepromDataStr(String str)
+   {
+      maskEepromData = DatatypeConverter.parseHexBinary(str);
    }
 
    /**
@@ -544,19 +555,19 @@ public class VdMask
    /**
     * @return the port A DDR.
     */
-   public Integer getPortAddr()
+   public Integer getPortADdr()
    {
-      return portAddr;
+      return portADdr;
    }
 
    /**
     * Set the port A DDR.
     *
-    * @param portAddr the port A DDR to set
+    * @param portADdr the port A DDR to set
     */
-   public void setPortAddr(Integer portAddr)
+   public void setPortADdr(Integer portADdr)
    {
-      this.portAddr = portAddr;
+      this.portADdr = portADdr;
    }
 
    /**
@@ -564,7 +575,7 @@ public class VdMask
     */
    public boolean isPortAddressProtected()
    {
-      return portAddressProtected;
+      return portAddressProtected == 1;
    }
 
    /**
@@ -572,7 +583,7 @@ public class VdMask
     */
    public void setPortAddressProtected(boolean portAddressProtected)
    {
-      this.portAddressProtected = portAddressProtected;
+      this.portAddressProtected = portAddressProtected ? 1 : 0;
    }
 
    /**

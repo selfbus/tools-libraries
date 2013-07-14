@@ -14,14 +14,14 @@ public enum ObjectPriority
    SYSTEM,
 
    /**
-    * Alarm / urgent priority.
-    */
-   ALARM,
-
-   /**
     * High priority.
     */
    HIGH,
+
+   /**
+    * Alarm / urgent priority.
+    */
+   ALARM,
 
    /**
     * Low / normal priority. This is the lowest priority.

@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.Validate;
 import org.selfbus.sbtools.vdio.internal.AbstractXmlReader;
+import org.selfbus.sbtools.vdio.internal.I18n;
 import org.selfbus.sbtools.vdio.internal.TableFieldType;
 import org.selfbus.sbtools.vdio.internal.TableInfo;
 import org.slf4j.Logger;
@@ -12,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * A {@link XMLReader XML reader} for VD files.
@@ -32,15 +32,30 @@ public class VDReader extends AbstractXmlReader
    private static final String START_INDICATOR = "EX-IM";
    private static final String END_INDICATOR = "XXX";
 
-   private final AttributesImpl recordAtts = new AttributesImpl();
-   private final AttributesImpl tableAtts = new AttributesImpl();
+   private final VdioAttributes recordAtts = new VdioAttributes();
+   private final VdioAttributes tableAtts = new VdioAttributes();
    private BufferedReader reader;
    private String documentName;
    private String currentLine;
    private TableInfo tableInfo;
-   private boolean debug;
+   private boolean debug, started;
 
-   
+   /**
+    * @return True if at least parseDocument was called.
+    */
+   public boolean isStarted()
+   {
+      return started;
+   }
+
+   /**
+    * @return The current line number of reading.
+    */
+   public int getLineNo()
+   {
+      return lineNo;
+   }
+
    /**
     * {@inheritDoc}
     */
@@ -48,20 +63,29 @@ public class VDReader extends AbstractXmlReader
    protected void parseDocument(BufferedReader reader) throws SAXException, IOException
    {
       this.reader = reader;
+
+      started = true;
       lineNo = 0;
 
-      debug = features.get("debug");
+      debug = getFeature("debug");
 
-      contentHandler.startDocument();
-      parseHeader();
-
-      while (!atEnd())
+      try
       {
-         parseTable();
+         contentHandler.startDocument();
+         parseHeader();
+   
+         while (!atEnd())
+         {
+            parseTable();
+         }
+   
+         contentHandler.endElement(null, documentName, documentName);
+         contentHandler.endDocument();
       }
-
-      contentHandler.endElement(null, documentName, documentName);
-      contentHandler.endDocument();
+      finally
+      {
+         readRest();
+      }
    }
 
    /**
@@ -182,6 +206,7 @@ public class VDReader extends AbstractXmlReader
 
       recordAtts.clear();
 
+      int startLineNo = lineNo;
       for (int i = 0; i <= numFields; )
       {
          line = reader.readLine();
@@ -210,11 +235,50 @@ public class VDReader extends AbstractXmlReader
       }
 
       String recordName = tableInfo.name.intern();
-//      LOGGER.debug("Record {}", recordName);
-      contentHandler.startElement(null, recordName, recordName, recordAtts);
-      contentHandler.endElement(null, recordName, recordName);
+
+      if (startLineNo == 9938324)
+      {
+         LOGGER.debug("debug point");
+      }
+
+      try
+      {
+         contentHandler.startElement(null, recordName, recordName, recordAtts);
+         contentHandler.endElement(null, recordName, recordName);
+      }
+      catch (ArrayIndexOutOfBoundsException e)
+      {
+         readRest();
+
+         String fieldName = recordAtts.getQName(recordAtts.getLastIndex()); 
+         LOGGER.warn("line " + startLineNo + ": annotation missing in target Java class for table {} field {} (class in package org.selfbus.sbtools.vdio.model)", tableInfo.name, fieldName);
+         throw e; //new SAXException(I18n.formatMessage("VDReader.unknownFieldError", Integer.toString(startLineNo), tableInfo.name, fieldName), e);
+      }
+      catch (Exception e)
+      {
+         LOGGER.warn("Exception near line " + startLineNo , e);
+         throw new SAXException(I18n.formatMessage("VDReader.parseError", Integer.toString(startLineNo)), e);
+      }
 
       currentLine = line;
+   }
+
+   /**
+    * Read with the reader to the end of the file. This is required because the ZipFile library will else throw
+    * an exception on close().
+    */
+   private void readRest()
+   {
+      try
+      {
+         while (reader.readLine() != null)
+            ;
+      }
+      catch (IOException e)
+      {
+         // Ignore IO exceptions, this method is called when the reader is about to being closed
+         // anyways.
+      }
    }
 
    /**

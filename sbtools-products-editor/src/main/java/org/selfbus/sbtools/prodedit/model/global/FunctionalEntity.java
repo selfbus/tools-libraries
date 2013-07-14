@@ -19,25 +19,25 @@ import com.jgoodies.common.collect.ArrayListModel;
 @XmlAccessorType(XmlAccessType.NONE)
 public class FunctionalEntity extends Model implements Identifiable, Comparable<FunctionalEntity>
 {
-    private static final long serialVersionUID = 1262854512380193005L;
+   private static final long serialVersionUID = 1262854512380193005L;
 
    @XmlElement(name = "functional_entity")
-   public final ArrayListModel<FunctionalEntity> childs = new ArrayListModel<FunctionalEntity>();
+   private final ArrayListModel<FunctionalEntity> childs = new ArrayListModel<FunctionalEntity>();
 
    @XmlAttribute
-   public int id;
+   private int id;
 
    @XmlAttribute
-   public String name;
+   private String name;
 
    @XmlAttribute
-   public int number;
+   private int number;
 
    @XmlAttribute
-   public String description;
+   private String description;
 
    @XmlAttribute(name = "manufacturer_id")
-   public int manufacturerId;
+   private int manufacturerId;
 
    /**
     * Create an empty functional entity object.
@@ -146,6 +146,33 @@ public class FunctionalEntity extends Model implements Identifiable, Comparable<
    public void setManufacturerId(int manufacturerId)
    {
       this.manufacturerId = manufacturerId;
+   }
+
+   /**
+    * @return the childs
+    */
+   public ArrayListModel<FunctionalEntity> getChilds()
+   {
+      return childs;
+   }
+
+   /**
+    * Add a functional entity child.
+    * 
+    * @param child - the child to add
+    */
+   public void add(FunctionalEntity child)
+   {
+      childs.add(child);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public int hashCode()
+   {
+      return id;
    }
 
    /**

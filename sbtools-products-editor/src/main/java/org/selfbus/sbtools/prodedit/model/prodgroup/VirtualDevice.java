@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
-import org.selfbus.sbtools.common.types.ObjectType;
+import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterType;
 
 import com.jgoodies.binding.beans.Model;
 import com.jgoodies.common.collect.ArrayListModel;
@@ -26,9 +26,6 @@ public class VirtualDevice extends Model
 
    @XmlAttribute(name = "symbol_id")
    private int symbolId;
-
-   @XmlAttribute(name = "catalog_entry_id", required = true)
-   public int catalogEntryId;
 
    @XmlAttribute(name = "program_id")
    private int programId;
@@ -60,9 +57,15 @@ public class VirtualDevice extends Model
    @XmlAttribute(name = "medium_types")
    private String mediumTypes;
 
+   @XmlAttribute(name = "version")
+   private int version = 1;
+
+   @XmlElement(name = "catalog_entry")
+   private CatalogEntry catalogEntry;
+
    @XmlElementWrapper(name = "parameter_types")
    @XmlElement(name = "parameter_type")
-   private ArrayListModel<ObjectType> objectTypes = new ArrayListModel<ObjectType>();
+   private ArrayListModel<ParameterType> paramTypes = new ArrayListModel<ParameterType>();
 
    /**
     * Create an empty virtual-device object.
@@ -78,16 +81,64 @@ public class VirtualDevice extends Model
     * @param name - the name of the object.
     * @param description - the description.
     * @param functionalEntityId - the functional entity ID.
-    * @param catalogEntryId - the catalog entry ID.
     */
-   public VirtualDevice(int id, String name, String description, int functionalEntityId,
-         int catalogEntryId)
+   public VirtualDevice(int id, String name, String description, int functionalEntityId)
    {
       this.id = id;
       this.name = name;
       this.description = description;
       this.functionalEntityId = functionalEntityId;
-      this.catalogEntryId = catalogEntryId;
+   }
+
+   /**
+    * @return the symbolId
+    */
+   public int getSymbolId()
+   {
+      return symbolId;
+   }
+
+   /**
+    * @param symbolId the symbolId to set
+    */
+   public void setSymbolId(int symbolId)
+   {
+      this.symbolId = symbolId;
+   }
+
+   /**
+    * @return the catalogEntry
+    */
+   public CatalogEntry getCatalogEntry()
+   {
+      if (catalogEntry == null)
+         catalogEntry = new CatalogEntry();
+
+      return catalogEntry;
+   }
+
+   /**
+    * @param catalogEntry the catalogEntry to set
+    */
+   public void setCatalogEntry(CatalogEntry catalogEntry)
+   {
+      this.catalogEntry = catalogEntry;
+   }
+
+   /**
+    * @return the paramTypes
+    */
+   public ArrayListModel<ParameterType> getParamTypes()
+   {
+      return paramTypes;
+   }
+
+   /**
+    * @param paramTypes the paramTypes to set
+    */
+   public void setParamTypes(ArrayListModel<ParameterType> paramTypes)
+   {
+      this.paramTypes = paramTypes;
    }
 
    /**
@@ -169,24 +220,6 @@ public class VirtualDevice extends Model
    {
       this.description = description;
    }
-   
-   /**
-    * Set the catalog entry ID.
-    * 
-    * @param catalogEntryId - the catalog entry ID to set.
-    */
-   public void setCatalogEntryId(int catalogEntryId)
-   {
-      this.catalogEntryId = catalogEntryId;
-   }
-
-   /**
-    * @return the catalog entry ID.
-    */
-   public int getCatalogEntryId()
-   {
-      return catalogEntryId;
-   }
 
    /**
     * Set the program ID.
@@ -249,6 +282,22 @@ public class VirtualDevice extends Model
    }
 
    /**
+    * @return the version
+    */
+   public int getVersion()
+   {
+      return version;
+   }
+
+   /**
+    * @param version the version to set
+    */
+   public void setVersion(int version)
+   {
+      this.version = version;
+   }
+
+   /**
     * {@inheritDoc}
     */
    @Override
@@ -268,7 +317,7 @@ public class VirtualDevice extends Model
       if (!(o instanceof VirtualDevice))
          return false;
       final VirtualDevice oo = (VirtualDevice) o;
-      return id == oo.id && catalogEntryId == oo.catalogEntryId && programId == oo.programId;
+      return id == oo.id;
    }
 
    /**

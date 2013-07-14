@@ -55,4 +55,21 @@ public final class IdentifiableUtils
 
       return maxId;
    }
+
+   /**
+    * Find the {@link Identifiable} with the given ID.
+    *
+    * @param id - the ID to search
+    * @return The first {@link Identifiable} with the ID, or null if not found.
+    */
+   public static Object findById(Collection<? extends Identifiable> list, int id)
+   {
+      for (Identifiable o : list)
+      {
+         if (o.getId() == id)
+            return o;
+      }
+
+      return null;
+   }
 }

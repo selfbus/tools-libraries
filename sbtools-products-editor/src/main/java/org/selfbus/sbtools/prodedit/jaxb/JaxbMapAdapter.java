@@ -5,30 +5,27 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-public class JaxbMapAdapter<K, V> extends XmlAdapter<JaxbMapToList<K, V>, Map<K, V>>
+public class JaxbMapAdapter<K, V> extends XmlAdapter<JaxbMapElement<K, V>[], Map<K, V>>
 {
    @Override
-   public Map<K, V> unmarshal(JaxbMapToList<K, V> v) throws Exception
+   public JaxbMapElement<K, V>[] marshal(Map<K, V> arg0) throws Exception
    {
-      HashMap<K, V> result = new HashMap<K, V>();
-      for (JaxbMapToListEntry<K, V> jme : v.getList())
-      {
-         result.put(jme.getKey(), jme.getValue());
-      }
-      return result;
+      @SuppressWarnings("unchecked")
+      JaxbMapElement<K, V>[] mapElements = new JaxbMapElement[arg0.size()];
+
+      int i = 0;
+      for (Map.Entry<K, V> entry : arg0.entrySet())
+         mapElements[i++] = new JaxbMapElement<K, V>(entry.getKey(), entry.getValue());
+
+      return mapElements;
    }
 
    @Override
-   public JaxbMapToList<K, V> marshal(Map<K, V> v) throws Exception
+   public Map<K, V> unmarshal(JaxbMapElement<K, V>[] arg0) throws Exception
    {
-      JaxbMapToList<K, V> result = new JaxbMapToList<K, V>();
-      for (Map.Entry<K, V> entry : v.entrySet())
-      {
-         JaxbMapToListEntry<K, V> jme = new JaxbMapToListEntry<K, V>();
-         jme.setKey(entry.getKey());
-         jme.setValue(entry.getValue());
-         result.getList().add(jme);
-      }
-      return result;
+      Map<K, V> r = new HashMap<K, V>();
+      for (JaxbMapElement<K, V> mapelement : arg0)
+         r.put(mapelement.key, mapelement.value);
+      return r;
    }
 }

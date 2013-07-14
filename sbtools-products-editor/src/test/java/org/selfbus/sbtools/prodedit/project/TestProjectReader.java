@@ -1,4 +1,4 @@
-package org.selfbus.sbtools.devtool.project;
+package org.selfbus.sbtools.prodedit.project;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -45,7 +45,7 @@ public class TestProjectReader
       assertEquals(11, manufacturer.id);
 
       assertEquals(2, project.getFunctionalEntities().size());
-      assertEquals(200, project.getFunctionalEntity(200).id);
-      assertEquals(110, project.getFunctionalEntity(110).id);
+      assertEquals(200, project.getFunctionalEntity(200).getId());
+      assertEquals(110, project.getFunctionalEntity(110).getId());
    }
 }

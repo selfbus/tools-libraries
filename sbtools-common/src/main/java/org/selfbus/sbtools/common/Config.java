@@ -157,14 +157,17 @@ public class Config
    }
 
    /**
-    * Set the configuration value for the given key.
+    * Set the configuration value for the given key. If the value is null,
+    * the configuration is removed.
     * 
     * @param key - the key.
     * @param value - the string value.
     */
    public void put(String key, String value)
    {
-      props.setProperty(key, value);
+      if (value == null)
+         props.remove(key);
+      else props.setProperty(key, value);
    }
 
    /**

@@ -17,23 +17,47 @@ public class VdHwProduct
    @XmlAttribute(name = "product_id", required = true)
    private int id;
 
-   @XmlAttribute(name = "product_name", required = true)
-   private String name;
-
    @XmlAttribute(name = "manufacturer_id")
    private int manufacturerId;
+
+   @XmlAttribute(name = "symbol_id")
+   private Integer symbolId;
+
+   @XmlAttribute(name = "product_name", required = true)
+   private String name;
 
    @XmlAttribute(name = "product_version_number")
    private int version;
 
+   @XmlAttribute(name = "component_type")
+   private Integer componentType;
+
+   @XmlAttribute(name = "component_attributes")
+   private Integer componentAttributes;
+
+   @XmlAttribute(name = "bus_current")
+   private Integer busCurrent;
+
    @XmlAttribute(name = "product_serial_number")
    private String serial;
 
-   @XmlAttribute(name = "bus_current")
-   private int busCurrent;
+   @XmlAttribute(name = "component_type_number")
+   private Integer componentTypeNumber;
+
+   @XmlAttribute(name = "product_picture")
+   private String picture;
 
    @XmlAttribute(name = "bcu_type_number")
    private int bcuTypeId;
+
+   @XmlAttribute(name = "product_handling")
+   private Integer handling;
+
+   @XmlAttribute(name = "product_dll")
+   private String dll;
+
+   @XmlAttribute(name = "original_manufacturer_id")
+   private Integer originalManufacturerId;
 
    /**
     * Create an empty product object.
@@ -75,7 +99,7 @@ public class VdHwProduct
    /**
     * @return The current that the product requires, in milliampere.
     */
-   public int getBusCurrent()
+   public Integer getBusCurrent()
    {
       return busCurrent;
    }
@@ -130,11 +154,11 @@ public class VdHwProduct
    }
 
    /**
-    * Set the current that the product requires, in milli-ampere.
+    * Set the current that the product requires, in milliampere.
     * 
     * @param busCurrent - the bus current to set.
     */
-   public void setBusCurrent(int busCurrent)
+   public void setBusCurrent(Integer busCurrent)
    {
       this.busCurrent = busCurrent;
    }
@@ -180,19 +204,171 @@ public class VdHwProduct
    }
 
    /**
-    * @param bcuTypeId the bcuType ID to set
+    * @return the manufacturerId
     */
-   public void setBcuType(int bcuTypeId)
+   public int getManufacturerId()
+   {
+      return manufacturerId;
+   }
+
+   /**
+    * @param manufacturerId the manufacturerId to set
+    */
+   public void setManufacturerId(int manufacturerId)
+   {
+      this.manufacturerId = manufacturerId;
+   }
+
+   /**
+    * @return the symbolId
+    */
+   public Integer getSymbolId()
+   {
+      return symbolId;
+   }
+
+   /**
+    * @param symbolId the symbolId to set
+    */
+   public void setSymbolId(Integer symbolId)
+   {
+      this.symbolId = symbolId;
+   }
+
+   /**
+    * @return the componentType
+    */
+   public Integer getComponentType()
+   {
+      return componentType;
+   }
+
+   /**
+    * @param componentType the componentType to set
+    */
+   public void setComponentType(Integer componentType)
+   {
+      this.componentType = componentType;
+   }
+
+   /**
+    * @return the componentAttributes
+    */
+   public Integer getComponentAttributes()
+   {
+      return componentAttributes;
+   }
+
+   /**
+    * @param componentAttributes the componentAttributes to set
+    */
+   public void setComponentAttributes(Integer componentAttributes)
+   {
+      this.componentAttributes = componentAttributes;
+   }
+
+   /**
+    * @return the componentTypeNumber
+    */
+   public Integer getComponentTypeNumber()
+   {
+      return componentTypeNumber;
+   }
+
+   /**
+    * @param componentTypeNumber the componentTypeNumber to set
+    */
+   public void setComponentTypeNumber(Integer componentTypeNumber)
+   {
+      this.componentTypeNumber = componentTypeNumber;
+   }
+
+   /**
+    * @return the picture
+    */
+   public String getPicture()
+   {
+      return picture;
+   }
+
+   /**
+    * @param picture the picture to set
+    */
+   public void setPicture(String picture)
+   {
+      this.picture = picture;
+   }
+
+   /**
+    * @return the bcuTypeId
+    */
+   public int getBcuTypeId()
+   {
+      return bcuTypeId;
+   }
+
+   /**
+    * @param bcuTypeId the bcuTypeId to set
+    */
+   public void setBcuTypeId(int bcuTypeId)
    {
       this.bcuTypeId = bcuTypeId;
    }
 
    /**
-    * @return the bcuType
+    * @return the handling
     */
-   public int getBcuType()
+   public Integer getHandling()
    {
-      return bcuTypeId;
+      return handling;
+   }
+
+   /**
+    * @param handling the handling to set
+    */
+   public void setHandling(Integer handling)
+   {
+      this.handling = handling;
+   }
+
+   /**
+    * @return the dll
+    */
+   public String getDll()
+   {
+      return dll;
+   }
+
+   /**
+    * @param dll the dll to set
+    */
+   public void setDll(String dll)
+   {
+      this.dll = dll;
+   }
+
+   /**
+    * @return the originalManufacturerId
+    */
+   public Integer getOriginalManufacturerId()
+   {
+      return originalManufacturerId;
+   }
+
+   /**
+    * @param originalManufacturerId the originalManufacturerId to set
+    */
+   public void setOriginalManufacturerId(Integer originalManufacturerId)
+   {
+      this.originalManufacturerId = originalManufacturerId;
+   }
+
+   /**
+    * @param name the name to set
+    */
+   public void setName(String name)
+   {
+      this.name = name;
    }
 
    /**

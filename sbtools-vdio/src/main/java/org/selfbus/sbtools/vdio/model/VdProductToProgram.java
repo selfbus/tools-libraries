@@ -48,6 +48,30 @@ public class VdProductToProgram
    @XmlAttribute(name = "registration_ts")
    private String registrationTS;
 
+   @XmlAttribute(name = "registration_date")
+   private String registrationDate;
+
+   @XmlAttribute(name = "registration_comment")
+   private String registrationComment;
+
+   @XmlAttribute(name = "registration_medium_type")
+   private String registrationMediumType;
+
+   @XmlAttribute(name = "dcy_f_individual")
+   private Double dcyFindividual;
+
+   @XmlAttribute(name = "dcy_g_individual")
+   private Double dcyGindividual;
+
+   @XmlAttribute(name = "dcy_f_group")
+   private Double dcyFgroup;
+
+   @XmlAttribute(name = "dcy_g_group")
+   private Double dcyGgroup;
+
+   @XmlAttribute(name = "signature")
+   private String signature;
+
    /**
     * Create an object type object.
     */

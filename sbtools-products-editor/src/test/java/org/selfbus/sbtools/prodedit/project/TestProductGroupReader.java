@@ -1,4 +1,4 @@
-package org.selfbus.sbtools.devtool.project;
+package org.selfbus.sbtools.prodedit.project;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

@@ -16,7 +16,7 @@ import org.selfbus.sbtools.common.gui.actions.BasicAction;
 import org.selfbus.sbtools.common.gui.misc.ImageCache;
 import org.selfbus.sbtools.prodedit.ProdEdit;
 import org.selfbus.sbtools.prodedit.actions.RemoveSelectionInListAction;
-import org.selfbus.sbtools.prodedit.binding.ValidationHandler;
+import org.selfbus.sbtools.prodedit.binding.ListValidationHandler;
 import org.selfbus.sbtools.prodedit.internal.I18n;
 import org.selfbus.sbtools.prodedit.model.global.FunctionalEntity;
 import org.selfbus.sbtools.prodedit.model.global.Project;
@@ -49,7 +49,7 @@ public class VirtualDeviceElem implements CategoryElem
    private final SelectionInList<VirtualDevice> selectionInList;
 
    private final Validator<VirtualDevice> validator = new DetailsFormValidator();
-   private final ValidationHandler<VirtualDevice> validationHandler;
+   private final ListValidationHandler<VirtualDevice> validationHandler;
 
    private final JPanel detailsPanel;
    private final JToolBar toolBar = new JToolBar();
@@ -109,7 +109,7 @@ public class VirtualDeviceElem implements CategoryElem
       this.selectionInList = selectionInList;
 
       PresentationModel<VirtualDevice> detailsModel = new PresentationModel<VirtualDevice>(selectionInList);
-      validationHandler = new ValidationHandler<VirtualDevice>(detailsModel, validator);
+      validationHandler = new ListValidationHandler<VirtualDevice>(detailsModel, validator);
 
       ConverterValueModel nameValueModel = new ConverterValueModel(validationHandler.getModel("name"), nameSyncConverter);
       nameField = BasicComponentFactory.createTextField(nameValueModel, false);

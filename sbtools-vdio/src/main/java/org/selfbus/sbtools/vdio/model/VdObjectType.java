@@ -18,6 +18,9 @@ public class VdObjectType
    @XmlAttribute(name = "object_type_name", required = true)
    private String name;
 
+   @XmlAttribute(name = "length_in_bit")
+   private Integer lengthInBit;
+
    /**
     * Create an object type object.
     */

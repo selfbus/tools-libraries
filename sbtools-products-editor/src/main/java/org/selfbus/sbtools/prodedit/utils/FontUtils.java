@@ -9,7 +9,7 @@ import javax.swing.UIManager;
  */
 public final class FontUtils
 {
-   private static Font captionFont;
+   private static Font captionFont, subCaptionFont;
 
    /**
     * @return The default caption font for forms
@@ -25,8 +25,17 @@ public final class FontUtils
       return captionFont;
    }
 
-   // Disabled
-   private FontUtils()
+   /**
+    * @return The default secondary caption font for forms
+    */
+   public static Font getSubCaptionFont()
    {
+      if (subCaptionFont == null)
+      {
+         subCaptionFont = UIManager.getDefaults().getFont("Label.font");
+         subCaptionFont = subCaptionFont.deriveFont(Font.BOLD, subCaptionFont.getSize() * 1.05f);
+      }
+
+      return subCaptionFont;
    }
 }

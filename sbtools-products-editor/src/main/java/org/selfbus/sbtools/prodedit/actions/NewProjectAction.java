@@ -37,6 +37,6 @@ public final class NewProjectAction extends BasicAction
       ProdEdit app = (ProdEdit) SingleFrameApplication.getInstance();
 //      final JFrame mainWin = app.getMainFrame();
 
-      app.getProjectService().newProject();
+      app.getProjectService().createProject();
    }
 }

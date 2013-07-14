@@ -25,9 +25,6 @@ package org.selfbus.sbtools.prodedit.binding;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.JTree;
@@ -38,8 +35,11 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.DefaultTreeSelectionModel;
 import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+
+import org.selfbus.sbtools.common.gui.utils.TreeUtils;
 
 import com.jgoodies.binding.beans.Model;
 import com.jgoodies.binding.value.ValueHolder;
@@ -90,17 +90,29 @@ public class SelectionInTree extends Model implements TreeSelectionListener, Tre
     */
    public SelectionInTree(TreeModel model, ValueModel selectionHolder)
    {
-      this.model = model;
       this.selectionHolder = selectionHolder;
       this.selectionModel = new DefaultTreeSelectionModel();
 
-      fillHash(model.getRoot());
+      setTree(model);
+
       selectionModel.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-      selectionHolder.addValueChangeListener(selectionChangeHandler);
 
       selectionModel.addTreeSelectionListener(treeSelectionHandler);
+      selectionHolder.addValueChangeListener(selectionChangeHandler);
    }
 
+   /**
+    * Set the tree model.
+    *
+    * @param model - the tree model
+    */
+   public void setTree(TreeModel model)
+   {
+      this.model = model;
+      fillHash(model.getRoot());
+      
+   }
+   
    /**
     * Recursively fill the internal hash with the tree model's objects.
     *
@@ -108,6 +120,8 @@ public class SelectionInTree extends Model implements TreeSelectionListener, Tre
     */
    private void fillHash(Object base)
    {
+      node2parent.clear();
+
       for (int i = 0; i < model.getChildCount(base); i++)
       {
          Object child = model.getChild(base, i);
@@ -133,6 +147,21 @@ public class SelectionInTree extends Model implements TreeSelectionListener, Tre
       tree.setSelectionModel(selectionModel);
    }
 
+   /**
+    * Returns the selected object.
+    *
+    * @return the selected object, or null if nothing is selected.
+    */
+   public Object getSelection()
+   {
+      return selectionHolder.getValue();
+   }
+
+   /**
+    * Returns the selection holder.
+    *
+    * @return the selection holder
+    */
    public ValueModel getSelectionHolder()
    {
       return selectionHolder;
@@ -164,32 +193,28 @@ public class SelectionInTree extends Model implements TreeSelectionListener, Tre
     * @param newSelection the object to be set as new selection, or {@code null} to set the
     *           selection index to -1
     */
-   private void setSelection(Object newSelection)
+   public void setSelection(Object newSelection)
    {
       if (newSelection == null)
       {
-         // TODO remove current selection
+         selectionModel.clearSelection();
+         selectionHolder.setValue(null);
          return;
       }
 
-      List<Object> pathList = new LinkedList<Object>();
-      pathList.add(newSelection);
-      while (node2parent.get(newSelection) != null)
+      for (TreeNode treeNode : TreeUtils.getChildTreeNodes((TreeNode) model.getRoot()))
       {
-         newSelection = node2parent.get(newSelection);
-         pathList.add(newSelection);
+         DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeNode;
+         if (node.getUserObject() == newSelection)
+         {
+            selectionHolder.setValue(newSelection);
+            selectionModel.setSelectionPath(new TreePath(node.getPath()));
+            return;
+         }
       }
 
-      Object[] pathArray = new Object[pathList.size()];
-      int index = pathList.size();
-      for (Iterator<?> iterator = pathList.iterator(); iterator.hasNext();)
-      {
-         index--;
-         pathArray[index] = iterator.next();
-      }
-
-      TreePath path = new TreePath(pathArray);
-      selectionModel.setSelectionPaths(new TreePath[] { path });
+      selectionHolder.setValue(null);
+      selectionModel.clearSelection();
    }
 
    public TreeSelectionModel getSelectionModel()
@@ -371,7 +396,15 @@ public class SelectionInTree extends Model implements TreeSelectionListener, Tre
          Object oldSelection = selectionHolder.getValue();
 
          TreePath newPath = e.getPath();
-         Object newSelection = newPath == null ? null : ((DefaultMutableTreeNode) newPath.getLastPathComponent()).getUserObject();
+         Object newSelection = null;
+
+         if (newPath != null)
+         {
+            Object pathComponent = newPath.getLastPathComponent();
+            if (pathComponent instanceof DefaultMutableTreeNode)
+               newSelection = ((DefaultMutableTreeNode) pathComponent).getUserObject();
+            else newSelection = pathComponent;
+         }
 
          if (e.getOldLeadSelectionPath() != null && model instanceof DefaultTreeModel)
          {

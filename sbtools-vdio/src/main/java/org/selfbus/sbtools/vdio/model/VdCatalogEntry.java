@@ -36,13 +36,13 @@ public class VdCatalogEntry
    private String color;
 
    @XmlAttribute(name = "entry_width_in_modules")
-   private Integer widthModules;
+   private Double widthModules;
 
    @XmlAttribute(name = "entry_width_in_millimeters")
-   private Integer widthMM;
+   private Double widthMM;
 
    @XmlAttribute(name = "price")
-   private Integer price;
+   private Double price;
 
    @XmlAttribute(name = "currency")
    private String currency;
@@ -51,7 +51,7 @@ public class VdCatalogEntry
    private String quantityUnit;
 
    @XmlAttribute(name = "material_price")
-   private Integer materialPrice;
+   private Double materialPrice;
 
    @XmlAttribute(name = "mounting_hours")
    private Integer mountingHours;
@@ -62,8 +62,8 @@ public class VdCatalogEntry
    @XmlAttribute(name = "mounting_seconds")
    private Integer mountingSeconds;
 
-   @XmlAttribute(name = "din_flag", required = true)
-   private boolean din;
+   @XmlAttribute(name = "din_flag")
+   private int din = 1;
 
    @XmlAttribute(name = "series")
    private String series;
@@ -103,6 +103,12 @@ public class VdCatalogEntry
 
    @XmlAttribute(name = "registration_ts")
    private String registrationTS;
+
+   @XmlAttribute(name = "registration_date")
+   private String registrationDate;
+
+   @XmlAttribute(name = "registration_comment")
+   private String registrationComment;
 
 
    /**
@@ -224,7 +230,7 @@ public class VdCatalogEntry
    /**
     * @return the with in module-units.
     */
-   public Integer getWidthModules()
+   public Double getWidthModules()
    {
       return widthModules;
    }
@@ -234,7 +240,7 @@ public class VdCatalogEntry
     * 
     * @param widthModules - the width to set.
     */
-   public void setWidthModules(Integer widthModules)
+   public void setWidthModules(Double widthModules)
    {
       this.widthModules = widthModules;
    }
@@ -242,7 +248,7 @@ public class VdCatalogEntry
    /**
     * @return the width in millimeters.
     */
-   public Integer getWidthMM()
+   public Double getWidthMM()
    {
       return widthMM;
    }
@@ -252,29 +258,9 @@ public class VdCatalogEntry
     * 
     * @param widthMM - the width to set.
     */
-   public void setWidthMM(Integer widthMM)
+   public void setWidthMM(Double widthMM)
    {
       this.widthMM = widthMM;
-   }
-
-   /**
-    * Test if the device can be mounted on DIN rails.
-    * 
-    * @return True if the device is DIN mountable.
-    */
-   public boolean getDIN()
-   {
-      return din;
-   }
-
-   /**
-    * Set if the device can be mounted on DIN rails.
-    * 
-    * @param din - true if the device is DIN mountable.
-    */
-   public void setDIN(boolean din)
-   {
-      this.din = din;
    }
 
    /**
@@ -329,6 +315,382 @@ public class VdCatalogEntry
    public void setSeries(String series)
    {
       this.series = series;
+   }
+
+   /**
+    * @return the symbolId
+    */
+   public Integer getSymbolId()
+   {
+      return symbolId;
+   }
+
+   /**
+    * @param symbolId the symbolId to set
+    */
+   public void setSymbolId(Integer symbolId)
+   {
+      this.symbolId = symbolId;
+   }
+
+   /**
+    * @return the price
+    */
+   public Double getPrice()
+   {
+      return price;
+   }
+
+   /**
+    * @param price the price to set
+    */
+   public void setPrice(Double price)
+   {
+      this.price = price;
+   }
+
+   /**
+    * @return the currency
+    */
+   public String getCurrency()
+   {
+      return currency;
+   }
+
+   /**
+    * @param currency the currency to set
+    */
+   public void setCurrency(String currency)
+   {
+      this.currency = currency;
+   }
+
+   /**
+    * @return the quantityUnit
+    */
+   public String getQuantityUnit()
+   {
+      return quantityUnit;
+   }
+
+   /**
+    * @param quantityUnit the quantityUnit to set
+    */
+   public void setQuantityUnit(String quantityUnit)
+   {
+      this.quantityUnit = quantityUnit;
+   }
+
+   /**
+    * @return the materialPrice
+    */
+   public Double getMaterialPrice()
+   {
+      return materialPrice;
+   }
+
+   /**
+    * @param materialPrice the materialPrice to set
+    */
+   public void setMaterialPrice(Double materialPrice)
+   {
+      this.materialPrice = materialPrice;
+   }
+
+   /**
+    * @return the mountingHours
+    */
+   public Integer getMountingHours()
+   {
+      return mountingHours;
+   }
+
+   /**
+    * @param mountingHours the mountingHours to set
+    */
+   public void setMountingHours(Integer mountingHours)
+   {
+      this.mountingHours = mountingHours;
+   }
+
+   /**
+    * @return the mountingMinutes
+    */
+   public Integer getMountingMinutes()
+   {
+      return mountingMinutes;
+   }
+
+   /**
+    * @param mountingMinutes the mountingMinutes to set
+    */
+   public void setMountingMinutes(Integer mountingMinutes)
+   {
+      this.mountingMinutes = mountingMinutes;
+   }
+
+   /**
+    * @return the mountingSeconds
+    */
+   public Integer getMountingSeconds()
+   {
+      return mountingSeconds;
+   }
+
+   /**
+    * @param mountingSeconds the mountingSeconds to set
+    */
+   public void setMountingSeconds(Integer mountingSeconds)
+   {
+      this.mountingSeconds = mountingSeconds;
+   }
+
+   /**
+    * @return the din
+    */
+   public boolean isDIN()
+   {
+      return 1 == din;
+   }
+
+   /**
+    * @param din the din to set
+    */
+   public void setDIN(boolean din)
+   {
+      this.din = din ? 1 : 0;
+   }
+
+   /**
+    * @return the catalogName
+    */
+   public String getCatalogName()
+   {
+      return catalogName;
+   }
+
+   /**
+    * @param catalogName the catalogName to set
+    */
+   public void setCatalogName(String catalogName)
+   {
+      this.catalogName = catalogName;
+   }
+
+   /**
+    * @return the pageNumber
+    */
+   public Integer getPageNumber()
+   {
+      return pageNumber;
+   }
+
+   /**
+    * @param pageNumber the pageNumber to set
+    */
+   public void setPageNumber(Integer pageNumber)
+   {
+      this.pageNumber = pageNumber;
+   }
+
+   /**
+    * @return the entryPicture
+    */
+   public String getEntryPicture()
+   {
+      return entryPicture;
+   }
+
+   /**
+    * @param entryPicture the entryPicture to set
+    */
+   public void setEntryPicture(String entryPicture)
+   {
+      this.entryPicture = entryPicture;
+   }
+
+   /**
+    * @return the designationType
+    */
+   public String getDesignationType()
+   {
+      return designationType;
+   }
+
+   /**
+    * @param designationType the designationType to set
+    */
+   public void setDesignationType(String designationType)
+   {
+      this.designationType = designationType;
+   }
+
+   /**
+    * @return the designationFunction
+    */
+   public String getDesignationFunction()
+   {
+      return designationFunction;
+   }
+
+   /**
+    * @param designationFunction the designationFunction to set
+    */
+   public void setDesignationFunction(String designationFunction)
+   {
+      this.designationFunction = designationFunction;
+   }
+
+   /**
+    * @return the helpFileName
+    */
+   public String getHelpFileName()
+   {
+      return helpFileName;
+   }
+
+   /**
+    * @param helpFileName the helpFileName to set
+    */
+   public void setHelpFileName(String helpFileName)
+   {
+      this.helpFileName = helpFileName;
+   }
+
+   /**
+    * @return the contextId
+    */
+   public Integer getContextId()
+   {
+      return contextId;
+   }
+
+   /**
+    * @param contextId the contextId to set
+    */
+   public void setContextId(Integer contextId)
+   {
+      this.contextId = contextId;
+   }
+
+   /**
+    * @return the ramSize
+    */
+   public Integer getRamSize()
+   {
+      return ramSize;
+   }
+
+   /**
+    * @param ramSize the ramSize to set
+    */
+   public void setRamSize(Integer ramSize)
+   {
+      this.ramSize = ramSize;
+   }
+
+   /**
+    * @return the registrationNumber
+    */
+   public Integer getRegistrationNumber()
+   {
+      return registrationNumber;
+   }
+
+   /**
+    * @param registrationNumber the registrationNumber to set
+    */
+   public void setRegistrationNumber(Integer registrationNumber)
+   {
+      this.registrationNumber = registrationNumber;
+   }
+
+   /**
+    * @return the registrationYear
+    */
+   public Integer getRegistrationYear()
+   {
+      return registrationYear;
+   }
+
+   /**
+    * @param registrationYear the registrationYear to set
+    */
+   public void setRegistrationYear(Integer registrationYear)
+   {
+      this.registrationYear = registrationYear;
+   }
+
+   /**
+    * @return the entryStatusCode
+    */
+   public Integer getEntryStatusCode()
+   {
+      return entryStatusCode;
+   }
+
+   /**
+    * @param entryStatusCode the entryStatusCode to set
+    */
+   public void setEntryStatusCode(Integer entryStatusCode)
+   {
+      this.entryStatusCode = entryStatusCode;
+   }
+
+   /**
+    * @return the registrationTS
+    */
+   public String getRegistrationTS()
+   {
+      return registrationTS;
+   }
+
+   /**
+    * @param registrationTS the registrationTS to set
+    */
+   public void setRegistrationTS(String registrationTS)
+   {
+      this.registrationTS = registrationTS;
+   }
+
+   /**
+    * @return the registrationDate
+    */
+   public String getRegistrationDate()
+   {
+      return registrationDate;
+   }
+
+   /**
+    * @param registrationDate the registrationDate to set
+    */
+   public void setRegistrationDate(String registrationDate)
+   {
+      this.registrationDate = registrationDate;
+   }
+
+   /**
+    * @return the registrationComment
+    */
+   public String getRegistrationComment()
+   {
+      return registrationComment;
+   }
+
+   /**
+    * @param registrationComment the registrationComment to set
+    */
+   public void setRegistrationComment(String registrationComment)
+   {
+      this.registrationComment = registrationComment;
+   }
+
+   /**
+    * @param manufacturerId the manufacturerId to set
+    */
+   public void setManufacturerId(int manufacturerId)
+   {
+      this.manufacturerId = manufacturerId;
    }
 
    /**

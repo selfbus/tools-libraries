@@ -4,6 +4,7 @@ import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -13,6 +14,7 @@ import javax.swing.filechooser.FileFilter;
 import org.jdesktop.application.SingleFrameApplication;
 import org.selfbus.sbtools.common.Config;
 import org.selfbus.sbtools.common.gui.actions.BasicAction;
+import org.selfbus.sbtools.common.gui.components.Dialogs;
 import org.selfbus.sbtools.common.gui.misc.ImageCache;
 import org.selfbus.sbtools.prodedit.ProdEdit;
 import org.selfbus.sbtools.prodedit.filter.ProjectFileFilter;
@@ -39,7 +41,7 @@ public final class OpenProjectAction extends BasicAction
     * Perform the action.
     */
    @Override
-   public void actionEvent(ActionEvent e)
+   public void actionEvent(ActionEvent ev)
    {
       SingleFrameApplication app = (SingleFrameApplication) SingleFrameApplication.getInstance();
       final JFrame mainWin = app.getMainFrame();
@@ -49,7 +51,7 @@ public final class OpenProjectAction extends BasicAction
 
       final JFileChooser dlg = new JFileChooser();
       dlg.setCurrentDirectory(new File(lastDir));
-      final FileFilter fileFilter = new ProjectFileFilter(true);
+      final FileFilter fileFilter = new ProjectFileFilter();
       dlg.addChoosableFileFilter(fileFilter);
       dlg.addChoosableFileFilter(dlg.getAcceptAllFileFilter());
       dlg.setFileFilter(fileFilter);
@@ -67,6 +69,10 @@ public final class OpenProjectAction extends BasicAction
       {
          mainWin.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
          ProdEdit.getInstance().getProjectService().loadProject(file);
+      }
+      catch (FileNotFoundException e)
+      {
+         Dialogs.showExceptionDialog(e, I18n.formatMessage("Error.read", file.getName()));
       }
       finally
       {

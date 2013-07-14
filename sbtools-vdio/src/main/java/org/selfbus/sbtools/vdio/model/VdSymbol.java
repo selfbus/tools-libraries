@@ -1,5 +1,6 @@
 package org.selfbus.sbtools.vdio.model;
 
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -20,6 +21,9 @@ public class VdSymbol
 
    @XmlAttribute(name = "symbol_name")
    private String name;
+
+   private byte[] data;
+   private byte[] iconData;
 
    /**
     * Create a symbol object.
@@ -62,5 +66,75 @@ public class VdSymbol
    public void setName(String name)
    {
       this.name = name;
+   }
+
+   /**
+    * @return the fileName
+    */
+   public String getFileName()
+   {
+      return fileName;
+   }
+
+   /**
+    * @param fileName the fileName to set
+    */
+   public void setFileName(String fileName)
+   {
+      this.fileName = fileName;
+   }
+
+   /**
+    * @return the data
+    */
+   public byte[] getData()
+   {
+      return data;
+   }
+
+   /**
+    * @param data the data to set
+    */
+   public void setData(byte[] data)
+   {
+      this.data = data;
+   }
+
+   /**
+    * @return the iconData
+    */
+   public byte[] getIconData()
+   {
+      return iconData;
+   }
+
+   /**
+    * @param iconData the iconData to set
+    */
+   public void setIconData(byte[] iconData)
+   {
+      this.iconData = iconData;
+   }
+
+   @XmlAttribute(name = "symbol_data")
+   String getDataStr()
+   {
+      return DatatypeConverter.printHexBinary(data).toLowerCase();
+   }
+
+   void setDataStr(String str)
+   {
+      data = DatatypeConverter.parseHexBinary(str);
+   }
+
+   @XmlAttribute(name = "icondata")
+   String getIconDataStr()
+   {
+      return DatatypeConverter.printHexBinary(iconData).toLowerCase();
+   }
+
+   void setIconDataStr(String str)
+   {
+      iconData = DatatypeConverter.parseHexBinary(str);
    }
 }

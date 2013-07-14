@@ -1,67 +1,53 @@
-package org.selfbus.sbtools.prodedit.tabs.prodgroup;
+package org.selfbus.sbtools.prodedit.tabs.prodgroup.parameter;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.util.LinkedList;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-import javax.swing.Box;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
-import javax.swing.text.JTextComponent;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultTreeModel;
 
 import org.selfbus.sbtools.common.gui.actions.BasicAction;
 import org.selfbus.sbtools.common.gui.components.CloseableComponent;
 import org.selfbus.sbtools.common.gui.misc.ImageCache;
-import org.selfbus.sbtools.prodedit.actions.RemoveSelectionInListAction;
-import org.selfbus.sbtools.prodedit.binding.ValidationHandler;
+import org.selfbus.sbtools.common.gui.tree.MutableIconTreeNode;
+import org.selfbus.sbtools.prodedit.actions.RemoveSelectionInTreeAction;
+import org.selfbus.sbtools.prodedit.binding.SelectionInTree;
 import org.selfbus.sbtools.prodedit.internal.I18n;
-import org.selfbus.sbtools.prodedit.model.enums.ParameterAtomicType;
-import org.selfbus.sbtools.prodedit.model.prodgroup.ParameterType;
+import org.selfbus.sbtools.prodedit.model.prodgroup.ApplicationProgram;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
 import org.selfbus.sbtools.prodedit.model.prodgroup.VirtualDevice;
-import org.selfbus.sbtools.prodedit.tabs.internal.CategoryElem;
-import org.selfbus.sbtools.prodedit.utils.FontUtils;
-
-import com.jgoodies.binding.PresentationModel;
-import com.jgoodies.binding.adapter.BasicComponentFactory;
-import com.jgoodies.binding.list.SelectionInList;
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.validation.ValidationResult;
-import com.jgoodies.validation.Validator;
-import com.jgoodies.validation.view.ValidationComponentUtils;
-import com.jgoodies.validation.view.ValidationResultViewFactory;
+import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.CommunicationObject;
+import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.Parameter;
+import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterTreeModel;
+import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterType;
+import org.selfbus.sbtools.prodedit.renderer.ParameterTreeCellRenderer;
+import org.selfbus.sbtools.prodedit.tabs.internal.AbstractCategoryElem;
 
 /**
  * An element that displays the {@link ParameterType parameter types} of a {@link VirtualDevice device}.
  */
-public class ParametersElem implements CategoryElem, CloseableComponent
+public class ParametersElem extends AbstractCategoryElem implements CloseableComponent
 {
+//   private final Logger LOGGER = LoggerFactory.getLogger(ParametersElem.class);
+
    private final ProductGroup group;
+   private ApplicationProgram program;
 
-   private SelectionInList<ParameterType> selectionInList = new SelectionInList<ParameterType>(new LinkedList<ParameterType>());
-   private final PresentationModel<ParameterType> detailsModel = new PresentationModel<ParameterType>(selectionInList);
-   private final Validator<ParameterType> validator = new DetailsFormValidator();
-   private final ValidationHandler<ParameterType> validationHandler = new ValidationHandler<ParameterType>(detailsModel, validator);
+   private final SelectionInTree selectionInTree = new SelectionInTree(new DefaultTreeModel(new MutableIconTreeNode("/")));
+//   private final PresentationModel<AbstractParameterNode> detailsModel = new PresentationModel<AbstractParameterNode>(selectionInTree);
 
-   @SuppressWarnings("unchecked")
-   private final JList<ParameterType> paramTypeList = BasicComponentFactory.createList(selectionInList);
-   private final JScrollPane paramTypeScrollPane = new JScrollPane(paramTypeList);
+   private final JTree paramTree = new JTree(selectionInTree);
+   private final ParameterTreeCellRenderer paramTreeCellRenderer = new ParameterTreeCellRenderer(paramTree.getCellRenderer());
 
-   private final JPanel detailsPanel;
-   private final JToolBar toolBar = new JToolBar();
-   
-   private final JLabel idField = BasicComponentFactory.createLabel(detailsModel.getModel("idStr"));
-   private final JTextComponent nameField = BasicComponentFactory.createTextField(validationHandler.getModel("name"), false);
-
-   private SelectionInList<ParameterAtomicType> selectionInAtomicType = new SelectionInList<ParameterAtomicType>(ParameterAtomicType.values());
-   @SuppressWarnings("unchecked")
-   private final JComboBox<ParameterAtomicType> atomicTypeCombo = BasicComponentFactory.createComboBox(selectionInAtomicType);
+   private final ParameterPanel paramPanel = new ParameterPanel();
+   private final CommunicationObjectPanel comObjectPanel = new CommunicationObjectPanel();
+   private final JPanel emptyPanel = new JPanel();
+   private JPanel currentPanel;
 
    /**
     * Create a {@link Product products} display element.
@@ -72,40 +58,52 @@ public class ParametersElem implements CategoryElem, CloseableComponent
    {
       this.group = group;
 
-      FormLayout layout = new FormLayout("6dlu,l:p,4dlu,f:p:g,6dlu", 
-         "8dlu,p,8dlu,p,4dlu,p,4dlu,p,4dlu,p,4dlu,p,4dlu,p,4dlu,p,4dlu,p,4dlu,f:p:g,p,4dlu");
-      PanelBuilder builder = new PanelBuilder(layout);
-      CellConstraints cc = new CellConstraints();
-      int row = 2;
-      
-      builder.addLabel(I18n.getMessage("ParametersElem.caption"), cc.rcw(row, 2, 3))
-         .setFont(FontUtils.getCaptionFont());
+      toolBar = new JToolBar();
+      detailsPanel = new JPanel(new BorderLayout(0, 0));
+      listScrollPane = new JScrollPane(paramTree);
 
-      row += 2;
-      builder.addLabel(I18n.getMessage("ParametersElem.name"), cc.rc(row, 2));
-      builder.add(nameField, cc.rc(row, 4));
-      ValidationComponentUtils.setMandatoryBackground(nameField);
+      selectionInTree.bindTo(paramTree);
+      paramTree.setCellRenderer(paramTreeCellRenderer);
 
-      row += 2;
-      builder.addLabel(I18n.getMessage("ParametersElem.type"), cc.rc(row, 2));
-      builder.add(atomicTypeCombo, cc.rc(row, 4));
-
-      row += 2;
-      builder.addLabel(I18n.getMessage("ParametersElem.id"), cc.rc(row, 2));
-      builder.add(idField, cc.rc(row, 4));
-
-      builder.add(Box.createVerticalGlue(), cc.rcw(++row, 2, 3));
-      
-      JComponent reportPane = ValidationResultViewFactory.createReportList(validationHandler.getValidationResultModel());
-      builder.add(reportPane, cc.rcw(++row, 2, 3));
-
-      detailsPanel = builder.build();
-
-      validationHandler.setValidatedContainer(detailsPanel);
-      validationHandler.observeSelectionChange(selectionInList);
-
-//      ProdEdit.getInstance().getProjectService().addListener(projectListener);
       setupToolBar();
+
+      currentPanel = emptyPanel;
+      detailsPanel.add(currentPanel, BorderLayout.CENTER);
+
+      selectionInTree.addPropertyChangeListener(SelectionInTree.PROPERTY_SELECTION, new PropertyChangeListener()
+      {
+         @Override
+         public void propertyChange(PropertyChangeEvent e)
+         {
+            Object newValue = e.getNewValue();
+            JPanel newCurrentPanel = null;
+
+            if (newValue instanceof Parameter)
+            {
+               newCurrentPanel = paramPanel;
+               paramPanel.setParameter((Parameter) newValue); 
+            }
+            else if (newValue instanceof CommunicationObject)
+            {
+               newCurrentPanel = comObjectPanel;
+               comObjectPanel.setCommunicationObject((CommunicationObject) newValue);
+            }
+            else
+            {
+               newCurrentPanel = emptyPanel;
+            }
+
+            if (newCurrentPanel != currentPanel)
+            {
+               detailsPanel.remove(currentPanel);
+               currentPanel.setVisible(false);
+
+               currentPanel = newCurrentPanel;
+               detailsPanel.add(currentPanel, BorderLayout.CENTER);
+               currentPanel.setVisible(true);
+            }
+         }
+      });
    }
 
    /**
@@ -114,9 +112,9 @@ public class ParametersElem implements CategoryElem, CloseableComponent
    private void setupToolBar()
    {
       //
-      //  Action: add a virtual device
+      //  Action: add a com object
       //
-      toolBar.add(new BasicAction("add", I18n.getMessage("ParametersElem.addTip"), ImageCache.getIcon("icons/add"))
+      toolBar.add(new BasicAction("add", I18n.getMessage("ParametersElem.addComObjectTip"), ImageCache.getIcon("icons/connect_new"))
       {
          private static final long serialVersionUID = 1;
 
@@ -128,9 +126,39 @@ public class ParametersElem implements CategoryElem, CloseableComponent
       });
 
       //
+      //  Action: add a page
+      //
+      toolBar.add(new BasicAction("add", I18n.getMessage("ParametersElem.addPageTip"), ImageCache.getIcon("icons/page_new"))
+      {
+         private static final long serialVersionUID = 1;
+
+         @Override
+         public void actionEvent(ActionEvent event)
+         {
+            // TODO
+         }
+      });
+
+      //
+      //  Action: add a parameter
+      //
+      toolBar.add(new BasicAction("add", I18n.getMessage("ParametersElem.addParamTip"), ImageCache.getIcon("icons/parameter_new"))
+      {
+         private static final long serialVersionUID = 1;
+
+         @Override
+         public void actionEvent(ActionEvent event)
+         {
+            // TODO
+         }
+      });
+
+      toolBar.addSeparator();
+
+      //
       //  Action: remove the current virtual device
       //
-      toolBar.add(new RemoveSelectionInListAction(selectionInList, I18n.getMessage("ParametersElem.removeTip"))); 
+      toolBar.add(new RemoveSelectionInTreeAction(selectionInTree, I18n.getMessage("ParametersElem.removeTip"))); 
    }
 
    /**
@@ -139,6 +167,8 @@ public class ParametersElem implements CategoryElem, CloseableComponent
    @Override
    public void close()
    {
+      paramPanel.close();
+      selectionInTree.release();
    }
 
    /**
@@ -149,33 +179,6 @@ public class ParametersElem implements CategoryElem, CloseableComponent
    {
       return I18n.getMessage("ParametersElem.title");
    }
-   
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public JComponent getListPanel()
-   {
-      return paramTypeScrollPane;
-   }
-   
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public JComponent getDetailsPanel()
-   {
-      return detailsPanel;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public JToolBar getToolBar()
-   {
-      return toolBar;
-   }
 
    /**
     * Set the virtual device.
@@ -184,20 +187,16 @@ public class ParametersElem implements CategoryElem, CloseableComponent
     */
    public void setDevice(VirtualDevice device)
    {
-//      detailsModel.setBean(device == null ? null : group.getProgram(device.getProgramId()));
-   }
+      program = group.getProgram(device);
 
-   /**
-    * Private validator for details form input.
-    */
-   private class DetailsFormValidator implements Validator<ParameterType>
-   {
-      @Override
-      public ValidationResult validate(ParameterType paramType)
-      {
-         ValidationResult result = new ValidationResult();
+      ParameterTreeModel paramTreeModel;
+      if (program != null)
+         paramTreeModel = program.getParameterTreeModel();
+      else paramTreeModel = new ParameterTreeModel();
 
-         return result;
-      }
+      paramPanel.setProgram(program);
+      paramTreeCellRenderer.setProgram(program);
+      selectionInTree.setTree(paramTreeModel);
+      paramTree.setModel(paramTreeModel);
    }
 }

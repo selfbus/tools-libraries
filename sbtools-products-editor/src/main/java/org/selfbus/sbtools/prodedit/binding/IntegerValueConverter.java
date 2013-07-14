@@ -1,8 +1,5 @@
 package org.selfbus.sbtools.prodedit.binding;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.jgoodies.binding.value.BindingConverter;
 
 /**
@@ -10,7 +7,7 @@ import com.jgoodies.binding.value.BindingConverter;
  */
 public class IntegerValueConverter implements BindingConverter
 {
-   private static final Logger LOGGER = LoggerFactory.getLogger(IntegerValueConverter.class);
+//   private static final Logger LOGGER = LoggerFactory.getLogger(IntegerValueConverter.class);
 
    /**
     * {@inheritDoc}
@@ -46,7 +43,6 @@ public class IntegerValueConverter implements BindingConverter
       }
       catch (NumberFormatException e)
       {
-         LOGGER.info("Cannot convert {} to integer", targetValue);
          return null;
       }
    }

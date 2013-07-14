@@ -21,11 +21,11 @@ public class VdDeviceParameter
    @XmlAttribute(name = "parameter_id", required = true)
    private int parameterId;
 
-   @XmlAttribute(name = "device_parameter_number", required = true)
-   private int number;
+   @XmlAttribute(name = "device_parameter_number")
+   private Integer number;
 
-   @XmlAttribute(name = "device_parameter_visible", required = true)
-   private boolean visible;
+   @XmlAttribute(name = "device_parameter_visible")
+   private int visible;
 
    @XmlAttribute(name = "parameter_value_long")
    private Integer intValue;
@@ -38,6 +38,9 @@ public class VdDeviceParameter
 
    @XmlAttribute(name = "parameter_value_double")
    private Double doubleValue;
+
+   @XmlAttribute(name = "valueisvalid")
+   private int valueIsValid = 1;
 
    /**
     * Create a product description.
@@ -97,7 +100,7 @@ public class VdDeviceParameter
    /**
     * @return the number
     */
-   public int getNumber()
+   public Integer getNumber()
    {
       return number;
    }
@@ -105,7 +108,7 @@ public class VdDeviceParameter
    /**
     * @param number the number to set
     */
-   public void setNumber(int number)
+   public void setNumber(Integer number)
    {
       this.number = number;
    }
@@ -115,7 +118,7 @@ public class VdDeviceParameter
     */
    public boolean isVisible()
    {
-      return visible;
+      return visible == 1;
    }
 
    /**
@@ -123,7 +126,7 @@ public class VdDeviceParameter
     */
    public void setVisible(boolean visible)
    {
-      this.visible = visible;
+      this.visible = visible ? 1 : 0;
    }
 
    /**

@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import javax.swing.Box;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -15,8 +16,10 @@ import org.selfbus.sbtools.common.gui.actions.BasicAction;
 import org.selfbus.sbtools.common.gui.components.CloseableComponent;
 import org.selfbus.sbtools.common.gui.misc.ImageCache;
 import org.selfbus.sbtools.prodedit.ProdEdit;
+import org.selfbus.sbtools.prodedit.actions.MoveNextSelectionInListAction;
+import org.selfbus.sbtools.prodedit.actions.MovePrevSelectionInListAction;
 import org.selfbus.sbtools.prodedit.actions.RemoveSelectionInListAction;
-import org.selfbus.sbtools.prodedit.binding.ValidationHandler;
+import org.selfbus.sbtools.prodedit.binding.ListValidationHandler;
 import org.selfbus.sbtools.prodedit.internal.I18n;
 import org.selfbus.sbtools.prodedit.model.AbstractProjectListener;
 import org.selfbus.sbtools.prodedit.model.ProjectListener;
@@ -24,10 +27,13 @@ import org.selfbus.sbtools.prodedit.model.global.Language;
 import org.selfbus.sbtools.prodedit.model.global.Project;
 import org.selfbus.sbtools.prodedit.tabs.internal.CategoryElem;
 import org.selfbus.sbtools.prodedit.utils.FontUtils;
+import org.selfbus.sbtools.prodedit.vdio.LanguageMapper;
 
 import com.jgoodies.binding.PresentationModel;
 import com.jgoodies.binding.adapter.BasicComponentFactory;
 import com.jgoodies.binding.list.SelectionInList;
+import com.jgoodies.binding.value.BindingConverter;
+import com.jgoodies.binding.value.ConverterValueModel;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -44,7 +50,7 @@ public class LanguagesElem implements CloseableComponent, CategoryElem
    private SelectionInList<Language> selectionInList = new SelectionInList<Language>(new LinkedList<Language>());
    private final PresentationModel<Language> detailsModel = new PresentationModel<Language>(selectionInList);
    private final Validator<Language> validator = new DetailsFormValidator();
-   private final ValidationHandler<Language> validationHandler = new ValidationHandler<Language>(detailsModel, validator);
+   private final ListValidationHandler<Language> validationHandler = new ListValidationHandler<Language>(detailsModel, validator);
 
    @SuppressWarnings("unchecked")
    private final JList<Language> langList = BasicComponentFactory.createList(selectionInList);
@@ -55,6 +61,7 @@ public class LanguagesElem implements CloseableComponent, CategoryElem
 
    private final JTextComponent idField = BasicComponentFactory.createTextField(validationHandler.getModel("id"), false);
    private final JTextComponent nameField = BasicComponentFactory.createTextField(validationHandler.getModel("name"), false);
+   private final JLabel etsIdField;
 
    /**
     * Create a {@link Language languages} display element.
@@ -62,7 +69,7 @@ public class LanguagesElem implements CloseableComponent, CategoryElem
    public LanguagesElem()
    {
       FormLayout layout = new FormLayout("6dlu, left:pref, 4dlu, fill:pref:grow, 6dlu", 
-         "8dlu, pref, 8dlu, pref, 4dlu, pref, fill:pref:grow, pref, 4dlu");
+         "8dlu, pref, 8dlu, pref, 4dlu, pref, 4dlu, pref, fill:pref:grow, pref, 4dlu");
       PanelBuilder builder = new PanelBuilder(layout);
       CellConstraints cc = new CellConstraints();
       
@@ -77,10 +84,14 @@ public class LanguagesElem implements CloseableComponent, CategoryElem
       builder.add(nameField, cc.rc(6, 4));
       ValidationComponentUtils.setMandatoryBackground(nameField);
 
-      builder.add(Box.createVerticalGlue(), cc.rcw(7, 2, 3));
+      builder.addLabel(I18n.getMessage("LanguagesElem.etsId"), cc.rc(8, 2));
+      etsIdField = BasicComponentFactory.createLabel(new ConverterValueModel(validationHandler.getModel("id"), etsIdValueConverter));
+      builder.add(etsIdField, cc.rc(8, 4));
+
+      builder.add(Box.createVerticalGlue(), cc.rcw(9, 2, 3));
       
       JComponent reportPane = ValidationResultViewFactory.createReportList(validationHandler.getValidationResultModel());
-      builder.add(reportPane, cc.rcw(8, 2, 3));
+      builder.add(reportPane, cc.rcw(10, 2, 3));
       
       detailsPanel = builder.build();
 
@@ -121,6 +132,16 @@ public class LanguagesElem implements CloseableComponent, CategoryElem
       //  Action: remove the current language
       //
       toolBar.add(new RemoveSelectionInListAction(selectionInList, I18n.getMessage("LanguagesElem.removeTip"))); 
+
+      //
+      //  Action: move the current value one step towards the beginning of the list.
+      //
+      toolBar.add(new MovePrevSelectionInListAction(selectionInList)); 
+
+      //
+      //  Action: move the current value one step towards the end of the list.
+      //
+      toolBar.add(new MoveNextSelectionInListAction(selectionInList)); 
    }
 
    /**
@@ -218,4 +239,32 @@ public class LanguagesElem implements CloseableComponent, CategoryElem
          return result;
       }
    }
+
+   /**
+    * Converter that translates the language ID to the numeric ETS ID.
+    */
+   private final BindingConverter etsIdValueConverter = new BindingConverter()
+   {
+      @Override
+      public Object targetValue(Object sourceValue)
+      {
+         if (sourceValue == null)
+            return "";
+
+         try
+         {
+            return Integer.toString(LanguageMapper.getEtsId((String) sourceValue));
+         }
+         catch (IllegalArgumentException e)
+         {
+            return I18n.getMessage("LanguagesElem.unknownEtsId");
+         }
+      }
+      
+      @Override
+      public Object sourceValue(Object targetValue)
+      {
+         return targetValue;
+      }
+   };
 }

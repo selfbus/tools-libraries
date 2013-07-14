@@ -1,6 +1,7 @@
 package org.selfbus.sbtools.prodedit;
 
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,6 +43,7 @@ import org.selfbus.sbtools.prodedit.model.global.Project;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
 import org.selfbus.sbtools.prodedit.tabs.prodgroup.ProductGroupTab;
 import org.selfbus.sbtools.prodedit.tabs.project.ProjectTab;
+import org.selfbus.sbtools.prodedit.vdio.ProductsImporter;
 
 import com.jgoodies.common.collect.ArrayListModel;
 
@@ -305,6 +307,8 @@ public class ProdEdit extends SingleFrameApplication
    {
       try
       {
+         getMainFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
          String lastProjectPath = Config.getInstance().getStringValue("project.last");
          if (lastProjectPath != null && !lastProjectPath.isEmpty())
          {
@@ -312,13 +316,21 @@ public class ProdEdit extends SingleFrameApplication
          }
          else
          {
-            projectService.newProject();
+            ProductsImporter importer = new ProductsImporter(projectService);
+            String fileName = "Bosch-Freebus12.vd_";
+            projectService.setProject(importer.read(getClass().getClassLoader().getResourceAsStream(fileName)));
+
+//            projectService.createExampleProject();
 //            projectService.fireProjectChanged();
          }
       }
       catch (Exception e)
       {
          Dialogs.showExceptionDialog(e, I18n.getMessage("Error.startup"));
+      }
+      finally
+      {
+         getMainFrame().setCursor(Cursor.getDefaultCursor());
       }
    }
 
@@ -329,7 +341,8 @@ public class ProdEdit extends SingleFrameApplication
    {
       final JFrame mainFrame = getMainView().getFrame();
 
-      File projFile = projectService.getProject().getFile();
+      Project project = projectService.getProject();
+      File projFile = project == null ? null : project.getFile();
 
       if (projFile == null)
       {
@@ -424,6 +437,12 @@ public class ProdEdit extends SingleFrameApplication
       public void projectChanged(final Project project)
       {
          updateMainTitle();
+
+         for (JComponent tab : tabComponents.values())
+         {
+            tab.setVisible(false);
+         }
+         tabComponents.clear();
 
          project.getProductGroups().addListDataListener(new AbstractListDataListener()
          {

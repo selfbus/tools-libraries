@@ -1,5 +1,6 @@
 package org.selfbus.sbtools.vdio.model;
 
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -33,7 +34,7 @@ public class VdApplicationProgram
    private Integer versionNumber;
 
    @XmlAttribute(name = "linkable", required = true)
-   private boolean linkable;
+   private int linkable;
 
    @XmlAttribute(name = "device_type", required = true)
    private int deviceType;
@@ -62,23 +63,43 @@ public class VdApplicationProgram
    @XmlAttribute(name = "manufacturer_id", required = true)
    private int manufacturerId;
 
-   @XmlAttribute(name = "eeprom_data")
    private byte[] eepromData;
 
-   @XmlAttribute(name = "dynamic_management", required = true)
-   private boolean dynamicManagement;
+   @XmlAttribute(name = "s19_file")
+   private String s19File;
 
-   @XmlAttribute(name = "program_type", required = true)
+   @XmlAttribute(name = "map_file")
+   private String mapFile;
+
+   @XmlAttribute(name = "assembler_id")
+   private Integer assemblerId;
+
+   @XmlAttribute(name = "help_file_name")
+   private String helpFile;
+
+   @XmlAttribute(name = "context_id")
+   private Integer contextId;
+
+   @XmlAttribute(name = "dynamic_management")
+   private int dynamicManagement;
+
+   @XmlAttribute(name = "program_type")
    private int programType;
 
    @XmlAttribute(name = "ram_size")
    private Integer ramSize;
 
-   @XmlAttribute(name = "program_style", required = true)
-   private int programStyle;
+   @XmlAttribute(name = "original_manufacturer_id")
+   private Integer originalManufacturerId;
 
-   @XmlAttribute(name = "is_polling_master", required = true)
-   private boolean pollingMaster;
+   @XmlAttribute(name = "api_version")
+   private Integer apiVersion;
+
+   @XmlAttribute(name = "program_style")
+   private Integer programStyle;
+
+   @XmlAttribute(name = "is_polling_master")
+   private int pollingMaster;
 
    @XmlAttribute(name = "number_of_polling_groups")
    private Integer numPollingGroups;
@@ -133,16 +154,6 @@ public class VdApplicationProgram
    }
 
    /**
-    * Set the mask ID.
-    * 
-    * @param maskId - the mask ID to set.
-    */
-   public void setMask(int maskId)
-   {
-      this.maskId = maskId;
-   }
-
-   /**
     * @return the name of the program.
     */
    public String getName()
@@ -189,7 +200,7 @@ public class VdApplicationProgram
     */
    public boolean isLinkable()
    {
-      return linkable;
+      return linkable == 1;
    }
 
    /**
@@ -197,7 +208,7 @@ public class VdApplicationProgram
     */
    public void setLinkable(boolean linkable)
    {
-      this.linkable = linkable;
+      this.linkable = linkable ? 1 : 0;
    }
 
    /**
@@ -357,7 +368,7 @@ public class VdApplicationProgram
     * 
     * @param manufacturerId - the manufacturer ID to set.
     */
-   public void setManufacturer(int manufacturerId)
+   public void setManufacturerId(int manufacturerId)
    {
       this.manufacturerId = manufacturerId;
    }
@@ -378,12 +389,42 @@ public class VdApplicationProgram
       this.eepromData = eepromData;
    }
 
+   @XmlAttribute(name = "eeprom_data")
+   String getEepromDataStr()
+   {
+      if (eepromData == null) return "";
+      return DatatypeConverter.printHexBinary(eepromData).toLowerCase();
+   }
+
+   void setEepromDataStr(String str)
+   {
+      if (str == null || str.isEmpty())
+         eepromData = null;
+      else eepromData = DatatypeConverter.parseHexBinary(str);
+   }
+
+   /**
+    * @return the eepromDataLength
+    */
+   @XmlAttribute(name = "data_length")
+   public Integer getEepromDataLength()
+   {
+      return eepromData == null ? 0 : eepromData.length;
+   }
+
+   /**
+    * @param eepromDataLength the eepromDataLength to set
+    */
+   public void setEepromDataLength(Integer eepromDataLength)
+   {
+   }
+
    /**
     * @return the dynamicManagement
     */
    public boolean isDynamicManagement()
    {
-      return dynamicManagement;
+      return dynamicManagement == 1;
    }
 
    /**
@@ -391,7 +432,7 @@ public class VdApplicationProgram
     */
    public void setDynamicManagement(boolean dynamicManagement)
    {
-      this.dynamicManagement = dynamicManagement;
+      this.dynamicManagement = dynamicManagement ? 1 : 0;
    }
 
    /**
@@ -433,17 +474,9 @@ public class VdApplicationProgram
    /**
     * @return the programStyle
     */
-   public int getProgramStyle()
+   public Integer getProgramStyle()
    {
       return programStyle;
-   }
-
-   /**
-    * @param programStyle the programStyle to set
-    */
-   public void setProgramStyle(int programStyle)
-   {
-      this.programStyle = programStyle;
    }
 
    /**
@@ -451,7 +484,7 @@ public class VdApplicationProgram
     */
    public boolean isPollingMaster()
    {
-      return pollingMaster;
+      return pollingMaster == 1;
    }
 
    /**
@@ -459,7 +492,7 @@ public class VdApplicationProgram
     */
    public void setPollingMaster(boolean pollingMaster)
    {
-      this.pollingMaster = pollingMaster;
+      this.pollingMaster = pollingMaster ? 1 : 0;
    }
 
    /**
@@ -476,6 +509,174 @@ public class VdApplicationProgram
    public void setNumPollingGroups(Integer numPollingGroups)
    {
       this.numPollingGroups = numPollingGroups;
+   }
+
+   /**
+    * @return the symbolId
+    */
+   public Integer getSymbolId()
+   {
+      return symbolId;
+   }
+
+   /**
+    * @param symbolId the symbolId to set
+    */
+   public void setSymbolId(Integer symbolId)
+   {
+      this.symbolId = symbolId;
+   }
+
+   /**
+    * @return the versionNumber
+    */
+   public Integer getVersionNumber()
+   {
+      return versionNumber;
+   }
+
+   /**
+    * @param versionNumber the versionNumber to set
+    */
+   public void setVersionNumber(Integer versionNumber)
+   {
+      this.versionNumber = versionNumber;
+   }
+
+   /**
+    * @return the s19File
+    */
+   public String getS19File()
+   {
+      return s19File;
+   }
+
+   /**
+    * @param s19File the s19File to set
+    */
+   public void setS19File(String s19File)
+   {
+      this.s19File = s19File;
+   }
+
+   /**
+    * @return the mapFile
+    */
+   public String getMapFile()
+   {
+      return mapFile;
+   }
+
+   /**
+    * @param mapFile the mapFile to set
+    */
+   public void setMapFile(String mapFile)
+   {
+      this.mapFile = mapFile;
+   }
+
+   /**
+    * @return the assemblerId
+    */
+   public Integer getAssemblerId()
+   {
+      return assemblerId;
+   }
+
+   /**
+    * @param assemblerId the assemblerId to set
+    */
+   public void setAssemblerId(Integer assemblerId)
+   {
+      this.assemblerId = assemblerId;
+   }
+
+   /**
+    * @return the helpFile
+    */
+   public String getHelpFile()
+   {
+      return helpFile;
+   }
+
+   /**
+    * @param helpFile the helpFile to set
+    */
+   public void setHelpFile(String helpFile)
+   {
+      this.helpFile = helpFile;
+   }
+
+   /**
+    * @return the contextId
+    */
+   public Integer getContextId()
+   {
+      return contextId;
+   }
+
+   /**
+    * @param contextId the contextId to set
+    */
+   public void setContextId(Integer contextId)
+   {
+      this.contextId = contextId;
+   }
+
+   /**
+    * @return the originalManufacturerId
+    */
+   public Integer getOriginalManufacturerId()
+   {
+      return originalManufacturerId;
+   }
+
+   /**
+    * @param originalManufacturerId the originalManufacturerId to set
+    */
+   public void setOriginalManufacturerId(Integer originalManufacturerId)
+   {
+      this.originalManufacturerId = originalManufacturerId;
+   }
+
+   /**
+    * @return the apiVersion
+    */
+   public Integer getApiVersion()
+   {
+      return apiVersion;
+   }
+
+   /**
+    * @param apiVersion the apiVersion to set
+    */
+   public void setApiVersion(Integer apiVersion)
+   {
+      this.apiVersion = apiVersion;
+   }
+
+   /**
+    * @param maskId the maskId to set
+    */
+   public void setMaskId(int maskId)
+   {
+      this.maskId = maskId;
+   }
+
+   /**
+    * @param ramSize the ramSize to set
+    */
+   public void setRamSize(Integer ramSize)
+   {
+      this.ramSize = ramSize;
+   }
+
+   /**
+    * @param programStyle the programStyle to set
+    */
+   public void setProgramStyle(Integer programStyle)
+   {
+      this.programStyle = programStyle;
    }
 
    /**

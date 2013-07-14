@@ -58,8 +58,8 @@ public class TestVdReader
       List<VdManufacturer> manufacturers = vd.manufacturers;
       assertNotNull("manufacturers!=null", manufacturers);
       assertEquals(2, manufacturers.size());
-      assertEquals(1, manufacturers.get(0).id);
-      assertEquals("Siemens", manufacturers.get(0).name);
+      assertEquals(1, manufacturers.get(0).getId());
+      assertEquals("Siemens", manufacturers.get(0).getName());
 
       assertEquals(2, vd.functionalEntities.size());
       assertEquals("Phys. Sensoren", vd.functionalEntities.get(0).getName());

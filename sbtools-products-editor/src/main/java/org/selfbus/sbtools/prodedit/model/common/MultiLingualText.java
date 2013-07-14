@@ -1,15 +1,20 @@
-package org.selfbus.sbtools.prodedit.model.prodgroup;
-
-import java.util.HashMap;
-import java.util.Map;
+package org.selfbus.sbtools.prodedit.model.common;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.bind.annotation.XmlValue;
 
-import org.selfbus.sbtools.prodedit.jaxb.JaxbMapAdapter;
+import org.selfbus.sbtools.prodedit.ProdEdit;
+
+import com.jgoodies.common.collect.ArrayListModel;
+
+
+//
+//  See  http://www.developpez.net/forums/d972324/java/general-java/xml/hashmap-jaxb
+//
 
 /**
  * A text / string in multiple languages.
@@ -18,7 +23,17 @@ import org.selfbus.sbtools.prodedit.jaxb.JaxbMapAdapter;
 @XmlAccessorType(XmlAccessType.NONE)
 public class MultiLingualText
 {
-   private Map<String, String> texts = new HashMap<String, String>();
+   @XmlElement(name = "text")
+   private ArrayListModel<Element> texts = new ArrayListModel<Element>();
+
+   /**
+    * Get the text in the default language.
+    * @return The text in the default language.
+    */
+   public String getDefaultText()
+   {
+      return getText(ProdEdit.getInstance().getProject().getDefaultLangId());
+   }
 
    /**
     * Get the text for a specific language.
@@ -26,17 +41,56 @@ public class MultiLingualText
     * @param lang - the language to get the text for.
     * @return The text or null if not found
     */
-   public String getText(String lang)
+   public String getText(String langId)
    {
-      return texts.get(lang);
+      return getElement(langId).text;
    }
-   
+
+   /**
+    * Set the text for a language.
+    *
+    * @param langId - the language ID
+    * @param text - the text
+    */
+   public void setText(String langId, String text)
+   {
+      for (Element e : texts)
+      {
+         if (e.langId.equals(langId))
+         {
+            e.text = text;
+            return;
+         }
+      }
+
+      texts.add(new Element(langId, text));
+   }
+
+
+   /**
+    * Get the text element for a specific language.
+    * 
+    * @param langId - the language to get the text for.
+    * @return The text element
+    */
+   public Element getElement(String langId)
+   {
+      for (Element e : texts)
+      {
+         if (e.langId.equals(langId))
+            return e;
+      }
+
+      Element e = new Element(langId, null);
+      texts.add(e);
+
+      return e;
+   }
+
    /**
     * @return the texts
     */
-   @XmlElement(name = "text")
-   @XmlJavaTypeAdapter(JaxbMapAdapter.class)
-   public Map<String, String> getTexts()
+   public ArrayListModel<Element> getTexts()
    {
       return texts;
    }
@@ -44,8 +98,37 @@ public class MultiLingualText
    /**
     * @param texts the texts to set
     */
-   public void setTexts(Map<String, String> texts)
+   public void setTexts(ArrayListModel<Element> texts)
    {
       this.texts = texts;
+   }
+   
+   public static class Element
+   {
+     @XmlAttribute
+     public String langId;
+
+     @XmlValue
+     public String text;
+    
+     public Element()
+     {
+     }
+    
+     public Element(String langId, String text)
+     {
+       this.langId = langId;
+       this.text = text;
+     }
+
+     public String getText()
+     {
+        return text;
+     }
+     
+     public void setText(String text)
+     {
+        this.text = text;
+     }
    }
 }

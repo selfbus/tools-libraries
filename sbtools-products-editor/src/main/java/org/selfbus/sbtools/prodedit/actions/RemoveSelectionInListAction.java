@@ -66,10 +66,8 @@ public final class RemoveSelectionInListAction extends BasicAction
    {
       List<?> list = selectionInList.getList();
 
-      int selectedIndex = Math.min(selectionInList.getSelectionIndex(), list.size() - 2);
-      if (selectedIndex < 0) return;
-
       Object selectedObject = selectionInList.getSelection();
+      if (selectedObject == null) return;
 
       if (confirm)
       {
@@ -82,7 +80,11 @@ public final class RemoveSelectionInListAction extends BasicAction
          }
       }
 
+      int selectedIndex = Math.min(selectionInList.getSelectionIndex(), list.size() - 2);
+
       list.remove(selectedObject);
-      selectionInList.setSelectionIndex(selectedIndex);
+
+      if (selectedIndex >= 0)
+         selectionInList.setSelectionIndex(selectedIndex);
    }
 }

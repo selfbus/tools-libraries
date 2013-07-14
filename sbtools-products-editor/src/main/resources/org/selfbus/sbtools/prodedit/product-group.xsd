@@ -12,10 +12,10 @@
      </xs:sequence>
     </xs:complexType>
    </xs:element>
-   <xs:element name="application_programs" minOccurs="0" maxOccurs="1">
+   <xs:element name="programs" minOccurs="0" maxOccurs="1">
     <xs:complexType>
      <xs:sequence>
-      <xs:element name="application_program" type="ApplicationProgram" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="program" type="ApplicationProgram" minOccurs="0" maxOccurs="unbounded" />
      </xs:sequence>
     </xs:complexType>
    </xs:element>
@@ -43,6 +43,7 @@
   <xs:attribute name="pei_program_id" type="xs:int" />
   <xs:attribute name="virtual_device_number" type="xs:int" />
   <xs:attribute name="medium_types" type="xs:string" />
+  <xs:attribute name="version" type="xs:int" default="1" />
  </xs:complexType>
 
  <xs:complexType name="ApplicationProgram">
@@ -54,26 +55,16 @@
   <xs:attribute name="mask_id" type="xs:int" />
   <xs:attribute name="program_name" type="xs:string" use="required" />
   <xs:attribute name="program_version" type="xs:string" />
-  <xs:attribute name="program_version_number" type="xs:int" />
-  <xs:attribute name="linkable" type="xs:int" />
   <xs:attribute name="device_type" type="xs:int" />
-  <xs:attribute name="pei_type" type="xs:int" />
   <xs:attribute name="address_tab_size" type="xs:int" />
   <xs:attribute name="assoctab_address" type="xs:int" />
   <xs:attribute name="assoctab_size" type="xs:int" />
   <xs:attribute name="commstab_address" type="xs:int" />
   <xs:attribute name="commstab_size" type="xs:int" />
-  <xs:attribute name="program_serial_number" type="xs:string" />
   <xs:attribute name="manufacturer_id" type="xs:int" />
   <xs:attribute name="eeprom_data" type="xs:base64Binary" />
   <xs:attribute name="data_length" type="xs:int" />
-  <xs:attribute name="s19_file" type="xs:string" />
-  <xs:attribute name="map_file" type="xs:string" />
-  <xs:attribute name="assembler_id" type="xs:int" />
-  <xs:attribute name="help_file_name" type="xs:string" />
   <xs:attribute name="context_id" type="xs:int" />
-  <xs:attribute name="dynamic_management" type="xs:int" />
-  <xs:attribute name="program_type" type="xs:int" />
   <xs:attribute name="ram_size" type="xs:int" />
   <xs:attribute name="original_manufacturer_id" type="xs:int" />
   <xs:attribute name="api_version" type="xs:int" />

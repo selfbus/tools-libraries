@@ -59,7 +59,7 @@ public class SaveProjectAsAction extends BasicAction
 
       final JFileChooser dlg = new JFileChooser();
       dlg.setCurrentDirectory(new File(lastDir));
-      final FileFilter fileFilter = new ProjectFileFilter(false);
+      final FileFilter fileFilter = new ProjectFileFilter();
       dlg.addChoosableFileFilter(fileFilter);
       dlg.addChoosableFileFilter(dlg.getAcceptAllFileFilter());
       dlg.setFileFilter(fileFilter);

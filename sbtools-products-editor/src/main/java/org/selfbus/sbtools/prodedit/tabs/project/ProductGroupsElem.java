@@ -21,7 +21,7 @@ import org.selfbus.sbtools.common.gui.components.CloseableComponent;
 import org.selfbus.sbtools.common.gui.misc.ImageCache;
 import org.selfbus.sbtools.prodedit.ProdEdit;
 import org.selfbus.sbtools.prodedit.actions.RemoveSelectionInListAction;
-import org.selfbus.sbtools.prodedit.binding.ValidationHandler;
+import org.selfbus.sbtools.prodedit.binding.ListValidationHandler;
 import org.selfbus.sbtools.prodedit.internal.I18n;
 import org.selfbus.sbtools.prodedit.model.AbstractProjectListener;
 import org.selfbus.sbtools.prodedit.model.ProjectListener;
@@ -51,7 +51,7 @@ public class ProductGroupsElem implements CloseableComponent, CategoryElem
    private SelectionInList<ProductGroup> selectionInList = new SelectionInList<ProductGroup>(new LinkedList<ProductGroup>());
    private final PresentationModel<ProductGroup> detailsModel = new PresentationModel<ProductGroup>(selectionInList);
    private final Validator<ProductGroup> validator = new DetailsFormValidator();
-   private final ValidationHandler<ProductGroup> validationHandler = new ValidationHandler<ProductGroup>(detailsModel, validator);
+   private final ListValidationHandler<ProductGroup> validationHandler = new ListValidationHandler<ProductGroup>(detailsModel, validator);
 
    @SuppressWarnings("unchecked")
    private final JList<ProductGroup> prodGroupsList = BasicComponentFactory.createList(selectionInList);

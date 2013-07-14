@@ -5,9 +5,11 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+import javax.swing.text.JTextComponent;
 
 import org.selfbus.sbtools.prodedit.ProdEdit;
-import org.selfbus.sbtools.prodedit.binding.ValidationHandler;
+import org.selfbus.sbtools.prodedit.binding.IdValueConverter;
+import org.selfbus.sbtools.prodedit.binding.ListValidationHandler;
 import org.selfbus.sbtools.prodedit.internal.I18n;
 import org.selfbus.sbtools.prodedit.model.global.Project;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ApplicationProgram;
@@ -18,6 +20,8 @@ import org.selfbus.sbtools.prodedit.utils.FontUtils;
 
 import com.jgoodies.binding.PresentationModel;
 import com.jgoodies.binding.adapter.BasicComponentFactory;
+import com.jgoodies.binding.value.ConverterValueModel;
+import com.jgoodies.binding.value.ValueModel;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -32,14 +36,18 @@ public class ApplicationProgramElem implements CategoryElem
 {
    protected final ProductGroup group;
 
-   private final PresentationModel<ApplicationProgram> detailsModel;
+   private final PresentationModel<ApplicationProgram> detailsModel = new PresentationModel<ApplicationProgram>();
    private final Validator<ApplicationProgram> validator = new DetailsFormValidator();
-   private final ValidationHandler<ApplicationProgram> validationHandler;
+   private final ListValidationHandler<ApplicationProgram> validationHandler = new ListValidationHandler<ApplicationProgram>(detailsModel, validator);
 
    private final JPanel detailsPanel;
    private final JToolBar toolBar = new JToolBar();
 
-   private final JLabel idField, nameField;
+   private final ValueModel idValue = new ConverterValueModel(detailsModel.getModel("id"), new IdValueConverter());
+   private final JLabel idField = BasicComponentFactory.createLabel(idValue);
+
+   private final ValueModel nameValue = detailsModel.getModel("name");
+   private final JTextComponent nameField = BasicComponentFactory.createTextField(nameValue, false);
 
    /**
     * Create a {@link VirtualDevice virtual device} display element.
@@ -49,12 +57,6 @@ public class ApplicationProgramElem implements CategoryElem
    public ApplicationProgramElem(final ProductGroup group)
    {
       this.group = group;
-
-      detailsModel = new PresentationModel<ApplicationProgram>();
-      validationHandler = new ValidationHandler<ApplicationProgram>(detailsModel, validator);
-
-      idField = BasicComponentFactory.createLabel(detailsModel.getModel("idStr"));
-      nameField = BasicComponentFactory.createLabel(validationHandler.getModel("name"));
 
       FormLayout layout = new FormLayout("6dlu,l:p,4dlu,f:p:g,6dlu", 
          "8dlu,p,8dlu,p,4dlu,p,p,4dlu,p,4dlu,p,4dlu,p,4dlu,p,4dlu,p,4dlu,p,4dlu,f:p:g,p,4dlu");

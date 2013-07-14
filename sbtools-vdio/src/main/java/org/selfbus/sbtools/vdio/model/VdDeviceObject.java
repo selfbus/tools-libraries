@@ -19,16 +19,16 @@ public class VdDeviceObject
    private int objectPriority;
 
    @XmlAttribute(name = "object_read", required = true)
-   private boolean objectRead;
+   private int objectRead;
 
    @XmlAttribute(name = "object_write", required = true)
-   private boolean objectWrite;
+   private int objectWrite;
 
    @XmlAttribute(name = "object_comm", required = true)
-   private boolean objectComm;
+   private int objectComm;
 
    @XmlAttribute(name = "object_trans", required = true)
-   private boolean objectTrans;
+   private int objectTrans;
 
    @XmlAttribute(name = "object_subgroups_text")
    private String subgroupsText;
@@ -46,19 +46,31 @@ public class VdDeviceObject
    private String subgroupsText2;
 
    @XmlAttribute(name = "device_object_visible", required = true)
-   private boolean visible;
+   private int visible;
 
    @XmlAttribute(name = "device_object_unique_name")
    private String name;
 
    @XmlAttribute(name = "object_update", required = true)
-   private boolean update;
+   private int update;
 
    @XmlAttribute(name = "device_object_unique_number")
    private int uniqueNumber;
 
-   @XmlAttribute(name = "device_object_type", required = true)
-   private int objectTypeId;
+   @XmlAttribute(name = "device_object_type")
+   private Integer objectTypeId;
+
+   @XmlAttribute(name = "eib_data_type_code")
+   private Integer eibDataTypeCode;
+
+   @XmlAttribute(name = "eib_data_subtype_code")
+   private Integer eibDataSubTypeCode;
+
+   @XmlAttribute(name = "name")
+   private String extraName;
+
+   @XmlAttribute(name = "description")
+   private String description;
 
    /**
     * Create a product description.
@@ -104,7 +116,7 @@ public class VdDeviceObject
     */
    public boolean isObjectRead()
    {
-      return objectRead;
+      return objectRead == 1;
    }
 
    /**
@@ -112,7 +124,7 @@ public class VdDeviceObject
     */
    public void setObjectRead(boolean objectRead)
    {
-      this.objectRead = objectRead;
+      this.objectRead = objectRead ? 1 : 0;
    }
 
    /**
@@ -120,7 +132,7 @@ public class VdDeviceObject
     */
    public boolean isObjectWrite()
    {
-      return objectWrite;
+      return objectWrite == 1;
    }
 
    /**
@@ -128,7 +140,7 @@ public class VdDeviceObject
     */
    public void setObjectWrite(boolean objectWrite)
    {
-      this.objectWrite = objectWrite;
+      this.objectWrite = objectWrite ? 1 : 0;
    }
 
    /**
@@ -136,7 +148,7 @@ public class VdDeviceObject
     */
    public boolean isObjectComm()
    {
-      return objectComm;
+      return objectComm == 1;
    }
 
    /**
@@ -144,7 +156,7 @@ public class VdDeviceObject
     */
    public void setObjectComm(boolean objectComm)
    {
-      this.objectComm = objectComm;
+      this.objectComm = objectComm ? 1 : 0;
    }
 
    /**
@@ -152,7 +164,7 @@ public class VdDeviceObject
     */
    public boolean isObjectTrans()
    {
-      return objectTrans;
+      return objectTrans == 1;
    }
 
    /**
@@ -160,7 +172,7 @@ public class VdDeviceObject
     */
    public void setObjectTrans(boolean objectTrans)
    {
-      this.objectTrans = objectTrans;
+      this.objectTrans = objectTrans ? 1 : 0;
    }
 
    /**
@@ -248,7 +260,7 @@ public class VdDeviceObject
     */
    public boolean isVisible()
    {
-      return visible;
+      return visible == 1;
    }
 
    /**
@@ -256,7 +268,7 @@ public class VdDeviceObject
     */
    public void setVisible(boolean visible)
    {
-      this.visible = visible;
+      this.visible = visible ? 1 : 0;
    }
 
    /**
@@ -280,7 +292,7 @@ public class VdDeviceObject
     */
    public boolean isUpdate()
    {
-      return update;
+      return update == 1;
    }
 
    /**
@@ -288,7 +300,7 @@ public class VdDeviceObject
     */
    public void setUpdate(boolean update)
    {
-      this.update = update;
+      this.update = update ? 1 : 0;
    }
 
    /**

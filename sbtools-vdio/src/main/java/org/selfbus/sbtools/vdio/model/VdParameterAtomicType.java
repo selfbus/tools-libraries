@@ -35,11 +35,11 @@ public class VdParameterAtomicType
     * @param name - the name.
     * @param display - the display attribute.
     */
-   public VdParameterAtomicType(int id, String name, String display)
+   public VdParameterAtomicType(int id, String name, char display)
    {
       this.id = id;
       this.name = name;
-      this.display = display;
+      this.display = Character.toString(display);
    }
 
    /**

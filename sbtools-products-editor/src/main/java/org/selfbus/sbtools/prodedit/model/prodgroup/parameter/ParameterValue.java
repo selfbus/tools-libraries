@@ -1,9 +1,12 @@
-package org.selfbus.sbtools.prodedit.model.prodgroup;
+package org.selfbus.sbtools.prodedit.model.prodgroup.parameter;
 
-import java.util.Arrays;
-
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
+import org.selfbus.sbtools.prodedit.model.common.MultiLingualText;
 import org.selfbus.sbtools.prodedit.model.interfaces.Identifiable;
 
 import com.jgoodies.binding.beans.Model;
@@ -11,27 +14,29 @@ import com.jgoodies.binding.beans.Model;
 /**
  * Values of an enum parameter type.
  */
+@XmlType(propOrder = {})
+@XmlAccessorType(XmlAccessType.NONE)
 public class ParameterValue extends Model implements Identifiable
 {
    private static final long serialVersionUID = -6983752023306872120L;
 
-   @XmlAttribute(name = "parameter_value_id", required = true)
+   @XmlAttribute(name = "id", required = true)
    private int id;
 
-   @XmlAttribute(name = "displayed_value")
-   private String displayedValue;
+   @XmlAttribute(name = "order", required = true)
+   private int order;
 
-   @XmlAttribute(name = "display_order")
-   private int displayOrder;
-
-   @XmlAttribute(name = "real_value")
-   private int intValue;
+   @XmlAttribute(name = "int_value")
+   private Integer intValue;
 
    @XmlAttribute(name = "binary_value")
    private byte[] binaryValue;
 
    @XmlAttribute(name = "double_value")
-   private double doubleValue;
+   private Double doubleValue;
+
+   @XmlElement(name = "label")
+   private MultiLingualText label = new MultiLingualText();
 
    /**
     * Create an empty parameter value.
@@ -44,44 +49,12 @@ public class ParameterValue extends Model implements Identifiable
     * Create a parameter value.
     *
     * @param id - the ID
-    * @param displayedValue - the displayed value string
-    * @param value - the integer value
     */
-   public ParameterValue(int id, String displayedValue, int value)
+   public ParameterValue(int id)
    {
       this.id = id;
-      this.displayedValue = displayedValue;
-      this.intValue = value;
    }
 
-   /**
-    * Create a parameter value.
-    *
-    * @param id - the ID
-    * @param displayedValue - the displayed value string
-    * @param value - the binary value
-    */
-   public ParameterValue(int id, String displayedValue, byte[] value)
-   {
-      this.id = id;
-      this.displayedValue = displayedValue;
-      this.binaryValue = Arrays.copyOf(value, value.length);
-   }
-
-   /**
-    * Create a parameter value.
-    *
-    * @param id - the ID
-    * @param displayedValue - the displayed value string
-    * @param value - the double value
-    */
-   public ParameterValue(int id, String displayedValue, double value)
-   {
-      this.id = id;
-      this.displayedValue = displayedValue;
-      this.doubleValue = value;
-   }
-   
    /**
     * @return the id
     */
@@ -99,41 +72,46 @@ public class ParameterValue extends Model implements Identifiable
    }
 
    /**
-    * @return the displayedValue
+    * @return the label
     */
-   public String getDisplayedValue()
+   public MultiLingualText getLabel()
    {
-      return displayedValue;
+      if (label == null)
+         label = new MultiLingualText();
+
+      return label;
    }
 
    /**
-    * @param displayedValue the displayedValue to set
+    * Set the label.
+    *
+    * @param label - the label to set
     */
-   public void setDisplayedValue(String displayedValue)
+   public void setLabel(MultiLingualText label)
    {
-      this.displayedValue = displayedValue;
+      this.label = label;
    }
 
    /**
     * @return the displayOrder
     */
-   public int getDisplayOrder()
+   public int getOrder()
    {
-      return displayOrder;
+      return order;
    }
 
    /**
-    * @param displayOrder the displayOrder to set
+    * @param order the display order to set
     */
-   public void setDisplayOrder(int displayOrder)
+   public void setOrder(int order)
    {
-      this.displayOrder = displayOrder;
+      this.order = order;
    }
 
    /**
     * @return The integer value that will be loaded into the BCU's memory.
     */
-   public int getIntValue()
+   public Integer getIntValue()
    {
       return intValue;
    }
@@ -143,7 +121,7 @@ public class ParameterValue extends Model implements Identifiable
     *
     * @param intValue the intValue to set
     */
-   public void setIntValue(int intValue)
+   public void setIntValue(Integer intValue)
    {
       this.intValue = intValue;
    }
@@ -171,7 +149,7 @@ public class ParameterValue extends Model implements Identifiable
    /**
     * @return The double value that will be loaded into the BCU's memory.
     */
-   public double getDoubleValue()
+   public Double getDoubleValue()
    {
       return doubleValue;
    }
@@ -181,7 +159,7 @@ public class ParameterValue extends Model implements Identifiable
     *
     * @param doubleValue - the double value to set.
     */
-   public void setDoubleValue(double doubleValue)
+   public void setDoubleValue(Double doubleValue)
    {
       this.doubleValue = doubleValue;
    }

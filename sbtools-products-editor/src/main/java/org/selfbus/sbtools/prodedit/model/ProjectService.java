@@ -13,18 +13,20 @@ import org.selfbus.sbtools.prodedit.model.global.Language;
 import org.selfbus.sbtools.prodedit.model.global.Manufacturer;
 import org.selfbus.sbtools.prodedit.model.global.Project;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ApplicationProgram;
-import org.selfbus.sbtools.prodedit.model.prodgroup.ParameterType;
-import org.selfbus.sbtools.prodedit.model.prodgroup.ParameterValue;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
 import org.selfbus.sbtools.prodedit.model.prodgroup.VirtualDevice;
+import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterType;
+import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterValue;
+import org.selfbus.sbtools.prodedit.vdio.ProductsExporter;
+import org.selfbus.sbtools.prodedit.vdio.ProductsImporter;
+import org.selfbus.sbtools.vdio.VdioException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jgoodies.common.collect.ArrayListModel;
 
 /**
- * A manager that holds the current project and notifies subscribers
- * about changes.
+ * A manager that holds the current project and notifies subscribers about changes.
  */
 public class ProjectService
 {
@@ -36,25 +38,20 @@ public class ProjectService
     * Load a project.
     * 
     * @param file - the file to load the project from.
+    * @throws FileNotFoundException 
     */
-   public void loadProject(File file)
+   public void loadProject(File file) throws FileNotFoundException
    {
       LOGGER.info("Loading project from {}", file);
 
       ProjectReader reader = new ProjectReader();
-      try
-      {
-         project = reader.read(file);
-         project.setProjectService(this);
 
-         Config.getInstance().put("project.last", file.getAbsolutePath());
+      project = reader.read(file);
+      project.setProjectService(this);
 
-         fireProjectChanged();
-      }
-      catch (FileNotFoundException e)
-      {
-         throw new RuntimeException("File not found: " + file, e);
-      }
+      Config.getInstance().put("project.last", file.getAbsolutePath());
+
+      fireProjectChanged();
    }
 
    /**
@@ -77,11 +74,74 @@ public class ProjectService
    }
 
    /**
-    * Start a new project.
+    * Import the project from a file.
+    *
+    * @param file - the file to import from
+    * 
+    * @return The imported project.
+    *
+    * @throws VdioException 
+    * @throws FileNotFoundException 
     */
-   public void newProject()
+   public Project importProject(File file) throws FileNotFoundException, VdioException
    {
-      LOGGER.info("Creating new project");
+      ProductsImporter importer = new ProductsImporter(this);
+
+      Project newProject = importer.read(file);
+      if (newProject != null)
+      {
+         project = newProject;
+
+         Config.getInstance().remove("project.last");
+         fireProjectChanged();
+      }
+
+      return project;
+   }
+
+   /**
+    * Export the project to a file.
+    *
+    * @param file - the file to export to
+    *
+    * @throws VdioException 
+    * @throws FileNotFoundException 
+    */
+   public void exportProject(File file) throws FileNotFoundException, VdioException
+   {
+      ProductsExporter exporter = new ProductsExporter();
+      exporter.write(project, file);
+   }
+
+   /**
+    * Start a new project.
+    * 
+    * @return The created project.
+    */
+   public Project createProject()
+   {
+      LOGGER.info("Creating new example project");
+
+      project = new Project();
+      project.setProjectService(this);
+
+      int manufacturerId = 76;
+      project.getManufacturers().put(manufacturerId, new Manufacturer(manufacturerId, "Selfbus"));
+
+      Config.getInstance().remove("project.last");
+      fireProjectChanged();
+
+      return project;
+   }
+
+   /**
+    * Create an example project.
+    * 
+    * @return The created project.
+    */
+   public Project createExampleProject()
+   {
+      LOGGER.info("Creating new example project");
 
       project = new Project();
       project.setProjectService(this);
@@ -94,20 +154,20 @@ public class ProjectService
       project.createFunctionalEntity("Touch", feIn);
       project.createFunctionalEntity("Switches", feIn);
 
-      project.getLanguages().add(new Language("en", I18n.getMessage("ProjectService.langEN")));
       project.getLanguages().add(new Language("de", I18n.getMessage("ProjectService.langDE")));
+      project.getLanguages().add(new Language("en", I18n.getMessage("ProjectService.langEN")));
       project.getLanguages().add(new Language("fr", I18n.getMessage("ProjectService.langFR")));
-      project.setDefaultLanguage("de");
+      project.setDefaultLangId("de");
 
       ProductGroup group = new ProductGroup();
-      group.setId("example-1");
-      group.setName("Example 1");
+      group.setId("inputs");
+      group.setName("Inputs");
       group.setManufacturer(project.getManufacturer(manufacturerId));
       project.addProductGroup(group);
 
       VirtualDevice device = group.createDevice();
       device.setNumber(1);
-      device.setDescription("Example device #1");
+      device.setDescription("Binary Input");
 
       ApplicationProgram program = group.getProgram(device);
       ArrayListModel<ParameterType> paramTypes = program.getParameterTypes();
@@ -117,9 +177,21 @@ public class ProjectService
       paramType.setMinValue(0);
       paramType.setMaxValue(1);
       paramType.setSize(1);
-      paramType.addValue(new ParameterValue(101, "No", 0));
-      paramType.addValue(new ParameterValue(102, "Yes", 1));
       paramTypes.add(paramType);
+
+      ParameterValue paramValue = new ParameterValue(101);
+      paramValue.setIntValue(0);
+      paramValue.getLabel().setText("en", "No");
+      paramValue.getLabel().setText("de", "Nein");
+      paramValue.getLabel().setText("fr", "Non");
+      paramType.addValue(paramValue);
+
+      paramValue = new ParameterValue(102);
+      paramValue.setIntValue(1);
+      paramValue.getLabel().setText("en", "Yes");
+      paramValue.getLabel().setText("de", "Ja");
+      paramValue.getLabel().setText("fr", "Oui");
+      paramType.addValue(paramValue);
 
       paramType = new ParameterType(ParameterAtomicType.UNSIGNED, "Percent");
       paramType.setId(200);
@@ -130,6 +202,8 @@ public class ProjectService
 
       Config.getInstance().remove("project.last");
       fireProjectChanged();
+
+      return project;
    }
 
    /**
@@ -141,6 +215,17 @@ public class ProjectService
    }
 
    /**
+    * Set the project.
+    * 
+    * @param project - the project
+    */
+   public void setProject(Project project)
+   {
+      this.project = project;
+      fireProjectChanged();
+   }
+
+   /**
     * Add a project listener.
     * 
     * @param listener - the listener to add.
@@ -149,7 +234,7 @@ public class ProjectService
    {
       synchronized (listeners)
       {
-         listeners.add(listener);         
+         listeners.add(listener);
       }
    }
 

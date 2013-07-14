@@ -1,22 +1,26 @@
 package org.selfbus.sbtools.prodedit.tabs.project;
 
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeModel;
 
+import org.selfbus.sbtools.common.gui.actions.BasicAction;
 import org.selfbus.sbtools.common.gui.components.CloseableComponent;
-import org.selfbus.sbtools.common.gui.components.ToolBarButton;
+import org.selfbus.sbtools.common.gui.misc.ImageCache;
 import org.selfbus.sbtools.common.gui.tree.IconTreeCellRenderer;
 import org.selfbus.sbtools.common.gui.tree.MutableIconTreeNode;
 import org.selfbus.sbtools.common.gui.utils.TreeUtils;
 import org.selfbus.sbtools.prodedit.ProdEdit;
+import org.selfbus.sbtools.prodedit.actions.RemoveSelectionInTreeAction;
 import org.selfbus.sbtools.prodedit.binding.SelectionInTree;
-import org.selfbus.sbtools.prodedit.binding.ValidationHandler;
+import org.selfbus.sbtools.prodedit.binding.ListValidationHandler;
 import org.selfbus.sbtools.prodedit.components.FormPanel;
 import org.selfbus.sbtools.prodedit.internal.I18n;
 import org.selfbus.sbtools.prodedit.model.AbstractProjectListener;
@@ -40,10 +44,11 @@ public class FunctionalEntitiesElem implements CloseableComponent, CategoryElem
    private final DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
    private final SelectionInTree selectionInTree = new SelectionInTree(treeModel);
    private final JTree tree = new JTree(selectionInTree);
+   private final JScrollPane listScrollPane = new JScrollPane(tree);
 
    private final PresentationModel<FunctionalEntity> detailsModel = new PresentationModel<FunctionalEntity>(selectionInTree);
    private final Validator<FunctionalEntity> validator = new FunctionalEntityValidator();
-   private final ValidationHandler<FunctionalEntity> validationHandler = new ValidationHandler<FunctionalEntity>(detailsModel, validator);
+   private final ListValidationHandler<FunctionalEntity> validationHandler = new ListValidationHandler<FunctionalEntity>(detailsModel, validator);
    
    private final JLabel idField;
    private final JTextField nameField, descField;
@@ -86,9 +91,40 @@ public class FunctionalEntitiesElem implements CloseableComponent, CategoryElem
     */
    private void setupToolBar()
    {
-      toolBar.add(new ToolBarButton("+"));
-      toolBar.add(new ToolBarButton("-"));
-      toolBar.add(new ToolBarButton("o"));
+      //
+      //  Action: add a language
+      //
+      toolBar.add(new BasicAction("add", I18n.getMessage("LanguagesElem.addTip"), ImageCache.getIcon("icons/add"))
+      {
+         private static final long serialVersionUID = 1;
+
+         @Override
+         public synchronized void actionEvent(ActionEvent event)
+         {
+            Project project = ProdEdit.getInstance().getProject();
+            if (project == null) return;
+
+            FunctionalEntity parentEntity = (FunctionalEntity) selectionInTree.getSelection();
+            selectionInTree.setSelection(null);
+
+            final FunctionalEntity newEntity = project.createFunctionalEntity(parentEntity);
+
+            // FIXME setSelection is buggy
+//            SwingUtilities.invokeLater(new Runnable()
+//            {
+//               @Override
+//               public void run()
+//               {
+//                  selectionInTree.setSelection(newEntity);
+//               }
+//            });
+         }
+      });
+
+      //
+      //  Action: remove the current language
+      //
+      toolBar.add(new RemoveSelectionInTreeAction(selectionInTree, I18n.getMessage("LanguagesElem.removeTip"))); 
    }
 
    /**
@@ -118,13 +154,14 @@ public class FunctionalEntitiesElem implements CloseableComponent, CategoryElem
    @Override
    public JComponent getListPanel()
    {
-      return tree;
+      return listScrollPane;
    }
 
    @Override
    public void close()
    {
       ProdEdit.getInstance().getProjectService().removeListener(projectListener);
+      selectionInTree.release();
    }      
 
 //   private void detailsEdited()
@@ -185,7 +222,7 @@ public class FunctionalEntitiesElem implements CloseableComponent, CategoryElem
       //      node.setIcon(funcEntityIcon);  TODO
       parentNode.add(node);
 
-      for (FunctionalEntity e : funcEntity.childs)
+      for (FunctionalEntity e : funcEntity.getChilds())
       {
          addFunctionalEntity(e, node);
       }
@@ -212,9 +249,9 @@ public class FunctionalEntitiesElem implements CloseableComponent, CategoryElem
          nameField.setEnabled(true);
          descField.setEnabled(true);
 
-         nameField.setText(funcEntity.name);
-         descField.setText(funcEntity.description);
-         idField.setText(Integer.toString(funcEntity.id));
+         nameField.setText(funcEntity.getName());
+         descField.setText(funcEntity.getDescription());
+         idField.setText(Integer.toString(funcEntity.getId()));
       }
    }
 

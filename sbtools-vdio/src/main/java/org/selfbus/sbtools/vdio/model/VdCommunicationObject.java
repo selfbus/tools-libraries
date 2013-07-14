@@ -24,16 +24,16 @@ public class VdCommunicationObject
    private String function;
 
    @XmlAttribute(name = "object_readenabled", required = true)
-   private boolean readEnabled;
+   private int readEnabled;
 
    @XmlAttribute(name = "object_writeenabled", required = true)
-   private boolean writeEnabled;
+   private int writeEnabled;
 
    @XmlAttribute(name = "object_commenabled", required = true)
-   private boolean commEnabled;
+   private int commEnabled;
 
    @XmlAttribute(name = "object_transenabled", required = true)
-   private boolean transEnabled;
+   private int transEnabled;
 
    @XmlAttribute(name = "object_display_order", required = true)
    private int order;
@@ -54,13 +54,13 @@ public class VdCommunicationObject
    private String description;
 
    @XmlAttribute(name = "object_type", required = true)
-   private int objectTypeId;
+   private int typeId;
 
    @XmlAttribute(name = "object_priority", required = true)
-   private int objectPriorityId;
+   private int priorityId;
 
    @XmlAttribute(name = "object_updateenabled", required = true)
-   private boolean updateEnabled;
+   private int updateEnabled;
 
    @XmlAttribute(name = "object_unique_number", required = true)
    private int uniqueNumber;
@@ -135,7 +135,7 @@ public class VdCommunicationObject
     */
    public boolean isReadEnabled()
    {
-      return readEnabled;
+      return readEnabled == 1;
    }
 
    /**
@@ -143,7 +143,7 @@ public class VdCommunicationObject
     */
    public void setReadEnabled(boolean readEnabled)
    {
-      this.readEnabled = readEnabled;
+      this.readEnabled = readEnabled ? 1 : 0;
    }
 
    /**
@@ -151,7 +151,7 @@ public class VdCommunicationObject
     */
    public boolean isWriteEnabled()
    {
-      return writeEnabled;
+      return writeEnabled == 1;
    }
 
    /**
@@ -159,7 +159,7 @@ public class VdCommunicationObject
     */
    public void setWriteEnabled(boolean writeEnabled)
    {
-      this.writeEnabled = writeEnabled;
+      this.writeEnabled = writeEnabled ? 1 : 0;
    }
 
    /**
@@ -167,7 +167,7 @@ public class VdCommunicationObject
     */
    public boolean isCommEnabled()
    {
-      return commEnabled;
+      return commEnabled == 1;
    }
 
    /**
@@ -175,7 +175,7 @@ public class VdCommunicationObject
     */
    public void setCommEnabled(boolean commEnabled)
    {
-      this.commEnabled = commEnabled;
+      this.commEnabled = commEnabled ? 1 : 0;
    }
 
    /**
@@ -183,7 +183,7 @@ public class VdCommunicationObject
     */
    public boolean isTransEnabled()
    {
-      return transEnabled;
+      return transEnabled == 1;
    }
 
    /**
@@ -191,7 +191,7 @@ public class VdCommunicationObject
     */
    public void setTransEnabled(boolean transEnabled)
    {
-      this.transEnabled = transEnabled;
+      this.transEnabled = transEnabled ? 1 : 0;
    }
 
    /**
@@ -261,7 +261,7 @@ public class VdCommunicationObject
    /**
     * @return the number
     */
-   public int getNumber()
+   public Integer getNumber()
    {
       return number;
    }
@@ -269,9 +269,9 @@ public class VdCommunicationObject
    /**
     * @param number the number to set
     */
-   public void setNumber(int number)
+   public void setNumber(Integer number)
    {
-      this.number = number;
+      this.number = number == null ? 0 : number;
    }
 
    /**
@@ -293,33 +293,33 @@ public class VdCommunicationObject
    /**
     * @return the objectTypeId
     */
-   public int getObjectTypeId()
+   public int getTypeId()
    {
-      return objectTypeId;
+      return typeId;
    }
 
    /**
-    * @param objectTypeId the objectTypeId to set
+    * @param typeId the object type ID to set
     */
-   public void setObjectTypeId(int objectTypeId)
+   public void setTypeId(int typeId)
    {
-      this.objectTypeId = objectTypeId;
+      this.typeId = typeId;
    }
 
    /**
     * @return the objectPriorityId
     */
-   public int getObjectPriorityId()
+   public int getPriorityId()
    {
-      return objectPriorityId;
+      return priorityId;
    }
 
    /**
-    * @param objectPriorityId the objectPriorityId to set
+    * @param priorityId the objectPriorityId to set
     */
-   public void setObjectPriorityId(int objectPriorityId)
+   public void setPriorityId(int priorityId)
    {
-      this.objectPriorityId = objectPriorityId;
+      this.priorityId = priorityId;
    }
 
    /**
@@ -327,7 +327,7 @@ public class VdCommunicationObject
     */
    public boolean isUpdateEnabled()
    {
-      return updateEnabled;
+      return updateEnabled == 1;
    }
 
    /**
@@ -335,7 +335,7 @@ public class VdCommunicationObject
     */
    public void setUpdateEnabled(boolean updateEnabled)
    {
-      this.updateEnabled = updateEnabled;
+      this.updateEnabled = updateEnabled ? 1 : 0;
    }
 
    /**

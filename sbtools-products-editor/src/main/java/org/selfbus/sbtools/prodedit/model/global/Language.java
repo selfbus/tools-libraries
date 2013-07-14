@@ -17,9 +17,12 @@ import com.jgoodies.binding.beans.Model;
 @XmlAccessorType(XmlAccessType.NONE)
 public class Language extends Model implements Comparable<Language>
 {
-   private static final long serialVersionUID = -5078670369479853569L;
+   private static final long serialVersionUID = -5078671369479853568L;
 
+   @XmlAttribute
    private String id;
+
+   @XmlAttribute
    private String name;
 
    /**
@@ -45,7 +48,6 @@ public class Language extends Model implements Comparable<Language>
    /**
     * @return the id
     */
-   @XmlAttribute
    public String getId()
    {
       return id;
@@ -56,14 +58,12 @@ public class Language extends Model implements Comparable<Language>
     */
    public void setId(String id)
    {
-      Validate.notNull(id);
       this.id = id;
    }
 
    /**
     * @return the name
     */
-   @XmlAttribute
    public String getName()
    {
       return name;
@@ -86,8 +86,6 @@ public class Language extends Model implements Comparable<Language>
    {
       if (name != null && !name.isEmpty())
          return name;
-      if (id != null && !id.isEmpty())
-         return '[' + id + ']';
       return I18n.getMessage("unnamed");
    }
 

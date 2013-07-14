@@ -21,6 +21,9 @@ public class VdProductToProgramToMT
    @XmlAttribute(name = "medium_type_number", required = true)
    private int mediumTypeId;
 
+   @XmlAttribute(name = "channel_list_id")
+   private Integer channelListId;
+
    /**
     * Create an object type object.
     */

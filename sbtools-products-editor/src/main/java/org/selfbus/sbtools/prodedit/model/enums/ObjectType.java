@@ -5,8 +5,8 @@ import org.selfbus.sbtools.prodedit.internal.I18n;
 /**
  * Types of communication objects.
  * 
- * The {@link #ordinal() ordinal} of the communication object gives the ID for
- * KNX devices, e.g. in the EEPROM communication table.
+ * The {@link #ordinal() ordinal} of the communication object gives the ID for KNX devices, e.g. in
+ * the EEPROM communication table.
  */
 public enum ObjectType
 {
@@ -88,9 +88,9 @@ public enum ObjectType
    /**
     * 1..14 bytes.
     */
-   VARBYTES_14(112);
+   VARBYTES_14(112, "0..14 Bytes");
 
-   private final String name;
+   private final String label, vdName;
    private final int bitLength;
 
    /**
@@ -102,11 +102,19 @@ public enum ObjectType
    }
 
    /**
+    * @return the label
+    */
+   public String getLabel()
+   {
+      return label;
+   }
+
+   /**
     * @return the name
     */
-   public String getName()
+   public String getVdName()
    {
-      return name;
+      return vdName;
    }
 
    /**
@@ -123,7 +131,7 @@ public enum ObjectType
    @Override
    public String toString()
    {
-      return name;
+      return label;
    }
 
    /**
@@ -150,7 +158,20 @@ public enum ObjectType
     */
    private ObjectType(int bitLength)
    {
-      this.name = I18n.getMessage(name());
+      this.label = I18n.getMessage("ObjectType." + name());
+      this.vdName = bitLength > 7 ? Integer.toString(bitLength >> 3) + " Byte" : Integer.toString(bitLength) + " Bit";
+      this.bitLength = bitLength;
+   }
+
+   /**
+    * Constructor.
+    * 
+    * @param bitLength - the number of bits of the object type.
+    */
+   private ObjectType(int bitLength, String vdName)
+   {
+      this.label = I18n.getMessage("ObjectType." + name());
+      this.vdName = vdName;
       this.bitLength = bitLength;
    }
 }

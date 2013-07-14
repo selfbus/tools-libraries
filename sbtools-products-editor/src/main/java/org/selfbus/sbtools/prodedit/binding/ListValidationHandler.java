@@ -1,13 +1,17 @@
 package org.selfbus.sbtools.prodedit.binding;
 
 import java.awt.Container;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.Validate;
 
 import com.jgoodies.binding.PresentationModel;
@@ -23,7 +27,7 @@ import com.jgoodies.validation.view.ValidationComponentUtils;
 /**
  * Handles validations.
  */
-public class ValidationHandler<B>
+public class ListValidationHandler<B>
 {
 //   private static final Logger LOGGER = LoggerFactory.getLogger(ValidationHandler.class);
 
@@ -45,7 +49,7 @@ public class ValidationHandler<B>
     * 
     * @see #setValidatedContainer(Container)
     */
-   public ValidationHandler(PresentationModel<B> subject, Validator<B> validator)
+   public ListValidationHandler(PresentationModel<B> subject, Validator<B> validator)
    {
       Validate.notNull(subject);
       Validate.notNull(validator);
@@ -136,10 +140,27 @@ public class ValidationHandler<B>
    /**
     * A private listener that invokes the validation process when triggered.
     */
-   private class ValueChangeListener implements PropertyChangeListener
+   private class ValueChangeListener implements PropertyChangeListener, ActionListener
    {
+      Timer checkTimer = new Timer(250, this);
+
+      ValueChangeListener()
+      {
+         checkTimer.setRepeats(false);
+      }
+
       @Override
       public void propertyChange(PropertyChangeEvent e)
+      {
+         if (e == null || !ObjectUtils.equals(e.getOldValue(), e.getNewValue()))
+         {
+            checkTimer.stop();
+            checkTimer.start();
+         }
+      }
+
+      @Override
+      public void actionPerformed(ActionEvent e)
       {
          ValidationResult result;
          if (selectionInList != null && selectionInList.hasSelection())

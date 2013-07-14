@@ -16,7 +16,7 @@ public class VdParameterValue
    private int parameterTypeId;
 
    @XmlAttribute(name = "real_value")
-   private int intValue;
+   private Integer intValue;
 
    @XmlAttribute(name = "displayed_value")
    private String label;
@@ -34,7 +34,7 @@ public class VdParameterValue
    private int binaryValueLength;
 
    @XmlAttribute(name = "double_value")
-   private double doubleValue;
+   private Double doubleValue;
 
    /**
     * Create an empty parameter value.
@@ -62,7 +62,7 @@ public class VdParameterValue
    /**
     * @return the intValue
     */
-   public int getIntValue()
+   public Integer getIntValue()
    {
       return intValue;
    }
@@ -70,7 +70,7 @@ public class VdParameterValue
    /**
     * @param intValue the intValue to set
     */
-   public void setIntValue(int intValue)
+   public void setIntValue(Integer intValue)
    {
       this.intValue = intValue;
    }
@@ -137,28 +137,13 @@ public class VdParameterValue
    public void setBinaryValue(byte[] binaryValue)
    {
       this.binaryValue = binaryValue;
-   }
-
-   /**
-    * @return the binaryValueLength
-    */
-   public int getBinaryValueLength()
-   {
-      return binaryValueLength;
-   }
-
-   /**
-    * @param binaryValueLength the binaryValueLength to set
-    */
-   public void setBinaryValueLength(int binaryValueLength)
-   {
-      this.binaryValueLength = binaryValueLength;
+      this.binaryValueLength = binaryValue == null ? 0 : binaryValue.length;
    }
 
    /**
     * @return the doubleValue
     */
-   public double getDoubleValue()
+   public Double getDoubleValue()
    {
       return doubleValue;
    }
@@ -166,7 +151,7 @@ public class VdParameterValue
    /**
     * @param doubleValue the doubleValue to set
     */
-   public void setDoubleValue(double doubleValue)
+   public void setDoubleValue(Double doubleValue)
    {
       this.doubleValue = doubleValue;
    }

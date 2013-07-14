@@ -16,11 +16,11 @@ public class VdParameter
    private int programId;
 
    @XmlAttribute(name = "parameter_type_id", required = true)
-   private int paramType;
+   private int paramTypeId;
 
    // The parameter number is unique for the program and starts with 1
-   @XmlAttribute(name = "parameter_number", required = true)
-   private int number;
+   @XmlAttribute(name = "parameter_number")
+   private Integer number;
 
    @XmlAttribute(name = "parameter_name", required = true)
    private String name;
@@ -74,10 +74,25 @@ public class VdParameter
    private Double defaultDouble;
 
    @XmlAttribute(name = "patch_always")
-   private boolean patchAlways;
+   private int patchAlways;
 
    @XmlAttribute(name = "address_space")
    private Integer addressSpace;
+
+   @XmlAttribute(name = "eib_object_ref")
+   private Integer eibObjectRef;
+
+   @XmlAttribute(name = "eib_property_id")
+   private Integer eibPropertyId;
+
+   @XmlAttribute(name = "calculationid")
+   private Integer calculationId;
+
+   @XmlAttribute(name = "calculationset")
+   private String calculationSet;
+
+   @XmlAttribute(name = "aliasname")
+   private String aliasName;
 
    /**
     * Create an empty parameter object.
@@ -103,25 +118,25 @@ public class VdParameter
    }
 
    /**
-    * @return the paramType
+    * @return the paramType ID
     */
-   public int getParamType()
+   public int getParamTypeId()
    {
-      return paramType;
+      return paramTypeId;
    }
 
    /**
-    * @param paramType the paramType to set
+    * @param id - the paramType ID to set
     */
-   public void setParamType(int paramType)
+   public void setParamTypeId(int id)
    {
-      this.paramType = paramType;
+      this.paramTypeId = id;
    }
 
    /**
     * @return the number
     */
-   public int getNumber()
+   public Integer getNumber()
    {
       return number;
    }
@@ -129,7 +144,7 @@ public class VdParameter
    /**
     * @param number the number to set
     */
-   public void setNumber(int number)
+   public void setNumber(Integer number)
    {
       this.number = number;
    }
@@ -411,7 +426,7 @@ public class VdParameter
     */
    public boolean isPatchAlways()
    {
-      return patchAlways;
+      return patchAlways == 1;
    }
 
    /**
@@ -419,7 +434,7 @@ public class VdParameter
     */
    public void setPatchAlways(boolean patchAlways)
    {
-      this.patchAlways = patchAlways;
+      this.patchAlways = patchAlways ? 1 : 0;
    }
 
    /**

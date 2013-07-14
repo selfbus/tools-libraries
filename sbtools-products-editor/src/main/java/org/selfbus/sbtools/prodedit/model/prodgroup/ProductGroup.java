@@ -23,12 +23,12 @@ import com.jgoodies.common.collect.ArrayListModel;
 /**
  * A products group.
  */
-@XmlRootElement
+@XmlRootElement(name = "product_group")
 @XmlType(propOrder = {})
 @XmlAccessorType(XmlAccessType.NONE)
 public class ProductGroup extends Model implements Comparable<ProductGroup>
 {
-   private static final long serialVersionUID = 7542620207078765362L;
+   private static final long serialVersionUID = 7542620207078765367L;
 
    private File file;
 
@@ -39,13 +39,11 @@ public class ProductGroup extends Model implements Comparable<ProductGroup>
    private String name;
 
    @XmlAttribute
-   private String description;
+   private String description = "";
 
    @XmlElement
    private Manufacturer manufacturer = Manufacturer.NONE;
 
-   @XmlElementWrapper(name = "application_programs")
-   @XmlElement(name = "application_program")
    private ArrayListModel<ApplicationProgram> programs = new ArrayListModel<ApplicationProgram>();
 
    @XmlElementWrapper(name = "virtual_devices")
@@ -55,6 +53,25 @@ public class ProductGroup extends Model implements Comparable<ProductGroup>
    @XmlElementWrapper(name = "object_types")
    @XmlElement(name = "object_type")
    private ArrayListModel<ObjectType> objectTypes = new ArrayListModel<ObjectType>();
+
+   /**
+    * Create a products group.
+    */
+   public ProductGroup()
+   {
+   }
+
+   /**
+    * Create a products group.
+    *
+    * @param id - the ID of the group
+    * @param name - the (file) name of the group
+    */
+   public ProductGroup(String id, String name)
+   {
+      this.id = id;
+      this.name = name;
+   }
 
    /**
     * @return The manufacturer. This manufacturer is used for all devices and other stuff in the
@@ -147,7 +164,7 @@ public class ProductGroup extends Model implements Comparable<ProductGroup>
     */
    public String getDescription()
    {
-      return description;
+      return description == null ? "" : description;
    }
 
    /**
@@ -176,6 +193,9 @@ public class ProductGroup extends Model implements Comparable<ProductGroup>
     */
    public ArrayListModel<VirtualDevice> getDevices()
    {
+      if (devices == null)
+         devices = new ArrayListModel<VirtualDevice>();
+
       return devices;
    }
 
@@ -206,7 +226,7 @@ public class ProductGroup extends Model implements Comparable<ProductGroup>
       // Ensure that a unique name was found
       Validate.isTrue(idx < 1000);
 
-      VirtualDevice device = new VirtualDevice(maxId + 1, name, null, 0, 0);
+      VirtualDevice device = new VirtualDevice(maxId + 1, name, null, 0);
       ApplicationProgram program = createProgram(name);
 
       device.setProgramId(program.getId());
@@ -228,7 +248,7 @@ public class ProductGroup extends Model implements Comparable<ProductGroup>
          maxId = Math.max(maxId, program.getId());
       }
 
-      ApplicationProgram program = new ApplicationProgram(maxId + 1, name, manufacturer.getId(), 0);
+      ApplicationProgram program = new ApplicationProgram(maxId + 1, name, manufacturer.getId());
       programs.add(program);
 
       return program;
@@ -237,8 +257,13 @@ public class ProductGroup extends Model implements Comparable<ProductGroup>
    /**
     * @return The programs.
     */
+   @XmlElementWrapper(name = "programs")
+   @XmlElement(name = "program")
    public ArrayListModel<ApplicationProgram> getPrograms()
    {
+      if (programs == null)
+         programs = new ArrayListModel<ApplicationProgram>();
+
       return programs;
    }
 
