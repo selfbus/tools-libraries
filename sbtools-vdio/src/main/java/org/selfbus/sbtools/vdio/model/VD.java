@@ -173,7 +173,30 @@ public class VD
     */
    public VdApplicationProgram findProgram(int id)
    {
+      if (programs == null)
+         return null;
+
       for (VdApplicationProgram e : programs)
+      {
+         if (e.getId() == id)
+            return e;
+      }
+      
+      return null;
+   }
+
+   /**
+    * Find a symbol by ID.
+    * 
+    * @param id - the ID to find
+    * @return The found object or null if not found.
+    */
+   public VdSymbol findSymbol(int id)
+   {
+      if (symbols == null)
+         return null;
+
+      for (VdSymbol e : symbols)
       {
          if (e.getId() == id)
             return e;

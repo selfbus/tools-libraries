@@ -12,15 +12,16 @@ import org.selfbus.sbtools.prodedit.model.interfaces.Identifiable;
 public final class IdentifiableUtils
 {
    /**
-    * Create a new unique ID >= 0 that does not exist in the given list.
+    * Create a new unique ID > 0 that does not exist in the given list.
+    * Returns 1 if the list is null.
     * 
-    * @param list - the list to scan for existing IDs.
+    * @param list - the list to scan for existing IDs, may be null.
     * @return the created ID.
     */
    public static int createUniqueId(Collection<? extends Identifiable> list)
    {
       Set<Integer> used = new HashSet<Integer>(list.size() << 1);
-      int maxId = 0;
+      int maxId = 1;
 
       for (Identifiable o : list)
       {

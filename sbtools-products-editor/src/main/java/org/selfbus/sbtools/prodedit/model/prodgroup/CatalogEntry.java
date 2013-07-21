@@ -9,9 +9,12 @@ import javax.xml.bind.annotation.XmlType;
  * Catalog entries name the variations of a virtual device, as it can be bought
  * from a catalog or web-shop. Catalog entries of the same virtual device
  * usually differ in things like housing color or maximum switching power.
+ * 
+ * @deprecated Not used - dynamically created upon export
  */
 @XmlType(propOrder = {})
 @XmlAccessorType(XmlAccessType.NONE)
+@Deprecated
 public class CatalogEntry
 {
    @XmlAttribute(name = "catalog_entry_id", required = true)
@@ -100,7 +103,8 @@ public class CatalogEntry
    }
 
    /**
-    * Set the id of the catalog-entry.
+    * Set the id of the catalog-entry. Use {@link ProductGroup#getNextUniqueId()}
+    * to get a unique ID.
     * 
     * @param id - the ID to set.
     */

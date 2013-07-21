@@ -1,5 +1,7 @@
 package org.selfbus.sbtools.prodedit.model.interfaces;
 
+import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
+
 /**
  * Interface for classes that have a numeric ID.
  */

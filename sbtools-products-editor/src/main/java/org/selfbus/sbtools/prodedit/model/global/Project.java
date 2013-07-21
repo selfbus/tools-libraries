@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.UUID;
 
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -48,17 +50,38 @@ public class Project
    @XmlAttribute
    private String name;
 
-   @XmlAttribute
+   @XmlAttribute(name = "default_lang_id")
    private String defaultLangId;
 
-   @XmlAttribute
+   @XmlAttribute(name = "default_manufacturer_id")
    private int defaultManufacturerId;
 
-   @XmlAttribute
+   @XmlAttribute(name = "next_func_entity_id")
    private int nextFuncEntityId = 1;
+
+   @XmlAttribute
+   private UUID id = UUID.randomUUID();
 
    public Project()
    {
+   }
+
+   /**
+    * @return the project ID
+    */
+   public UUID getId()
+   {
+      return id;
+   }
+
+   /**
+    * Set the project ID.
+    *
+    * @param id the id to set
+    */
+   public void setId(UUID id)
+   {
+      this.id = id;
    }
 
    /**
@@ -84,7 +107,7 @@ public class Project
     */
    public String getName()
    {
-      return name;
+      return name == null && file != null ? file.getName() : name;
    }
 
    /**
@@ -401,6 +424,8 @@ public class Project
    public void addProductGroup(ProductGroup group)
    {
       Validate.notEmpty(group.getId());
+
+      group.setProjectId(getId());
       productGroups.add(group);
       projectService.fireProductGroupAdded(group);
    }
@@ -416,13 +441,17 @@ public class Project
       projectService.fireProductGroupRemoved(group);
    }
 
-   //   /**
-   //    * Initialize the project after loading.
-   //    * 
-   //    * @param unmarshaller - the unmarshaller that was used for loading
-   //    * @param parent - the parent object.
-   //    */
-   //   void afterUnmarshal(Unmarshaller unmarshaller, Object parent)
-   //   {
-   //   }
+   /**
+    * Initialize the project after loading.
+    * 
+    * @param unmarshaller - the unmarshaller that was used for loading
+    * @param parent - the parent object.
+    */
+   public void afterUnmarshal(Unmarshaller unmarshaller, Object parent)
+   {
+      for (ProductGroup group : getProductGroups())
+      {
+         group.afterUnmarshal(unmarshaller, this);
+      }
+   }
 }

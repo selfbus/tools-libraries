@@ -18,10 +18,10 @@
    <fileMode>0644</fileMode>
   </fileSet>
   <fileSet>
-   <directory>src/main/resources</directory>
+   <directory>src/main/scripts</directory>
    <includes>
-    <include>devtool.sh</include>
-    <include>devtool.cmd</include>
+    <include>products-editor.sh</include>
+    <include>products-editor.cmd</include>
    </includes>
    <outputDirectory>/</outputDirectory>
    <directoryMode>0755</directoryMode>

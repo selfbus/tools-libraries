@@ -77,6 +77,7 @@ public class SaveProjectAsAction extends BasicAction
       {
          mainWin.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
          app.getProjectService().saveProject(file);
+         app.setStatusMessage(I18n.formatMessage("Project.saved", app.getProjectService().getProject().getName()));
       }
       finally
       {

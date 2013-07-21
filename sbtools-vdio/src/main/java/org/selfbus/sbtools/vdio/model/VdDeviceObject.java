@@ -39,8 +39,8 @@ public class VdDeviceObject
    @XmlAttribute(name = "object_id", required = true)
    private int objectId;
 
-   @XmlAttribute(name = "device_object_number", required = true)
-   private int number;
+   @XmlAttribute(name = "device_object_number")
+   private Integer number;
 
    @XmlAttribute(name = "object_subgroups_text2")
    private String subgroupsText2;
@@ -55,7 +55,7 @@ public class VdDeviceObject
    private int update;
 
    @XmlAttribute(name = "device_object_unique_number")
-   private int uniqueNumber;
+   private Integer uniqueNumber;
 
    @XmlAttribute(name = "device_object_type")
    private Integer objectTypeId;
@@ -114,7 +114,7 @@ public class VdDeviceObject
    /**
     * @return the objectRead
     */
-   public boolean isObjectRead()
+   public boolean isReadEnabled()
    {
       return objectRead == 1;
    }
@@ -122,7 +122,7 @@ public class VdDeviceObject
    /**
     * @param objectRead the objectRead to set
     */
-   public void setObjectRead(boolean objectRead)
+   public void setReadEnabled(boolean objectRead)
    {
       this.objectRead = objectRead ? 1 : 0;
    }
@@ -130,7 +130,7 @@ public class VdDeviceObject
    /**
     * @return the objectWrite
     */
-   public boolean isObjectWrite()
+   public boolean isWriteEnabled()
    {
       return objectWrite == 1;
    }
@@ -138,7 +138,7 @@ public class VdDeviceObject
    /**
     * @param objectWrite the objectWrite to set
     */
-   public void setObjectWrite(boolean objectWrite)
+   public void setWriteEnabled(boolean objectWrite)
    {
       this.objectWrite = objectWrite ? 1 : 0;
    }
@@ -146,7 +146,7 @@ public class VdDeviceObject
    /**
     * @return the objectComm
     */
-   public boolean isObjectComm()
+   public boolean isCommEnabled()
    {
       return objectComm == 1;
    }
@@ -154,7 +154,7 @@ public class VdDeviceObject
    /**
     * @param objectComm the objectComm to set
     */
-   public void setObjectComm(boolean objectComm)
+   public void setCommEnabled(boolean objectComm)
    {
       this.objectComm = objectComm ? 1 : 0;
    }
@@ -162,7 +162,7 @@ public class VdDeviceObject
    /**
     * @return the objectTrans
     */
-   public boolean isObjectTrans()
+   public boolean isTransEnabled()
    {
       return objectTrans == 1;
    }
@@ -170,9 +170,25 @@ public class VdDeviceObject
    /**
     * @param objectTrans the objectTrans to set
     */
-   public void setObjectTrans(boolean objectTrans)
+   public void setTransEnabled(boolean objectTrans)
    {
       this.objectTrans = objectTrans ? 1 : 0;
+   }
+
+   /**
+    * @return the update
+    */
+   public boolean isUpdateEnabled()
+   {
+      return update == 1;
+   }
+
+   /**
+    * @param update the update to set
+    */
+   public void setUpdateEnabled(boolean update)
+   {
+      this.update = update ? 1 : 0;
    }
 
    /**
@@ -226,7 +242,7 @@ public class VdDeviceObject
    /**
     * @return the number
     */
-   public int getNumber()
+   public Integer getNumber()
    {
       return number;
    }
@@ -234,7 +250,7 @@ public class VdDeviceObject
    /**
     * @param number the number to set
     */
-   public void setNumber(int number)
+   public void setNumber(Integer number)
    {
       this.number = number;
    }
@@ -288,25 +304,9 @@ public class VdDeviceObject
    }
 
    /**
-    * @return the update
-    */
-   public boolean isUpdate()
-   {
-      return update == 1;
-   }
-
-   /**
-    * @param update the update to set
-    */
-   public void setUpdate(boolean update)
-   {
-      this.update = update ? 1 : 0;
-   }
-
-   /**
     * @return the uniqueNumber
     */
-   public int getUniqueNumber()
+   public Integer getUniqueNumber()
    {
       return uniqueNumber;
    }
@@ -314,7 +314,7 @@ public class VdDeviceObject
    /**
     * @param uniqueNumber the uniqueNumber to set
     */
-   public void setUniqueNumber(int uniqueNumber)
+   public void setUniqueNumber(Integer uniqueNumber)
    {
       this.uniqueNumber = uniqueNumber;
    }

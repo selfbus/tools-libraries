@@ -3,37 +3,35 @@ package org.selfbus.sbtools.prodedit.model.prodgroup;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
-import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterType;
+import org.selfbus.sbtools.prodedit.model.interfaces.Identifiable;
+import org.selfbus.sbtools.prodedit.model.interfaces.Symbolized;
 
 import com.jgoodies.binding.beans.Model;
-import com.jgoodies.common.collect.ArrayListModel;
 
 /**
  * A virtual device.
  */
 @XmlType(propOrder = {})
 @XmlAccessorType(XmlAccessType.NONE)
-public class VirtualDevice extends Model
+public class VirtualDevice extends Model implements Identifiable, Symbolized
 {
    private static final long serialVersionUID = 291511597283834248L;
 
-   @XmlAttribute(name = "virtual_device_id", required = true)
+   @XmlAttribute(name = "id", required = true)
    private int id;
 
    @XmlAttribute(name = "symbol_id")
-   private int symbolId;
+   private Integer symbolId;
 
    @XmlAttribute(name = "program_id")
    private int programId;
 
-   @XmlAttribute(name = "virtual_device_name", required = true)
+   @XmlAttribute(name = "name", required = true)
    private String name = "";
 
-   @XmlAttribute(name = "virtual_device_description")
+   @XmlAttribute(name = "description")
    private String description;
 
    @XmlAttribute(name = "functional_entity_id")
@@ -60,13 +58,6 @@ public class VirtualDevice extends Model
    @XmlAttribute(name = "version")
    private int version = 1;
 
-   @XmlElement(name = "catalog_entry")
-   private CatalogEntry catalogEntry;
-
-   @XmlElementWrapper(name = "parameter_types")
-   @XmlElement(name = "parameter_type")
-   private ArrayListModel<ParameterType> paramTypes = new ArrayListModel<ParameterType>();
-
    /**
     * Create an empty virtual-device object.
     */
@@ -91,69 +82,39 @@ public class VirtualDevice extends Model
    }
 
    /**
-    * @return the symbolId
+    * @return the symbol ID
     */
-   public int getSymbolId()
+   @Override
+   public Integer getSymbolId()
    {
       return symbolId;
    }
 
    /**
-    * @param symbolId the symbolId to set
+    * Set the symbol ID.
+    *
+    * @param symbolId - the symbolId to set
     */
-   public void setSymbolId(int symbolId)
+   public void setSymbolId(Integer symbolId)
    {
       this.symbolId = symbolId;
    }
 
    /**
-    * @return the catalogEntry
+    * @return The ID.
     */
-   public CatalogEntry getCatalogEntry()
-   {
-      if (catalogEntry == null)
-         catalogEntry = new CatalogEntry();
-
-      return catalogEntry;
-   }
-
-   /**
-    * @param catalogEntry the catalogEntry to set
-    */
-   public void setCatalogEntry(CatalogEntry catalogEntry)
-   {
-      this.catalogEntry = catalogEntry;
-   }
-
-   /**
-    * @return the paramTypes
-    */
-   public ArrayListModel<ParameterType> getParamTypes()
-   {
-      return paramTypes;
-   }
-
-   /**
-    * @param paramTypes the paramTypes to set
-    */
-   public void setParamTypes(ArrayListModel<ParameterType> paramTypes)
-   {
-      this.paramTypes = paramTypes;
-   }
-
-   /**
-    * @return the id
-    */
+   @Override
    public int getId()
    {
       return id;
    }
 
    /**
-    * Set the id.
+    * Set the id. Use {@link ProductGroup#getNextUniqueId()} to get a unique ID.
     * 
     * @param id - the id to set.
     */
+   @Override
    public void setId(int id)
    {
       this.id = id;

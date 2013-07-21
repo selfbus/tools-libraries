@@ -1,10 +1,15 @@
 package org.selfbus.sbtools.prodedit.model.enums;
 
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlType;
+
 import org.selfbus.sbtools.prodedit.internal.I18n;
 
 /**
  * The atomic type of a parameter: none, unsigned, signed, string, enum, long enum.
  */
+@XmlType
+@XmlEnum
 public enum ParameterAtomicType
 {
    // WARNING: do not change the order of the enum values.

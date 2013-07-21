@@ -14,7 +14,7 @@ import org.selfbus.sbtools.prodedit.model.prodgroup.ApplicationProgram;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.CommunicationObject;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.Parameter;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterCategory;
-import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterRootNode;
+import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterRoot;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterType;
 
 public class ParameterTreeCellRenderer implements TreeCellRenderer
@@ -85,7 +85,7 @@ public class ParameterTreeCellRenderer implements TreeCellRenderer
          label += ((CommunicationObject) value).getFunction().getDefaultText();
          label += "  [" + comObject.getId() + ']';
       }
-      else if (value instanceof ParameterRootNode)
+      else if (value instanceof ParameterRoot)
       {
          label = "/";
          icon = paramRootIcon;

@@ -1,5 +1,8 @@
 package org.selfbus.sbtools.prodedit.model.prodgroup.parameter;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -10,7 +13,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.selfbus.sbtools.prodedit.internal.I18n;
 import org.selfbus.sbtools.prodedit.model.enums.ParameterAtomicType;
 import org.selfbus.sbtools.prodedit.model.interfaces.Identifiable;
-import org.selfbus.sbtools.prodedit.utils.IdentifiableUtils;
+import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
 
 import com.jgoodies.binding.beans.Model;
 import com.jgoodies.common.collect.ArrayListModel;
@@ -34,7 +37,7 @@ public class ParameterType extends Model implements Identifiable
    @XmlAttribute(name = "id", required = true)
    private int id;
 
-   @XmlAttribute(name = "atomic_type", required = true)
+   //@XmlAttribute(name = "atomic_type", required = true)
    private ParameterAtomicType atomicType;
 
    @XmlAttribute(name = "name", required = true)
@@ -52,16 +55,9 @@ public class ParameterType extends Model implements Identifiable
    @XmlAttribute(name = "max_double_value")
    private Double maxDoubleValue;
 
-   @XmlAttribute(name = "low_access")
-   private int lowAccess;
-
-   @XmlAttribute(name = "high_access")
-   private int highAccess;
-
    @XmlAttribute(name = "size")
    private int size;
 
-   @XmlElementWrapper(name = "values")
    @XmlElement(name = "value")
    private ArrayListModel<ParameterValue> values;
 
@@ -111,7 +107,7 @@ public class ParameterType extends Model implements Identifiable
    }
 
    /**
-    * Set the id.
+    * Set the id. Use {@link ProductGroup#getNextUniqueId()} to get a unique ID.
     * 
     * @param id - the id to set.
     */
@@ -136,6 +132,25 @@ public class ParameterType extends Model implements Identifiable
    public void setAtomicType(ParameterAtomicType atomicType)
    {
       this.atomicType = atomicType;
+   }
+
+   /**
+    * @return the atomic type of the parameter as string.
+    */
+   @XmlAttribute(name = "atomic_type", required = true)
+   String getAtomicTypeStr()
+   {
+      return atomicType.toString();
+   }
+
+   /**
+    * Set the atomic type of the parameter as String.
+    * 
+    * @param str - the atomic type to set.
+    */
+   void setAtomicTypeStr(String str)
+   {
+      this.atomicType = ParameterAtomicType.valueOf(str);
    }
 
    /**
@@ -239,6 +254,28 @@ public class ParameterType extends Model implements Identifiable
    }
 
    /**
+    * Create a new parameter value.
+    * 
+    * @return The created value.
+    */
+   public ParameterValue createValue()
+   {
+      int id = values == null ? 1 : values.size() + 1;
+
+      String langId = I18n.getMessage("Project.languageId");
+      String label = I18n.formatMessage("ParameterType.newValue", Integer.toString(id));
+
+      ParameterValue value = new ParameterValue();
+      value.getLabel().setText(langId, label);
+      value.setIntValue(0);
+
+      addValue(value);
+      reorderValues();
+
+      return value;
+   }
+
+   /**
     * Add a parameter value to the parameter type's values
     * 
     * @param value - the value to add
@@ -252,6 +289,46 @@ public class ParameterType extends Model implements Identifiable
    }
 
    /**
+    * Update the order of the parameter values.
+    */
+   public void reorderValues()
+   {
+      if (values != null)
+      {
+         int order = 1;
+         for (ParameterValue value : values)
+         {
+            value.setOrder(order++);
+         }
+      }
+   }
+
+   /**
+    * Sort the parameter values by {@link ParameterValue#getOrder() order}.
+    */
+   public void sortValues()
+   {
+      if (values == null)
+         return;
+
+      ParameterValue[] arr = new ParameterValue[values.size()];
+      values.toArray(arr);
+
+      Arrays.sort(arr, new Comparator<ParameterValue>()
+      {
+         @Override
+         public int compare(ParameterValue a, ParameterValue b)
+         {
+            return a.getOrder() - b.getOrder();
+         }
+      });
+
+      values.clear();
+      for (ParameterValue value : arr)
+         values.add(value);
+   }
+
+   /**
     * Set the allowed values or null if no specific allowed values are set.
     * 
     * @param values - the allowed values to set.
@@ -259,27 +336,6 @@ public class ParameterType extends Model implements Identifiable
    public void setValues(ArrayListModel<ParameterValue> values)
    {
       this.values = values;
-   }
-
-   /**
-    * Create a new value.
-    * 
-    * @return The created value
-    */
-   public ParameterValue createValue()
-   {
-      int id = IdentifiableUtils.createUniqueId(getValues());
-
-      String langId = I18n.getMessage("Project.languageId");
-      String label = I18n.formatMessage("ParameterType.newValue", Integer.toString(id));
-
-      ParameterValue value = new ParameterValue(id);
-      value.setIntValue(0);
-      value.getLabel().setText(langId, label);
-      value.setOrder(values.isEmpty() ? 1 : values.get(values.size() - 1).getOrder() + 1);
-
-      values.add(value);
-      return value;
    }
 
    /**
@@ -300,38 +356,6 @@ public class ParameterType extends Model implements Identifiable
       }
 
       return null;
-   }
-
-   /**
-    * @return the lowAccess
-    */
-   public int getLowAccess()
-   {
-      return lowAccess;
-   }
-
-   /**
-    * @param lowAccess the lowAccess to set
-    */
-   public void setLowAccess(int lowAccess)
-   {
-      this.lowAccess = lowAccess;
-   }
-
-   /**
-    * @return the highAccess
-    */
-   public int getHighAccess()
-   {
-      return highAccess;
-   }
-
-   /**
-    * @param highAccess the highAccess to set
-    */
-   public void setHighAccess(int highAccess)
-   {
-      this.highAccess = highAccess;
    }
 
    /**

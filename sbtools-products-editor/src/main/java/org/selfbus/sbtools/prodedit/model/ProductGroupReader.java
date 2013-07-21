@@ -49,7 +49,7 @@ public class ProductGroupReader
 
       try
       {
-         final JAXBContext context = JAXBContext.newInstance("org.selfbus.sbtools.prodedit.model.prodgroup");
+         final JAXBContext context = JAXBContext.newInstance("org.selfbus.sbtools.prodedit.model");
 
          final String schemaFileName = "org/selfbus/sbtools/prodedit/product-group.xsd";
          final URL schemaUrl = getClass().getClassLoader().getResource(schemaFileName);

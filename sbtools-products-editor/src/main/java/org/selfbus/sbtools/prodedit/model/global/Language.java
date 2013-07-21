@@ -19,10 +19,10 @@ public class Language extends Model implements Comparable<Language>
 {
    private static final long serialVersionUID = -5078671369479853568L;
 
-   @XmlAttribute
+   @XmlAttribute(required = true)
    private String id;
 
-   @XmlAttribute
+   @XmlAttribute(required = true)
    private String name;
 
    /**

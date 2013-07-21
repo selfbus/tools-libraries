@@ -3,7 +3,9 @@ package org.selfbus.sbtools.prodedit.model.prodgroup;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -13,9 +15,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang3.Validate;
-import org.selfbus.sbtools.common.types.ObjectType;
 import org.selfbus.sbtools.prodedit.internal.I18n;
 import org.selfbus.sbtools.prodedit.model.global.Manufacturer;
+import org.selfbus.sbtools.prodedit.utils.IdentifiableUtils;
 
 import com.jgoodies.binding.beans.Model;
 import com.jgoodies.common.collect.ArrayListModel;
@@ -38,21 +40,26 @@ public class ProductGroup extends Model implements Comparable<ProductGroup>
    @XmlAttribute
    private String name;
 
+   @XmlAttribute(name = "project_id")
+   private UUID projectId;
+   
    @XmlAttribute
    private String description = "";
 
    @XmlElement
    private Manufacturer manufacturer = Manufacturer.NONE;
 
+   @XmlElementWrapper(name = "programs")
+   @XmlElement(name = "program")
    private ArrayListModel<ApplicationProgram> programs = new ArrayListModel<ApplicationProgram>();
 
    @XmlElementWrapper(name = "virtual_devices")
    @XmlElement(name = "virtual_device")
    private ArrayListModel<VirtualDevice> devices = new ArrayListModel<VirtualDevice>();
 
-   @XmlElementWrapper(name = "object_types")
-   @XmlElement(name = "object_type")
-   private ArrayListModel<ObjectType> objectTypes = new ArrayListModel<ObjectType>();
+   @XmlElementWrapper(name = "symbols")
+   @XmlElement(name = "symbol")
+   private ArrayListModel<Symbol> symbols = new ArrayListModel<Symbol>();
 
    /**
     * Create a products group.
@@ -71,6 +78,24 @@ public class ProductGroup extends Model implements Comparable<ProductGroup>
    {
       this.id = id;
       this.name = name;
+   }
+
+   /**
+    * Set the ID of the project.
+    *
+    * @param id - the ID to set.
+    */
+   public void setProjectId(UUID id)
+   {
+      this.projectId = id;
+   }
+
+   /**
+    * @return the project ID.
+    */
+   public UUID getProjectId()
+   {
+      return projectId;
    }
 
    /**
@@ -200,35 +225,44 @@ public class ProductGroup extends Model implements Comparable<ProductGroup>
    }
 
    /**
-    * Create a virtual device.
+    * Create a virtual device with a new application program.
     */
    public VirtualDevice createDevice()
+   {
+      ApplicationProgram program = createProgram("unnamed");
+      VirtualDevice device = createDevice(program);
+      program.setName(device.getName());
+
+      return device;
+   }
+
+   /**
+    * Create a virtual device.
+    * 
+    * @param program - the application program of the device.
+    */
+   public VirtualDevice createDevice(ApplicationProgram program)
    {
       String name = null;
       int idx;
 
       Set<String> usedNames = new HashSet<String>();
-      int maxId = 0;
       for (VirtualDevice device : devices)
       {
          usedNames.add(device.getName());
-         maxId = Math.max(maxId, device.getId());
       }
 
       for (idx = 1; idx < 1000; ++idx)
       {
          name = I18n.formatMessage("ProductGroup.newDeviceName", Integer.toString(idx, 36));
-
-         if (!usedNames.contains(name))
-            break;
+         if (!usedNames.contains(name)) break;
       }
 
       // Ensure that a unique name was found
       Validate.isTrue(idx < 1000);
 
-      VirtualDevice device = new VirtualDevice(maxId + 1, name, null, 0);
-      ApplicationProgram program = createProgram(name);
-
+      int id = IdentifiableUtils.createUniqueId(devices);
+      VirtualDevice device = new VirtualDevice(id, name, null, 0);
       device.setProgramId(program.getId());
 
       devices.add(device);
@@ -242,13 +276,8 @@ public class ProductGroup extends Model implements Comparable<ProductGroup>
     */
    public ApplicationProgram createProgram(String name)
    {
-      int maxId = 0;
-      for (ApplicationProgram program : programs)
-      {
-         maxId = Math.max(maxId, program.getId());
-      }
-
-      ApplicationProgram program = new ApplicationProgram(maxId + 1, name, manufacturer.getId());
+      int id = IdentifiableUtils.createUniqueId(programs);
+      ApplicationProgram program = new ApplicationProgram(id, name, manufacturer.getId());
       programs.add(program);
 
       return program;
@@ -257,8 +286,6 @@ public class ProductGroup extends Model implements Comparable<ProductGroup>
    /**
     * @return The programs.
     */
-   @XmlElementWrapper(name = "programs")
-   @XmlElement(name = "program")
    public ArrayListModel<ApplicationProgram> getPrograms()
    {
       if (programs == null)
@@ -275,6 +302,9 @@ public class ProductGroup extends Model implements Comparable<ProductGroup>
     */
    public ApplicationProgram getProgram(int id)
    {
+      if (programs == null)
+         programs = new ArrayListModel<ApplicationProgram>();
+
       for (ApplicationProgram program : programs)
       {
          if (program.getId() == id)
@@ -292,6 +322,66 @@ public class ProductGroup extends Model implements Comparable<ProductGroup>
    public ApplicationProgram getProgram(VirtualDevice device)
    {
       return getProgram(device.getProgramId());
+   }
+
+   /**
+    * Create a symbol.
+    * 
+    * @param name - the name of the symbol.
+    * 
+    * @return The new symbol.
+    */
+   public Symbol createSymbol(String name)
+   {
+      int id = IdentifiableUtils.createUniqueId(symbols);
+      Symbol symbol = new Symbol(id, name);
+      symbols.add(symbol);
+
+      return symbol;
+   }
+
+   /**
+    * Get a symbol by ID
+    * 
+    * @param id - the symbol ID
+    * @return The symbol or null if not found
+    */
+   public Symbol getSymbol(int id)
+   {
+      if (symbols == null)
+         symbols = new ArrayListModel<Symbol>();
+
+      for (Symbol symbol : symbols)
+      {
+         if (symbol.getId() == id)
+            return symbol;
+      }
+      return null;
+   }
+
+   /**
+    * @return The symbols.
+    */
+   public ArrayListModel<Symbol> getSymbols()
+   {
+      if (symbols == null)
+         symbols = new ArrayListModel<Symbol>();
+
+      return symbols;
+   }
+
+   /**
+    * Initialize the project after loading.
+    * 
+    * @param unmarshaller - the unmarshaller that was used for loading
+    * @param parent - the parent object.
+    */
+   public void afterUnmarshal(Unmarshaller unmarshaller, Object parent)
+   {
+      for (ApplicationProgram program : getPrograms())
+      {
+         program.updateUniqueId();
+      }
    }
 
    /**

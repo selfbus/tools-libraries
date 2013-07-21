@@ -1,4 +1,4 @@
-package org.selfbus.sbtools.prodedit.vdio;
+package org.selfbus.sbtools.prodedit.project;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,9 +8,9 @@ import org.selfbus.sbtools.prodedit.model.ProjectService;
 import org.selfbus.sbtools.vdio.VdioException;
 
 /**
- * A small test program that reads a VD and writes a VD to a file in the user's home directory.
+ * Import products and save the project.
  */
-public class ExampleProductsInExport
+public class TestSaveProject
 {
    public static void main(String[] args) throws FileNotFoundException, VdioException
    {
@@ -18,9 +18,7 @@ public class ExampleProductsInExport
 
       ProjectService projectService = ProdEdit.getInstance().getProjectService();
 
-//      projectService.importProject(new File("src/main/resources/Bosch-Freebus12.vd_"));
-      projectService.importProject(new File("src/test/resources/test-device.vd_"));
-
-      projectService.exportProject(new File(home + "/TestProductsInExport.vd_"));
+      projectService.importProject(new File("src/main/resources/Bosch-Freebus12.vd_"));
+      projectService.saveProject(new File(home + "/TestSaveProject"));
    }
 }

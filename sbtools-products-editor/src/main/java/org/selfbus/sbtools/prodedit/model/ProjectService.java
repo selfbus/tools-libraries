@@ -2,6 +2,7 @@ package org.selfbus.sbtools.prodedit.model;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -48,14 +49,47 @@ public class ProjectService
 
       project = reader.read(file);
       project.setProjectService(this);
-
       Config.getInstance().put("project.last", file.getAbsolutePath());
+
+      String baseName = file.getName();
+      int idx = baseName.lastIndexOf('.');
+      if (idx > 0) baseName = baseName.substring(0, idx);
+      baseName += '-';
+
+      String[] files = file.getParentFile().list();
+      Arrays.sort(files);
+      for (String fileName : files)
+      {
+         if (fileName.toLowerCase().startsWith(baseName) && fileName.toLowerCase().endsWith(".prgr"))
+         {
+            File groupFile = new File(file.getParent() + File.separatorChar + fileName);
+            LOGGER.info("Loading product group {}", groupFile);
+
+            try
+            {
+               ProductGroupReader groupReader = new ProductGroupReader();
+               ProductGroup group = groupReader.read(groupFile);
+               if (project.getId().equals(group.getProjectId()))
+               {
+                  project.addProductGroup(group);
+               }
+               else
+               {
+                  LOGGER.info("Skipping product group (project IDs do not match)");
+               }
+            }
+            catch (Exception e)
+            {
+               LOGGER.error("Failed to load product group {}", groupFile, e);
+            }
+         }
+      }
 
       fireProjectChanged();
    }
 
    /**
-    * Save the project.
+    * Save the project, including all product groups.
     * 
     * @param file - the file to save the project to.
     */
@@ -69,6 +103,20 @@ public class ProjectService
       ProjectWriter writer = new ProjectWriter();
       writer.write(project, file);
       Config.getInstance().put("project.last", file.getAbsolutePath());
+
+      String baseName = file.getPath();
+      int idx = baseName.lastIndexOf('.');
+      if (idx > 0) baseName = baseName.substring(0, idx);
+      baseName += '-';
+      
+      for (ProductGroup group : project.getProductGroups())
+      {
+         File groupFile = new File(baseName + group.getName() + ".prgr");
+
+         LOGGER.info("Saving products group {} as {}", group.getName(), groupFile);
+         ProductGroupWriter groupWriter = new ProductGroupWriter();
+         groupWriter.write(group, groupFile);
+      }
 
       fireProjectChanged();
    }
@@ -179,14 +227,14 @@ public class ProjectService
       paramType.setSize(1);
       paramTypes.add(paramType);
 
-      ParameterValue paramValue = new ParameterValue(101);
+      ParameterValue paramValue = new ParameterValue();
       paramValue.setIntValue(0);
       paramValue.getLabel().setText("en", "No");
       paramValue.getLabel().setText("de", "Nein");
       paramValue.getLabel().setText("fr", "Non");
       paramType.addValue(paramValue);
 
-      paramValue = new ParameterValue(102);
+      paramValue = new ParameterValue();
       paramValue.setIntValue(1);
       paramValue.getLabel().setText("en", "Yes");
       paramValue.getLabel().setText("de", "Ja");

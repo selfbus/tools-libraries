@@ -22,6 +22,8 @@ T 6 symbol
 C1 T6 1 4 N SYMBOL_ID
 C2 T6 3 80 Y SYMBOL_FILENAME
 C3 T6 3 50 Y SYMBOL_NAME
+C4 T6 8 32767 Y SYMBOL_DATA
+C5 T6 8 32767 Y IconData
 -------------------------------------
 T 7 hw_product
 C1 T7 1 4 N PRODUCT_ID

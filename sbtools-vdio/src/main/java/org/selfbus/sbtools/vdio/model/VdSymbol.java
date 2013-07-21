@@ -119,7 +119,7 @@ public class VdSymbol
    @XmlAttribute(name = "symbol_data")
    String getDataStr()
    {
-      return DatatypeConverter.printHexBinary(data).toLowerCase();
+      return data == null ? "" : DatatypeConverter.printHexBinary(data).toLowerCase();
    }
 
    void setDataStr(String str)
@@ -130,7 +130,7 @@ public class VdSymbol
    @XmlAttribute(name = "icondata")
    String getIconDataStr()
    {
-      return DatatypeConverter.printHexBinary(iconData).toLowerCase();
+      return iconData == null ? "" : DatatypeConverter.printHexBinary(iconData).toLowerCase();
    }
 
    void setIconDataStr(String str)

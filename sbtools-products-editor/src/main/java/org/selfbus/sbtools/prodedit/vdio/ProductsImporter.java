@@ -22,8 +22,8 @@ import org.selfbus.sbtools.prodedit.model.global.Language;
 import org.selfbus.sbtools.prodedit.model.global.Manufacturer;
 import org.selfbus.sbtools.prodedit.model.global.Project;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ApplicationProgram;
-import org.selfbus.sbtools.prodedit.model.prodgroup.CatalogEntry;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
+import org.selfbus.sbtools.prodedit.model.prodgroup.Symbol;
 import org.selfbus.sbtools.prodedit.model.prodgroup.VirtualDevice;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.AbstractParameterContainer;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.CommunicationObject;
@@ -44,6 +44,7 @@ import org.selfbus.sbtools.vdio.model.VdParameter;
 import org.selfbus.sbtools.vdio.model.VdParameterType;
 import org.selfbus.sbtools.vdio.model.VdParameterValue;
 import org.selfbus.sbtools.vdio.model.VdProgramDescription;
+import org.selfbus.sbtools.vdio.model.VdSymbol;
 import org.selfbus.sbtools.vdio.model.VdTextAttribute;
 import org.selfbus.sbtools.vdio.model.VdVirtualDevice;
 import org.slf4j.Logger;
@@ -66,8 +67,24 @@ public class ProductsImporter
    private ProductGroup group;
    private Map<FunctionalEntity, ProductGroup> groups = new HashMap<FunctionalEntity, ProductGroup>();
    private Map<Integer, FunctionalEntity> topEntities = new HashMap<Integer, FunctionalEntity>();
+
+   // Map application programs from external ID to internal program.
+   private Map<Integer, ApplicationProgram> programs;
+
+   // Application programs map, one per group
+   private final Map<ProductGroup, Map<Integer, ApplicationProgram>> groupPrograms = new HashMap<ProductGroup, Map<Integer, ApplicationProgram>>();
+   
+   // Map parameter types from external ID to internal parameter type.
    private final Map<Integer, ParameterType> paramTypes = new HashMap<Integer, ParameterType>();
+
+   // Map parameters from external ID to internal parameter.
    private final Map<Integer, Parameter> params = new HashMap<Integer, Parameter>();
+
+   // Map symbols from external ID to internal ID.
+   private final Map<Integer, Integer> symbolIds = new HashMap<Integer, Integer>();
+
+   // The VD parameters, sorted by order
+   private VdParameter[] sortedParams;
 
    /**
     * Text lookup cache. Always use {@link #getText(int,int)} to access the texts.
@@ -147,7 +164,12 @@ public class ProductsImporter
    {
       Validate.notNull(vd, "input stream is null");
 
+      sortedParams = null;
       groups.clear();
+      groupPrograms.clear();
+      params.clear();
+      paramTypes.clear();
+      symbolIds.clear();
 
       project = new Project();
       project.setProjectService(projectService);
@@ -158,6 +180,8 @@ public class ProductsImporter
       importLanguages();
       importFunctionalEntities();
       importProducts();
+
+      project.afterUnmarshal(null, null);
    }
 
    /**
@@ -335,6 +359,13 @@ public class ProductsImporter
             groups.put(topEntity, group);
 
             LOGGER.debug("Creating products group {} \"{}\"", group.getId(), group.getName());
+
+            programs = new HashMap<Integer, ApplicationProgram>();
+            groupPrograms.put(group, programs);
+         }
+         else
+         {
+            programs = groupPrograms.get(group);
          }
 
          importVirtualDevice(d);
@@ -348,21 +379,16 @@ public class ProductsImporter
     */
    protected void importVirtualDevice(VdVirtualDevice d)
    {
-      VirtualDevice device = new VirtualDevice(d.getId(), d.getName(), d.getDescription(), d.getFunctionalEntityId());
-      device.setDescription(d.getDescription());
-      device.setNumber(d.getNumber());
-      device.setProductTypeId(d.getProductTypeId());
-      device.setSymbolId(d.getSymbolId());
-
-      VdCatalogEntry ce = vd.findCatalogEntry(d.getCatalogEntryId());
-      CatalogEntry entry = new CatalogEntry(ce.getId(), ce.getName(), ce.getManufacturerId(), ce.getProductId());
-      device.setCatalogEntry(entry);
-
-      if (group.getProgram(d.getProgramId()) == null)
+      int vdProgramId = d.getProgramId();
+      ApplicationProgram program = programs.get(vdProgramId);
+      if (program == null)
       {
-         VdApplicationProgram p = vd.findProgram(d.getProgramId());
+         VdApplicationProgram p = vd.findProgram(vdProgramId);
 
-         ApplicationProgram program = new ApplicationProgram(p.getId(), p.getName(), p.getMaskId());
+         program = group.createProgram(p.getName());
+         programs.put(d.getProgramId(), program);
+
+         program.setMaskId(p.getMaskId());
          program.setVersion(p.getVersion());
          program.setDeviceType(p.getDeviceType());
          program.setAddrTabSize(p.getAddrTabSize());
@@ -372,19 +398,25 @@ public class ProductsImporter
          program.setCommsTabSize(p.getCommsTabSize());
          program.setEepromData(p.getEepromData());
          program.setTypeId(p.getProgramType());
-         program.setProgramStyle(p.getProgramStyle());
-         program.setPollingMaster(p.isPollingMaster());
-         
-         importProgramDescription(program);
-         importParameterTypes(program);
-         importParameters(program);
-         importComObjects(program);
-   
-         group.getPrograms().add(program);
+         program.setSymbolId(getSymbolId(p.getSymbolId()));
+
+         importProgramDescription(program, vdProgramId);
+         importParameterTypes(program, vdProgramId);
+         importParameters(program, vdProgramId);
+         importComObjects(program, vdProgramId);
       }
 
-      device.setProgramId(d.getProgramId());
-      group.addDevice(device);
+      VirtualDevice device = group.createDevice(program);
+
+      device.setName(d.getName());
+      device.setFunctionalEntityId(d.getFunctionalEntityId());
+      device.setDescription(d.getDescription());
+      device.setNumber(d.getNumber());
+      device.setProductTypeId(d.getProductTypeId());
+      device.setSymbolId(getSymbolId(d.getSymbolId()));
+      device.setProgramId(program.getId());
+
+      VdCatalogEntry ce = vd.findCatalogEntry(d.getCatalogEntryId());
 
       if (group.getManufacturer() == null || group.getManufacturer() == Manufacturer.NONE)
       {
@@ -393,23 +425,56 @@ public class ProductsImporter
       }
    }
 
+   /**
+    * Get the internal symbol ID for the VD symbol id. Imports the symbol
+    * if it is not yet imported.
+    *
+    * @param vdSymbolId - the VD symbol ID
+    * @return The symbol
+    */
+   Integer getSymbolId(Integer vdSymbolId)
+   {
+      if (vdSymbolId == null)
+         return null;
+
+      Integer id = symbolIds.get(vdSymbolId);
+      if (id == null || group.getSymbol(id) == null)
+      {
+         VdSymbol s = vd.findSymbol(vdSymbolId);
+         if (s != null)
+         {
+            Symbol symbol = group.createSymbol(s.getName());
+            symbol.setFileName(s.getFileName());
+            symbol.setData(s.getData());
+
+            id = symbol.getId();
+            symbolIds.put(vdSymbolId, id);
+//            LOGGER.debug("Adding symbol {} to group {}", s.getName(), group.getName());
+         }
+         else
+         {
+            LOGGER.error("Symbol #{} not found in VD", vdSymbolId);
+         }
+      }
+
+      return id;
+   }
 
    /**
     * Import the description of an application program.
     * 
     * @param program - the program to import the description for
+    * @param vdProgramId - the program ID in the VD
     */
-   protected void importProgramDescription(ApplicationProgram program)
+   protected void importProgramDescription(ApplicationProgram program, int vdProgramId)
    {
-      final int programId = program.getId();
-
       if (vd.programDescriptions == null)
          return;
 
       Map<Integer,VdProgramDescription> ordered= new TreeMap<Integer,VdProgramDescription>();
       for (VdProgramDescription d : vd.programDescriptions)
       {
-         if (d.getProgramId() == programId)
+         if (d.getProgramId() == vdProgramId)
             ordered.put((d.getLanguageId() << 10) + d.getOrder(), d);
       }
 
@@ -434,28 +499,24 @@ public class ProductsImporter
     * Import the parameter types of an application program.
     * 
     * @param program - the program to import the parameter types for
+    * @param vdProgramId - the program ID in the VD
     */
-   protected void importParameterTypes(ApplicationProgram program)
+   protected void importParameterTypes(ApplicationProgram program, int vdProgramId)
    {
-      final int programId = program.getId();
       paramTypes.clear();
 
       for (VdParameterType t : vd.parameterTypes)
       {
-         if (t.getProgramId() != programId)
+         if (t.getProgramId() != vdProgramId)
             continue;
-
-         ParameterType paramType = new ParameterType();
-         paramType.setAtomicType(ParameterAtomicType.valueOf(t.getAtomicTypeId()));
-         paramType.setId(t.getId());
+ 
+         ParameterType paramType = program.createParameterType(ParameterAtomicType.valueOf(t.getAtomicTypeId()));
          paramType.setName(t.getName());
          paramType.setMinValue(t.getMinValue());
          paramType.setMaxValue(t.getMaxValue());
          paramType.setMinDoubleValue(t.getMinDoubleValue());
          paramType.setMaxDoubleValue(t.getMaxDoubleValue());
          paramType.setSize(t.getSize());
-
-         program.addParameterType(paramType);
 
          paramTypes.put(t.getId(), paramType);
       }
@@ -466,12 +527,15 @@ public class ProductsImporter
          if (paramType == null)
             continue;
 
-         ParameterValue paramValue = new ParameterValue(v.getId());
+         ParameterValue paramValue = paramType.createValue();
          paramValue.setIntValue(v.getIntValue());
          paramValue.setOrder(v.getOrder());
          paramValue.setLabel(getText(v.getId(), TextColumn.PARAM_VALUE, v.getLabel()));
+      }
 
-         paramType.addValue(paramValue);
+      for (ParameterType paramType : paramTypes.values())
+      {
+         paramType.sortValues();
       }
    }
 
@@ -482,43 +546,43 @@ public class ProductsImporter
     */
    protected VdParameter[] sortedParameters()
    {
-      VdParameter[] params = new  VdParameter[vd.parameters.size()];
-      vd.parameters.toArray(params);
-
-      Arrays.sort(params, new Comparator<VdParameter>()
+      if (sortedParams == null)
       {
-         @Override
-         public int compare(VdParameter a, VdParameter b)
-         {
-            return a.getOrder() - b.getOrder();
-         }
-      });
+         sortedParams = new VdParameter[vd.parameters.size()];
+         vd.parameters.toArray(sortedParams);
 
-      return params; 
+         Arrays.sort(sortedParams, new Comparator<VdParameter>()
+         {
+            @Override
+            public int compare(VdParameter a, VdParameter b)
+            {
+               return a.getOrder() - b.getOrder();
+            }
+         });
+      }
+
+      return sortedParams; 
    }
 
    /**
     * Import the parameters of an application program.
     * 
     * @param program - the program to import the parameters for
+    * @param vdProgramId - the program ID in the VD
     */
-   protected void importParameters(ApplicationProgram program)
+   protected void importParameters(ApplicationProgram program, int vdProgramId)
    {
-      final int programId = program.getId();
-      params.clear();
-
       AbstractParameterContainer pageParam = program.getParameterRoot();
 
       for (VdParameter p : sortedParameters())
       {
-         if (p.getProgramId() != programId)
+         if (p.getProgramId() != vdProgramId)
             continue;
 
-         // Safety check
-         Validate.notNull(paramTypes.get(p.getParamTypeId()));
+         ParameterType paramType = paramTypes.get(p.getParamTypeId());
+         Validate.notNull(paramType);
 
-         Parameter param = new Parameter(p.getParamTypeId());
-         param.setId(p.getId());
+         Parameter param = program.createParameter(paramType);
          param.setName(p.getName());
          param.setDescription(getText(p.getId(), TextColumn.PARAM_DESCRIPTION, p.getDescription()));
          param.setAddress(p.getAddress());
@@ -530,6 +594,7 @@ public class ProductsImporter
          param.setDefaultInt(p.getDefaultInt());
          param.setDefaultDouble(p.getDefaultDouble());
          param.setDefaultString(p.getDefaultString());
+         param.setNumber(p.getNumber());
          // TODO param.setVisible(...);
 
          if (p.getAddress() == null)
@@ -550,15 +615,6 @@ public class ProductsImporter
             pageParam.addChild(param);
          }
 
-//         Integer parentId = p.getParentId();
-//         if (parentId != null)
-//         {
-//            Parameter parent = params.get(parentId);
-//            Validate.notNull(parent, "Parent parameter #{0} for parameter #{1} not found", parentId, p.getId());
-//            parent.addChild(param);
-//         }
-//         else program.addParameter(param);
-
          params.put(p.getId(), param);
       }
    }
@@ -567,21 +623,29 @@ public class ProductsImporter
     * Import the communication objects of an application program.
     * 
     * @param program - the program to import the parameters for
+    * @param vdProgramId - the program ID in the VD
     */
-   protected void importComObjects(ApplicationProgram program)
+   protected void importComObjects(ApplicationProgram program, int vdProgramId)
    {
-      final int programId = program.getId();
       for (VdCommunicationObject o : vd.communicationObjects)
       {
-         if (o.getProgramId() != programId)
+         if (o.getProgramId() != vdProgramId)
             continue;
 
-         CommunicationObject comObject = new CommunicationObject();
-         comObject.setId(o.getId());
+         Parameter parent = null;
+         Integer parentId = o.getParentParameterId();
+         if (parentId != null)
+         {
+            parent = params.get(parentId);
+            Validate.notNull(parent, "Parent parameter #{0} for com-object #{1} not found", parentId, o.getId());
+         }
+
+         CommunicationObject comObject = program.createCommunicationObject(parent);
          comObject.setName(getText(o.getId(), TextColumn.COM_OBJECT_NAME, o.getName()));
          comObject.setFunction(getText(o.getId(), TextColumn.COM_OBJECT_FUNCTION, o.getFunction()));
          comObject.setDescription(getText(o.getId(), TextColumn.COM_OBJECT_DESCRIPTION, o.getDescription()));
          comObject.setType(ObjectType.valueOf(o.getTypeId()));
+         comObject.setNumber(o.getNumber());
          comObject.setParentId(o.getParentParameterId());
          comObject.setParentValue(o.getParentParameterValue());
          comObject.setCommEnabled(o.isCommEnabled());
@@ -589,15 +653,6 @@ public class ProductsImporter
          comObject.setWriteEnabled(o.isWriteEnabled());
          comObject.setTransEnabled(o.isTransEnabled());
          comObject.setPriority(ObjectPriority.valueOf(o.getPriorityId()));
-
-         Integer parentId = o.getParentParameterId();
-         if (parentId != null)
-         {
-            Parameter parent = params.get(parentId);
-            Validate.notNull(parent, "Parent parameter #{0} for com-object #{1} not found", parentId, o.getId());
-            parent.addChild(comObject);
-         }
-         else program.addParameter(comObject);
       }
    }
 }

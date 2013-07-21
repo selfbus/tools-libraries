@@ -8,13 +8,17 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
+import org.apache.commons.lang3.Validate;
 import org.selfbus.sbtools.prodedit.internal.I18n;
 import org.selfbus.sbtools.prodedit.model.common.MultiLingualText;
 import org.selfbus.sbtools.prodedit.model.enums.ParameterAtomicType;
 import org.selfbus.sbtools.prodedit.model.interfaces.Identifiable;
+import org.selfbus.sbtools.prodedit.model.interfaces.Symbolized;
+import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.AbstractParameterContainer;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.AbstractParameterNode;
+import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.CommunicationObject;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.Parameter;
-import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterRootNode;
+import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterRoot;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterTreeModel;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterType;
 import org.selfbus.sbtools.prodedit.utils.IdentifiableUtils;
@@ -31,7 +35,7 @@ import com.jgoodies.common.collect.ArrayListModel;
  */
 @XmlType(propOrder = {})
 @XmlAccessorType(XmlAccessType.NONE)
-public class ApplicationProgram extends Model implements Identifiable
+public class ApplicationProgram extends Model implements Identifiable, Symbolized
 {
    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationProgram.class);
    private static final long serialVersionUID = 2365607976221764138L;
@@ -40,7 +44,7 @@ public class ApplicationProgram extends Model implements Identifiable
    private int id;
 
    @XmlAttribute(name = "symbol_id")
-   private int symbolId;
+   private Integer symbolId;
 
    @XmlAttribute(name = "mask_id", required = true)
    private int maskId;
@@ -51,7 +55,10 @@ public class ApplicationProgram extends Model implements Identifiable
    @XmlAttribute(name = "program_version")
    private String version;
 
-   @XmlAttribute(name = "device_type")
+   @XmlAttribute(name = "program_type", required = true)
+   private int typeId;
+
+   @XmlAttribute(name = "device_type", required = true)
    private int deviceType;
 
    @XmlAttribute(name = "address_tab_size")
@@ -75,43 +82,23 @@ public class ApplicationProgram extends Model implements Identifiable
    @XmlAttribute(name = "data_length")
    private int eepromDataLength;
 
-   @XmlAttribute(name = "contextId")
-   private int contextId;
-
-   @XmlAttribute(name = "program_type")
-   private int typeId;
-
    @XmlAttribute(name = "ram_size")
    private int ramSize;
 
    @XmlAttribute(name = "original_manufacturer_id")
    private int originalManufacturerId;
 
-   @XmlAttribute(name = "api_version")
-   private int apiVersion;
-
-   @XmlAttribute(name = "program_style")
-   private int programStyle;
-
-   @XmlAttribute(name = "is_polling_master")
-   private boolean pollingMaster;
-
-   @XmlAttribute(name = "number_of_polling_groups")
-   private int numPollingGroups;
-
-   @XmlElement(name = "parameters")
-   private ParameterTreeModel parameterTree;
-
    @XmlElementWrapper(name = "parameter_types")
    @XmlElement(name = "parameter_type")
    private ArrayListModel<ParameterType> parameterTypes = new ArrayListModel<ParameterType>();
 
-   @XmlElementWrapper(name = "s19_blocks")
-   @XmlElement(name = "s19_block")
-   private final ArrayListModel<S19Block> s19Blocks = new ArrayListModel<S19Block>();
-
    @XmlElement(name = "description")
    private MultiLingualText description = new MultiLingualText();
+
+   private ParameterTreeModel parameterTree;
+
+   // Next unique ID for parameters and communication objects 
+   private int uniqueParamId = 1;
 
    /**
     * Create an empty program object.
@@ -135,18 +122,100 @@ public class ApplicationProgram extends Model implements Identifiable
    }
 
    /**
+    * Create a parameter type.
+    * 
+    * @param atomicType - the atomic type of the parameter.
+    * 
+    * @return The created parameter type.
+    */
+   public ParameterType createParameterType(ParameterAtomicType atomicType)
+   {
+      Validate.notNull(atomicType);
+
+      ParameterType paramType = new ParameterType(atomicType);
+      paramType.setSize(1);
+      paramType.setMinValue(0);
+      paramType.setMaxValue(1);
+      paramType.setId(IdentifiableUtils.createUniqueId(parameterTypes));
+      paramType.setName(I18n.formatMessage("ParameterType.newName", Integer.toString(paramType.getId())));
+
+      addParameterType(paramType);
+
+      return paramType;
+   }
+
+   /**
+    * Create a parameter.
+    * 
+    * @param paramType - the type of the parameter.
+    * @param parent - the parent parameter, null if it is a top level parameter.
+    * 
+    * @return The created parameter.
+    */
+   public Parameter createParameter(ParameterType paramType, AbstractParameterContainer parent)
+   {
+      Parameter param = createParameter(paramType);
+
+      if (parent == null)
+         parent = getParameterRoot();
+
+      parent.addChild(param);
+
+      return param;
+   }
+
+   /**
+    * Create a parameter. The parameter is not added to the program or any other parent.
+    * 
+    * @param paramType - the type of the parameter.
+    * 
+    * @return The created parameter.
+    */
+   public Parameter createParameter(ParameterType paramType)
+   {
+      Validate.notNull(paramType);
+
+      Parameter param = new Parameter(paramType.getId());
+      param.setId(uniqueParamId++);
+
+      return param;
+   }
+
+   /**
+    * Create a communication object.
+    * 
+    * @param parent - the parent parameter, null if it is a top level communication object.
+    * 
+    * @return The created parameter.
+    */
+   public CommunicationObject createCommunicationObject(AbstractParameterContainer parent)
+   {
+      CommunicationObject comObject = new CommunicationObject();
+      comObject.setId(uniqueParamId++);
+
+      if (parent == null)
+         parent = getParameterRoot();
+
+      parent.addChild(comObject);
+
+      return comObject;
+   }
+
+   /**
     * @return the program id
     */
+   @Override
    public int getId()
    {
       return id;
    }
 
    /**
-    * Set the program id.
+    * Set the program ID.
     * 
     * @param id - the id to set.
     */
+   @Override
    public void setId(int id)
    {
       this.id = id;
@@ -334,12 +403,18 @@ public class ApplicationProgram extends Model implements Identifiable
    /**
     * @return The root of the parameter tree model.
     */
-   public ParameterRootNode getParameterRoot()
+   @XmlElement(name = "parameterRoot")
+   public ParameterRoot getParameterRoot()
    {
       if (parameterTree == null)
          parameterTree = new ParameterTreeModel();
 
       return parameterTree.getRoot();
+   }
+
+   void setParameterRoot(ParameterRoot root)
+   {
+      parameterTree = new ParameterTreeModel(root);
    }
 
    /**
@@ -422,12 +497,12 @@ public class ApplicationProgram extends Model implements Identifiable
    @XmlAttribute(name = "eeprom_data")
    String getEepromDataStr()
    {
-      return DatatypeConverter.printHexBinary(eepromData).toLowerCase();
+      return DatatypeConverter.printBase64Binary(eepromData);
    }
 
    void setEepromDataStr(String str)
    {
-      eepromData = DatatypeConverter.parseHexBinary(str);
+      eepromData = DatatypeConverter.parseBase64Binary(str);
    }
 
    /**
@@ -471,54 +546,6 @@ public class ApplicationProgram extends Model implements Identifiable
    }
 
    /**
-    * @return the programStyle
-    */
-   public int getProgramStyle()
-   {
-      return programStyle;
-   }
-
-   /**
-    * @param programStyle the programStyle to set
-    */
-   public void setProgramStyle(int programStyle)
-   {
-      this.programStyle = programStyle;
-   }
-
-   /**
-    * @return the pollingMaster
-    */
-   public boolean isPollingMaster()
-   {
-      return pollingMaster;
-   }
-
-   /**
-    * @param pollingMaster the pollingMaster to set
-    */
-   public void setPollingMaster(boolean pollingMaster)
-   {
-      this.pollingMaster = pollingMaster;
-   }
-
-   /**
-    * @return the numPollingGroups
-    */
-   public int getNumPollingGroups()
-   {
-      return numPollingGroups;
-   }
-
-   /**
-    * @param numPollingGroups the numPollingGroups to set
-    */
-   public void setNumPollingGroups(int numPollingGroups)
-   {
-      this.numPollingGroups = numPollingGroups;
-   }
-
-   /**
     * @param parameterTypes the parameterTypes to set
     */
    public void setParameterTypes(ArrayListModel<ParameterType> parameterTypes)
@@ -559,25 +586,6 @@ public class ApplicationProgram extends Model implements Identifiable
    }
 
    /**
-    * Create a new parameter type.
-    * 
-    * @return The created parameter type.
-    */
-   public ParameterType createParameterType()
-   {
-      ParameterType paramType = new ParameterType(ParameterAtomicType.UNSIGNED);
-      paramType.setSize(1);
-      paramType.setMinValue(0);
-      paramType.setMaxValue(1);
-      paramType.setId(IdentifiableUtils.createUniqueId(parameterTypes));
-      paramType.setName(I18n.formatMessage("ParameterType.newName", Integer.toString(paramType.getId())));
-
-      parameterTypes.add(paramType);
-
-      return paramType;
-   }
-
-   /**
     * Set the program description.
     * 
     * @param description - the program description to set.
@@ -596,11 +604,47 @@ public class ApplicationProgram extends Model implements Identifiable
    }
 
    /**
-    * @return the S19 Blocks
+    * @return the symbolId
     */
-   public ArrayListModel<S19Block> getS19Blocks()
+   @Override
+   public Integer getSymbolId()
    {
-      return s19Blocks;
+      return symbolId;
+   }
+
+   /**
+    * @param symbolId the symbolId to set
+    */
+   public void setSymbolId(Integer symbolId)
+   {
+      this.symbolId = symbolId;
+   }
+
+   /**
+    * Update the internal unique ID for parameters and communication objects.
+    * <p>
+    * Call this method once after adding parameters or communication objects that
+    * were not created with the create methods of this class.
+    */
+   public void updateUniqueId()
+   {
+      uniqueParamId = 1;
+      updateUniqueParamId(getParameterRoot());
+   }
+
+   /**
+    * Recursive worker of {@link #updateUniqueId()}.
+    */
+   private void updateUniqueParamId(AbstractParameterContainer cont)
+   {
+      for (AbstractParameterNode param : cont.getChilds())
+      {
+         if (param.getId() >= uniqueParamId)
+            uniqueParamId = param.getId() + 1;
+
+         if (param instanceof AbstractParameterContainer)
+            updateUniqueParamId((AbstractParameterContainer) param);
+      }
    }
 
    /**

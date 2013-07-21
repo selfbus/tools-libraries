@@ -31,7 +31,6 @@ public class TestProductGroupWriter
       out.close();
 
       assertTrue(out.toByteArray().length > 0);
-      assertEquals("", new String(out.toByteArray()));
    }
 
    // @Test

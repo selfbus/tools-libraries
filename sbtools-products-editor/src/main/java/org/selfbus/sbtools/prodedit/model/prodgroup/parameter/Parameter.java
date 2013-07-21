@@ -3,21 +3,18 @@ package org.selfbus.sbtools.prodedit.model.prodgroup.parameter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
-import org.selfbus.sbtools.prodedit.model.common.MultiLingualText;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A parameter of a program.
  */
+@XmlRootElement
 @XmlType(propOrder = {})
 @XmlAccessorType(XmlAccessType.NONE)
 public class Parameter extends AbstractParameterContainer
 {
-   private static final Logger LOGGER = LoggerFactory.getLogger(Parameter.class);
+//   private static final Logger LOGGER = LoggerFactory.getLogger(Parameter.class);
    private static final long serialVersionUID = -4919375775576501382L;
 
    @XmlAttribute(name = "name", required = true)
@@ -41,19 +38,13 @@ public class Parameter extends AbstractParameterContainer
    @XmlAttribute(name = "bit_offset")
    private Integer bitOffset;
 
-   @XmlAttribute(name = "low_access")
-   private Integer lowAccess;
-
-   @XmlAttribute(name = "high_access")
-   private Integer highAccess;
-
-   @XmlElement(name = "default_int")
+   @XmlAttribute(name = "default_int")
    private Integer defaultInt;
 
-   @XmlElement(name = "default_double")
+   @XmlAttribute(name = "default_double")
    private Double defaultDouble;
 
-   @XmlElement(name = "default_string")
+   @XmlAttribute(name = "default_string")
    private String defaultString;
 
    /**
@@ -194,38 +185,6 @@ public class Parameter extends AbstractParameterContainer
    }
 
    /**
-    * @return the lowAccess
-    */
-   public Integer getLowAccess()
-   {
-      return lowAccess;
-   }
-
-   /**
-    * @param lowAccess the lowAccess to set
-    */
-   public void setLowAccess(Integer lowAccess)
-   {
-      this.lowAccess = lowAccess;
-   }
-
-   /**
-    * @return the highAccess
-    */
-   public Integer getHighAccess()
-   {
-      return highAccess;
-   }
-
-   /**
-    * @param highAccess the highAccess to set
-    */
-   public void setHighAccess(Integer highAccess)
-   {
-      this.highAccess = highAccess;
-   }
-
-   /**
     * @return the default integer value
     */
    public Integer getDefaultInt()
@@ -238,7 +197,7 @@ public class Parameter extends AbstractParameterContainer
     */
    public void setDefaultInt(Integer defaultInt)
    {
-      LOGGER.debug("Param #{} defaultInt={}", id, defaultInt);
+      //LOGGER.debug("Param #{} defaultInt={}", id, defaultInt);
       this.defaultInt = defaultInt;
    }
 

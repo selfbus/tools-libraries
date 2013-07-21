@@ -9,7 +9,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileFilter;
 
-import org.jdesktop.application.SingleFrameApplication;
 import org.selfbus.sbtools.common.Config;
 import org.selfbus.sbtools.common.gui.actions.BasicAction;
 import org.selfbus.sbtools.common.gui.components.Dialogs;
@@ -41,7 +40,7 @@ public final class ImportProjectAction extends BasicAction
    @Override
    public void actionEvent(ActionEvent ev)
    {
-      SingleFrameApplication app = (SingleFrameApplication) SingleFrameApplication.getInstance();
+      ProdEdit app = ProdEdit.getInstance();
       final JFrame mainWin = app.getMainFrame();
 
       final Config cfg = Config.getInstance();
@@ -66,7 +65,8 @@ public final class ImportProjectAction extends BasicAction
       try
       {
          mainWin.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-         ProdEdit.getInstance().getProjectService().importProject(file);
+         app.getProjectService().importProject(file);
+         app.setStatusMessage(I18n.formatMessage("Project.imported", file.getName()));
       }
       catch (FileNotFoundException | VdioException e)
       {

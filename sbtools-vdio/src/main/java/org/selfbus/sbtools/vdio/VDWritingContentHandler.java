@@ -2,7 +2,9 @@ package org.selfbus.sbtools.vdio;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.commons.lang3.Validate;
 import org.selfbus.sbtools.vdio.internal.VDTableColumn;
@@ -39,6 +41,7 @@ public class VDWritingContentHandler extends DefaultHandler
     * Create a VD format stream writer.
     * 
     * @param outStream - the stream to write
+    * @throws RuntimeException if the encoding "ISO-8859-15" is unknown (which should never happen)
     */
    public VDWritingContentHandler(OutputStream outStream)
    {
@@ -46,7 +49,15 @@ public class VDWritingContentHandler extends DefaultHandler
       Validate.notNull(infoStream, "VD tables info not found in class path: " + INFO_FILE_NAME);
 
       infoMgr = new VDTableInfoManager(infoStream);
-      out = new PrintWriter(outStream);
+
+      try
+      {
+         out = new PrintWriter(new OutputStreamWriter(outStream, "ISO-8859-15"));
+      }
+      catch (UnsupportedEncodingException e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 
    /**

@@ -3,10 +3,6 @@ package org.selfbus.sbtools.prodedit.model.prodgroup.parameter;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.selfbus.sbtools.prodedit.model.prodgroup.ApplicationProgram;
 
@@ -14,19 +10,22 @@ import org.selfbus.sbtools.prodedit.model.prodgroup.ApplicationProgram;
  * Tree model for {@link Parameter}s and {@link CommunicationObject}s of an
  * {@link ApplicationProgram}.
  */
-@XmlType(name = "param_tree", propOrder = {})
-@XmlAccessorType(XmlAccessType.NONE)
 public class ParameterTreeModel implements TreeModel
 {
-   @XmlElement(name = "root")
-   private ParameterRootNode root = new ParameterRootNode();
+   private final ParameterRoot root;
 
    public ParameterTreeModel()
    {
+      this.root = new ParameterRoot();
+   }
+
+   public ParameterTreeModel(ParameterRoot root)
+   {
+      this.root = root;
    }
 
    @Override
-   public ParameterRootNode getRoot()
+   public ParameterRoot getRoot()
    {
       return root;
    }

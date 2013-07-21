@@ -1,5 +1,8 @@
 package org.selfbus.sbtools.prodedit.model.enums;
 
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlType;
+
 import org.selfbus.sbtools.prodedit.internal.I18n;
 
 /**
@@ -8,6 +11,8 @@ import org.selfbus.sbtools.prodedit.internal.I18n;
  * The {@link #ordinal() ordinal} gives the numeric value of the priority as it
  * is used in communication and the KNX devices.
  */
+@XmlType
+@XmlEnum
 public enum ObjectPriority
 {
    /**

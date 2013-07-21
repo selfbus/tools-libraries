@@ -5,16 +5,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlValue;
 
 import org.selfbus.sbtools.prodedit.ProdEdit;
 
 import com.jgoodies.common.collect.ArrayListModel;
 
-
-//
-//  See  http://www.developpez.net/forums/d972324/java/general-java/xml/hashmap-jaxb
-//
 
 /**
  * A text / string in multiple languages.
@@ -25,6 +20,37 @@ public class MultiLingualText
 {
    @XmlElement(name = "text")
    private ArrayListModel<Element> texts = new ArrayListModel<Element>();
+   
+   @XmlType(propOrder = {})
+   @XmlAccessorType(XmlAccessType.NONE)
+   public static class Element
+   {
+     @XmlAttribute(name = "id")
+     public String langId;
+
+     @XmlAttribute(name = "value")
+     public String value;
+    
+     public Element()
+     {
+     }
+    
+     public Element(String langId, String text)
+     {
+       this.langId = langId;
+       this.value = text;
+     }
+
+     public String getText()
+     {
+        return value;
+     }
+     
+     public void setText(String text)
+     {
+        this.value = text;
+     }
+   }
 
    /**
     * Get the text in the default language.
@@ -43,7 +69,7 @@ public class MultiLingualText
     */
    public String getText(String langId)
    {
-      return getElement(langId).text;
+      return getElement(langId).value;
    }
 
    /**
@@ -58,7 +84,7 @@ public class MultiLingualText
       {
          if (e.langId.equals(langId))
          {
-            e.text = text;
+            e.value = text;
             return;
          }
       }
@@ -101,34 +127,5 @@ public class MultiLingualText
    public void setTexts(ArrayListModel<Element> texts)
    {
       this.texts = texts;
-   }
-   
-   public static class Element
-   {
-     @XmlAttribute
-     public String langId;
-
-     @XmlValue
-     public String text;
-    
-     public Element()
-     {
-     }
-    
-     public Element(String langId, String text)
-     {
-       this.langId = langId;
-       this.text = text;
-     }
-
-     public String getText()
-     {
-        return text;
-     }
-     
-     public void setText(String text)
-     {
-        this.text = text;
-     }
    }
 }

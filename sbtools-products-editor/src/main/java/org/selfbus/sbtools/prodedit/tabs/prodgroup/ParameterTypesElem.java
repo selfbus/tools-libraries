@@ -9,7 +9,6 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
@@ -185,7 +184,7 @@ public class ParameterTypesElem extends AbstractCategoryElem implements Closeabl
          @Override
          public void actionEvent(ActionEvent event)
          {
-            selectionInList.setSelection(program.createParameterType());
+            selectionInList.setSelection(program.createParameterType(ParameterAtomicType.UNSIGNED));
          }
       });
 

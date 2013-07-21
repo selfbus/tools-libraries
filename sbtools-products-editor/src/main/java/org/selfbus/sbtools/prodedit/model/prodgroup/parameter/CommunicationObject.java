@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.selfbus.sbtools.prodedit.model.common.MultiLingualText;
@@ -15,7 +16,8 @@ import org.selfbus.sbtools.prodedit.model.enums.ObjectType;
  * to other devices on the bus. Group data telegrams send and receive the data
  * of the communication objects.
  */
-@XmlType(propOrder = {})
+@XmlRootElement
+@XmlType(name = "communication_object", propOrder = {})
 @XmlAccessorType(XmlAccessType.NONE)
 public class CommunicationObject extends AbstractParameterNode
 {

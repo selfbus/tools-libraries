@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.selfbus.sbtools.prodedit.model.common.MultiLingualText;
 import org.selfbus.sbtools.prodedit.model.interfaces.Identifiable;
 import org.selfbus.sbtools.prodedit.model.interfaces.Orderable;
+import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
 
 import com.jgoodies.binding.beans.Model;
 
@@ -17,7 +18,7 @@ import com.jgoodies.binding.beans.Model;
  */
 @XmlType(propOrder = {})
 @XmlAccessorType(XmlAccessType.NONE)
-public abstract class AbstractParameterNode extends Model implements Identifiable, Orderable
+public class AbstractParameterNode extends Model implements Identifiable, Orderable
 {
    private static final long serialVersionUID = 8492676566007169620L;
 
@@ -40,6 +41,10 @@ public abstract class AbstractParameterNode extends Model implements Identifiabl
    @XmlAttribute(name = "number")
    private Integer number;
 
+   protected AbstractParameterNode()
+   {
+   }
+
    /**
     * {@inheritDoc}
     */
@@ -58,7 +63,9 @@ public abstract class AbstractParameterNode extends Model implements Identifiabl
    }
 
    /**
-    * {@inheritDoc}
+    * Set the ID. Use {@link ProductGroup#getNextUniqueId()} to get a unique ID.
+    * 
+    * @param id - the ID to set.
     */
    @Override
    public void setId(int id)

@@ -1,19 +1,33 @@
 package org.selfbus.sbtools.prodedit.model.prodgroup.parameter;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlType;
 
 import com.jgoodies.common.collect.ArrayListModel;
 
-public abstract class AbstractParameterContainer extends AbstractParameterNode implements ParameterContainer
+@XmlType(propOrder = {})
+@XmlAccessorType(XmlAccessType.NONE)
+@XmlRootElement
+@XmlSeeAlso({ Parameter.class, CommunicationObject.class })
+public class AbstractParameterContainer extends AbstractParameterNode implements ParameterContainer
 {
    private static final long serialVersionUID = 4327394838211456868L;
 
-   @XmlElementWrapper(name = "children")
-   @XmlElement(name = "parameter")
+   //@XmlMixed
+   @XmlElementWrapper(name = "childs")
+   @XmlElementRefs({
+      @XmlElementRef(name = "parameter", type = Parameter.class),
+      @XmlElementRef(name = "communication_object", type = CommunicationObject.class)
+   })
    private ArrayListModel<AbstractParameterNode> childs;
 
-   public AbstractParameterContainer()
+   protected AbstractParameterContainer()
    {
       super();
    }

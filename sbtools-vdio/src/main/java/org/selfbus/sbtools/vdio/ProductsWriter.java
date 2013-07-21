@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.net.URL;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -22,6 +23,7 @@ import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.util.Zip4jConstants;
 
 import org.apache.commons.lang3.Validate;
+import org.selfbus.sbtools.vdio.internal.I18n;
 import org.selfbus.sbtools.vdio.internal.AbstractZipPasswordHandler;
 import org.selfbus.sbtools.vdio.model.ObjectFactory;
 import org.selfbus.sbtools.vdio.model.VD;
@@ -94,6 +96,21 @@ public class ProductsWriter extends AbstractZipPasswordHandler
    {
       File vdFile = null;
 
+      if (!haveZipPassword() && isInteractive())
+      {
+         int ret = JOptionPane.showOptionDialog(parentFrame, I18n.getMessage("ProductsWriter.askZipWithoutPass"),
+            I18n.getMessage("ProductsWriter.confirm"), JOptionPane.YES_NO_CANCEL_OPTION,
+            JOptionPane.QUESTION_MESSAGE, null, null, Boolean.TRUE);
+         if (ret == JOptionPane.YES_OPTION)
+         {
+            zipPasswd = askZipPassword(false);
+         }
+         else if (ret == JOptionPane.CANCEL_OPTION)
+         {
+            return;
+         }
+      }
+
       try
       {
          file.delete();
@@ -101,12 +118,10 @@ public class ProductsWriter extends AbstractZipPasswordHandler
          ZipFile zipFile = new ZipFile(file);
 
          vdFile = File.createTempFile("ets_", ".vd_", file.getParentFile());
-         Validate.isTrue(!vdFile.exists());
-
          write(new FileOutputStream(vdFile), vd);
 
          ZipParameters zipParams = new ZipParameters();
-         if (hasZipPassword())
+         if (haveZipPassword())
          {
             zipParams.setEncryptFiles(true);
             zipParams.setEncryptionMethod(Zip4jConstants.ENC_METHOD_STANDARD);

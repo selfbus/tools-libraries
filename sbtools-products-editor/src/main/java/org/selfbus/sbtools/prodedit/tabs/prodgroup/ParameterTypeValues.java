@@ -69,9 +69,6 @@ public class ParameterTypeValues extends JPanel implements CloseableComponent
    private final PresentationModel<ParameterValue> detailsModel = new PresentationModel<ParameterValue>(selectionInList);
    private final IntegerValueConverter intValueConverter = new IntegerValueConverter();
 
-   private final AbstractValueModel idValue =  detailsModel.getModel("id");
-   private final JLabel idField = BasicComponentFactory.createLabel(new ConverterValueModel(idValue, intValueConverter));
-
    private final AbstractValueModel orderValue =  detailsModel.getModel("order");
    private final JLabel orderField = BasicComponentFactory.createLabel(new ConverterValueModel(orderValue, intValueConverter));
 
@@ -165,10 +162,6 @@ public class ParameterTypeValues extends JPanel implements CloseableComponent
       builder.addLabel(I18n.getMessage("ParameterTypeValue.order"), cc.rc(row, 2));
       builder.add(orderField, cc.rc(row, 4));
 
-      row = 8;
-      builder.addLabel(I18n.getMessage("ParameterTypeValue.id"), cc.rc(row, 2));
-      builder.add(idField, cc.rc(row, 4));
-
       splitPane.setRightComponent(new JScrollPane(builder.build()));
 
       labelElems = MultiLingualTextUtil.createFormElements(builder, 3);
@@ -189,7 +182,7 @@ public class ParameterTypeValues extends JPanel implements CloseableComponent
          @Override
          public void actionEvent(ActionEvent event)
          {
-            if (paramType != null)           
+            if (paramType != null)
                selectionInList.setSelection(paramType.createValue());
          }
       });

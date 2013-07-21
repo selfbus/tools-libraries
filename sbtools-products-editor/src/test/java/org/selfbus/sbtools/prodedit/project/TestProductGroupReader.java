@@ -23,10 +23,11 @@ public class TestProductGroupReader
       String data = XML_HEADER + 
          "<product_group id=\"inputs-1\" name=\"Inputs\">\n" +
          " <programs>\n" +
-         "  <program program_id=\"100\" program_name=\"Input\" manufacturer_id=\"11\">\n" +
+         "  <program program_id=\"100\" program_name=\"Input\" manufacturer_id=\"11\" "+
+         "device_type=\"1\" program_type=\"1010\">\n" +
          "   <description>\n" +
-         "    <text key=\"en\" value=\"Input devices\" />\n" +
-         "    <text key=\"de\" value=\"Eingänge\" />\n" +
+         "    <text id=\"en\" value=\"Input devices\" />\n" +
+         "    <text id=\"de\" value=\"Eingänge\" />\n" +
          "   </description>\n" +
          "  </program>\n" +
          " </programs>\n" +

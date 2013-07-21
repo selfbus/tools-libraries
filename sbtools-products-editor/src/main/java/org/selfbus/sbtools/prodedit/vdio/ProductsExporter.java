@@ -28,6 +28,7 @@ import org.selfbus.sbtools.prodedit.model.global.Manufacturer;
 import org.selfbus.sbtools.prodedit.model.global.Project;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ApplicationProgram;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
+import org.selfbus.sbtools.prodedit.model.prodgroup.Symbol;
 import org.selfbus.sbtools.prodedit.model.prodgroup.VirtualDevice;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.AbstractParameterContainer;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.AbstractParameterNode;
@@ -80,21 +81,47 @@ public class ProductsExporter
    private VD vd;
    private Project project;
    private ProductGroup group;
-   private ApplicationProgram program;
    private int defaultManufacturerId;
    private int mediumTypeIdTP = 0;
    private int bitmapId = 5507;
-   private int deviceParamId = 10000;
    private int maskId, maskEntryId, textId, comObjectUniqueNumber;
-   private int uniqueId, programId, deviceId, deviceInfoId, productDescriptionId;
-   private int productToProgramId, programDescriptionId;
+   private int uniqueId, deviceId, deviceInfoId, productDescriptionId;
+   private int productToProgramId, programDescriptionId, symbolId;
    private String defaultLangId;
 
-   private final Map<Integer,Integer> deviceIdMap = new HashMap<Integer,Integer>();
-   private final Map<Integer,Integer> programIdMap = new HashMap<Integer,Integer>();
-   private final Map<Integer,Integer> paramTypeIdMap = new HashMap<Integer,Integer>();
-   private final Map<Integer,Integer> paramIdMap = new HashMap<Integer,Integer>();
+   // External ID for device parameters and device objects
+   private int deviceParamId = 10000;
 
+   // Map from internal virtual device to external ID
+   private final Map<VirtualDevice, Integer> deviceMap = new HashMap<VirtualDevice, Integer>();
+
+   // Map from internal application program to external ID
+   private final Map<ApplicationProgram, Integer> programMap = new HashMap<ApplicationProgram, Integer>();
+
+   // Map from internal communication object to external ID
+   private final Map<CommunicationObject, Integer> comObjectMap = new HashMap<CommunicationObject, Integer>();
+
+   // Map from internal symbol ID to external ID
+   private final Map<Integer, Integer> symbolIdMap = new HashMap<Integer, Integer>();
+
+   // Map from internal parameter type ID to external ID
+   private Map<Integer, Integer> paramTypeIdMap;
+
+   // Map from internal parameter ID to external ID
+   private Map<Integer, Integer> paramIdMap;
+
+   class ProgramExportInfo
+   {
+      // Map from internal parameter type ID to external ID
+      private final Map<Integer, Integer> paramTypeIdMap = new HashMap<Integer, Integer>();
+
+      // Map from internal parameter ID to external ID
+      private final Map<Integer, Integer> paramIdMap = new HashMap<Integer, Integer>();
+   }
+
+   // Map for program export informations
+   private final Map<ApplicationProgram, ProgramExportInfo> programExportInfoMap = new HashMap<ApplicationProgram, ProgramExportInfo>();
+   
    /**
     * Create a products exporter.
     */
@@ -152,6 +179,12 @@ public class ProductsExporter
    {
       this.project = project;
 
+      deviceMap.clear();
+      programMap.clear();
+      comObjectMap.clear();
+      symbolIdMap.clear();
+      programExportInfoMap.clear();
+
       uniqueId = 22000;
       textId = 1;
       deviceInfoId = uniqueId++;
@@ -161,6 +194,7 @@ public class ProductsExporter
       productDescriptionId = 1;
       productToProgramId = 1;
       programDescriptionId = 1;
+      symbolId = 1;
       defaultLangId = project.getDefaultLangId();
 
       defaultManufacturerId = project.getDefaultManufacturerId();
@@ -187,6 +221,7 @@ public class ProductsExporter
       vd.product2programs = new LinkedList<VdProductToProgram>();
       vd.prod2prog2mts = new LinkedList<VdProductToProgramToMT>();
       vd.programDescriptions = new LinkedList<VdProgramDescription>();
+      vd.symbols = new LinkedList<VdSymbol>();
 
       exportManufacturers();
       exportLanguages();
@@ -194,7 +229,6 @@ public class ProductsExporter
       exportBcuTypes();
       exportAssemblerTypes();
       exportMediumTypes();
-      exportSymbols();
       exportMasks();
       exportAtomicTypes();
       exportObjectTypes();
@@ -387,16 +421,6 @@ public class ProductsExporter
    }
 
    /**
-    * Export the symbols.
-    */
-   void exportSymbols()
-   {
-      vd.symbols = new LinkedList<VdSymbol>();
-
-      // TODO
-   }
-
-   /**
     * Load a properties file that is searched in the directory "org.selfbus.sbtools.prodedit"
     * in the class path.
     * 
@@ -533,8 +557,12 @@ public class ProductsExporter
    {
       this.group = group;
 
-      deviceIdMap.clear();
-      programIdMap.clear();
+      symbolIdMap.clear();
+
+      for (Symbol symbol : group.getSymbols())
+      {
+         exportSymbol(symbol);
+      }
 
       for (ApplicationProgram program : group.getPrograms())
       {
@@ -544,7 +572,25 @@ public class ProductsExporter
       for (VirtualDevice device : group.getDevices())
       {
          exportDevice(device);
+         exportDeviceParameters(device);
       }
+   }
+
+   /**
+    * Export a symbol.
+    * 
+    * @param symbol - the symbol to export
+    */
+   void exportSymbol(Symbol symbol)
+   {
+      VdSymbol s = new VdSymbol();
+      s.setId(symbolId++);
+      s.setName(symbol.getName());
+      s.setFileName(symbol.getFileName());
+      s.setData(symbol.getData());
+      vd.symbols.add(s);
+
+      symbolIdMap.put(symbol.getId(), s.getId());
    }
 
    /**
@@ -555,28 +601,29 @@ public class ProductsExporter
    void exportDevice(VirtualDevice device)
    {
       deviceId = uniqueId++;
-      deviceIdMap.put(device.getId(), deviceId);
+      deviceMap.put(device, deviceId);
 
-      programId = programIdMap.get(device.getProgramId());
+      int programId = programMap.get(group.getProgram(device));
+      int productId = deviceId;
+      int entryId = deviceId;
 
       VdVirtualDevice d = new VdVirtualDevice();
       d.setId(deviceId);
-      d.setSymbolId(null); // TODO implement symbols
-      d.setCatalogEntryId(device.getCatalogEntry().getId());
+      d.setSymbolId(symbolIdMap.get(device.getSymbolId()));
+      d.setCatalogEntryId(entryId);
       d.setProgramId(programId);
       d.setName(device.getName());
       d.setDescription(device.getDescription());
       d.setFunctionalEntityId(device.getFunctionalEntityId());
-      d.setProductTypeId(device.getFunctionalEntityId());
+      d.setProductTypeId(device.getProductTypeId());
       d.setNumber(1);
       d.setMediumTypes("TP");
       vd.virtualDevices.add(d);
 
-      int productId = deviceId;
       VdHwProduct p = new VdHwProduct();
       p.setId(productId);
       p.setManufacturer(defaultManufacturerId);
-      p.setSymbolId(null); // TODO implement symbols
+      p.setSymbolId(symbolIdMap.get(device.getSymbolId()));
       p.setName(device.getName());
       p.setVersion(device.getVersion());
       p.setComponentAttributes(30);
@@ -584,13 +631,12 @@ public class ProductsExporter
       p.setHandling(0);
       vd.products.add(p);
 
-      int entryId = deviceId;
       VdCatalogEntry e = new VdCatalogEntry();
       e.setId(entryId);
       e.setProductId(productId);
       e.setManufacturer(defaultManufacturerId);
-      e.setSymbolId(null); // TODO implement symbols
-      e.setOrderNumber(Integer.toString(vd.virtualDevices.size()));
+      e.setSymbolId(symbolIdMap.get(device.getSymbolId()));
+      e.setOrderNumber(null); // The parts number, not the sorting order
       e.setName(d.getName());
       e.setDIN(true);
       e.setDesignationType("A");
@@ -633,20 +679,111 @@ public class ProductsExporter
    }
 
    /**
+    * Export the device objects and device parameters for a virtual device.
+    *
+    * @param device - the device to export for
+    */
+   void exportDeviceParameters(VirtualDevice device)
+   {
+      ApplicationProgram program = group.getProgram(device);
+      deviceId = deviceMap.get(device);
+
+      ProgramExportInfo progExportInfo = programExportInfoMap.get(program);
+      paramTypeIdMap = progExportInfo.paramTypeIdMap;
+      paramIdMap = progExportInfo.paramIdMap;
+
+      exportDeviceParameters(program.getParameterRoot());
+   }
+
+   /**
+    * Export the device objects and device parameters of a parameter's children.
+    * 
+    * @param cont - the container to process
+    */
+   void exportDeviceParameters(AbstractParameterContainer cont)
+   {
+      for (AbstractParameterNode paramNode : cont.getChilds())
+      {
+         if (paramNode instanceof Parameter)
+            exportDeviceParameter((Parameter) paramNode);
+         else if (paramNode instanceof CommunicationObject)
+            exportDeviceObject((CommunicationObject) paramNode);
+      }
+
+      for (AbstractParameterNode paramNode : cont.getChilds())
+      {
+         if (paramNode instanceof AbstractParameterContainer)
+            exportDeviceParameters((AbstractParameterContainer) paramNode);
+      }
+   }
+
+   /**
+    * Export a device parameter.
+    * 
+    * @param param - the parameter to export.
+    */
+   void exportDeviceParameter(Parameter param)
+   {
+      int vdParamId = paramIdMap.get(param.getId());
+
+      VdDeviceParameter dp = new VdDeviceParameter();
+      dp.setDeviceId(deviceId);
+      dp.setId(deviceParamId++);
+      dp.setParameterId(vdParamId);
+      dp.setNumber(param.getNumber());
+      dp.setVisible(param.isVisible());
+      dp.setIntValue(param.getDefaultInt());
+      dp.setStrValue(param.getDefaultString());
+      dp.setProgramType(0);
+      dp.setDoubleValue(param.getDefaultDouble());
+
+      vd.deviceParameters.add(dp);
+   }
+
+   /**
+    * Export a device object.
+    * 
+    * @param comObject - the communication object to export.
+    */
+   void exportDeviceObject(CommunicationObject comObject)
+   {
+      VdDeviceObject cd = new VdDeviceObject();
+      cd.setDeviceId(deviceId);
+      cd.setObjectPriority(comObject.getPriority().getId());
+      cd.setReadEnabled(comObject.isReadEnabled());
+      cd.setWriteEnabled(comObject.isWriteEnabled());
+      cd.setCommEnabled(comObject.isCommEnabled());
+      cd.setTransEnabled(comObject.isTransEnabled());
+      cd.setId(deviceParamId++);
+      cd.setObjectId(comObjectMap.get(comObject));
+      cd.setNumber(comObject.getNumber());
+      cd.setVisible(true);
+      cd.setUpdateEnabled(false);
+      cd.setUniqueNumber(comObject.getNumber() + 1);
+      cd.setObjectTypeId(comObject.getType().getId());
+
+      vd.deviceObjects.add(cd);
+   }
+
+   /**
     * Export an application program.
     * 
     * @param program - the program to export
     */
    void exportProgram(ApplicationProgram program)
    {
-      this.program = program;
+      ProgramExportInfo progExportInfo = new ProgramExportInfo();
+      programExportInfoMap.put(program, progExportInfo);
 
-      programId = uniqueId++;
-      programIdMap.put(program.getId(), programId);
+      paramTypeIdMap = progExportInfo.paramTypeIdMap;
+      paramIdMap = progExportInfo.paramIdMap;
+
+      int vdProgramId = uniqueId++;
+      programMap.put(program, vdProgramId);
 
       VdApplicationProgram p = new VdApplicationProgram();
-      p.setId(programId);
-      p.setSymbolId(null); // TODO implement symbols
+      p.setId(vdProgramId);
+      p.setSymbolId(symbolIdMap.get(program.getSymbolId()));
       p.setMaskId(maskId);
       p.setName(program.getName());
       p.setVersion(program.getVersion());
@@ -663,7 +800,7 @@ public class ProductsExporter
       p.setAssemblerId(1);
       p.setDynamicManagement(true);
       p.setProgramType(program.getTypeId());
-      p.setProgramStyle(program.getProgramStyle());
+      p.setProgramStyle(0);
       p.setPollingMaster(false);
       vd.programs.add(p);
 
@@ -672,17 +809,17 @@ public class ProductsExporter
       {
          for (Element textElem : description.getTexts())
          {
-            if (textElem.text == null || textElem.text.isEmpty())
+            if (textElem.value == null || textElem.value.isEmpty())
                continue;
 
             int order = 1;
             int langId = LanguageMapper.getEtsId(textElem.langId);
 
-            for (String line : textElem.text.split("\n"))
+            for (String line : textElem.value.split("\n"))
             {
                VdProgramDescription pd = new VdProgramDescription();
                pd.setId(programDescriptionId++);
-               pd.setProgramId(programId);
+               pd.setProgramId(vdProgramId);
                pd.setText(line);
                pd.setOrder(order++);
                pd.setLanguageId(langId);
@@ -691,22 +828,21 @@ public class ProductsExporter
          }
       }
 
-      paramTypeIdMap.clear();
       for (ParameterType paramType : program.getParameterTypes())
       {
-         exportParameterType(paramType);
+         exportParameterType(program, paramType);
       }
 
-      paramIdMap.clear();
-      exportParameters(program.getParameterRoot());
+      exportParameters(program, program.getParameterRoot());
    }
 
    /**
     * Export a parameter type.
-    * 
+    *
+    * @param program - the application program that owns the type
     * @param paramType - the parameter type to export
     */
-   void exportParameterType(ParameterType paramType)
+   void exportParameterType(ApplicationProgram program, ParameterType paramType)
    {
       int typeId = uniqueId++;
       paramTypeIdMap.put(paramType.getId(), typeId);
@@ -714,7 +850,7 @@ public class ProductsExporter
       VdParameterType t = new VdParameterType();
       t.setId(typeId);
       t.setAtomicTypeId(paramType.getAtomicType().ordinal());
-      t.setProgramId(programId);
+      t.setProgramId(programMap.get(program));
       t.setName(paramType.getName());
       t.setMinValue(paramType.getMinValue());
       t.setMaxValue(paramType.getMaxValue());
@@ -752,37 +888,39 @@ public class ProductsExporter
    /**
     * Export the parameter's children.
     * 
+    * @param program - the parent application program
     * @param cont - the container to process
     */
-   void exportParameters(AbstractParameterContainer cont)
+   void exportParameters(ApplicationProgram program, AbstractParameterContainer cont)
    {
       for (AbstractParameterNode paramNode : cont.getChilds())
       {
          if (paramNode instanceof Parameter)
-            exportParameter((Parameter) paramNode);
+            exportParameter(program, (Parameter) paramNode);
          else if (paramNode instanceof CommunicationObject)
-            exportComObject((CommunicationObject) paramNode);
+            exportComObject(program, (CommunicationObject) paramNode);
       }
 
       for (AbstractParameterNode paramNode : cont.getChilds())
       {
          if (paramNode instanceof AbstractParameterContainer)
-            exportParameters((AbstractParameterContainer) paramNode);
+            exportParameters(program, (AbstractParameterContainer) paramNode);
       }
    }
 
    /**
     * Export a parameter.
     * 
+    * @param program - the parent application program
     * @param param - the parameter to export
     */
-   void exportParameter(Parameter param)
+   void exportParameter(ApplicationProgram program, Parameter param)
    {
       int id = uniqueId++;
       paramIdMap.put(param.getId(), id);
 
       VdParameter p = new VdParameter();
-      p.setProgramId(programId);
+      p.setProgramId(programMap.get(program));
       p.setParamTypeId(paramTypeIdMap.get(param.getTypeId()));
       p.setNumber(param.getNumber());
       p.setName(param.getName());
@@ -814,32 +952,21 @@ public class ProductsExporter
       vd.parameters.add(p);
 
       exportText(id, param.getDescription(), TextColumn.PARAM_DESCRIPTION);
-
-      VdDeviceParameter dp = new VdDeviceParameter();
-      dp.setDeviceId(deviceId);
-      dp.setId(deviceParamId++);
-      dp.setParameterId(id);
-      dp.setNumber(p.getNumber());
-      dp.setVisible(param.isVisible());
-      dp.setIntValue(p.getDefaultInt());
-      dp.setStrValue(p.getDefaultString());
-      dp.setProgramType(0);
-      dp.setDoubleValue(p.getDefaultDouble());
-
-      vd.deviceParameters.add(dp);
    }
 
    /**
     * Export a communication object.
     * 
+    * @param program - the parent application program
     * @param comObject - the communication object to export
     */
-   void exportComObject(CommunicationObject comObject)
+   void exportComObject(ApplicationProgram program, CommunicationObject comObject)
    {
       int id = uniqueId++;
+      comObjectMap.put(comObject, id);
 
       VdCommunicationObject c = new VdCommunicationObject();
-      c.setProgramId(programId);
+      c.setProgramId(programMap.get(program));
       c.setName(comObject.getName().getText(defaultLangId));
       c.setFunction(comObject.getFunction().getText(defaultLangId));
       c.setReadEnabled(comObject.isReadEnabled());
@@ -862,23 +989,6 @@ public class ProductsExporter
       exportText(id, comObject.getName(), TextColumn.COM_OBJECT_NAME);
       exportText(id, comObject.getFunction(), TextColumn.COM_OBJECT_FUNCTION);
       exportText(id, comObject.getDescription(), TextColumn.COM_OBJECT_DESCRIPTION);
-
-      // FIXME need to call this once per VirtualDevice not once per ApplicationProgram
-     xxx VdDeviceObject cd = new VdDeviceObject();
-      cd.setDeviceId(deviceId);
-      cd.setObjectPriority(c.getPriorityId());
-      cd.setObjectRead(comObject.isReadEnabled());
-      cd.setObjectWrite(comObject.isWriteEnabled());
-      cd.setObjectComm(comObject.isCommEnabled());
-      cd.setObjectTrans(comObject.isTransEnabled());
-      cd.setId(deviceParamId++);
-      cd.setNumber(c.getNumber());
-      cd.setVisible(true);
-      cd.setUpdate(false);
-      cd.setUniqueNumber(c.getUniqueNumber());
-      cd.setObjectTypeId(c.getTypeId());
-
-      vd.deviceObjects.add(cd);
    }
 
    /**
@@ -892,13 +1002,13 @@ public class ProductsExporter
    {
       for (Element elem : text.getTexts())
       {
-         if (elem.text != null && !elem.text.isEmpty())
+         if (elem.value != null && !elem.value.isEmpty())
          {
             VdTextAttribute t = new VdTextAttribute();
             t.setId(textId++);
             t.setEntityId(id);
             t.setLanguageId(LanguageMapper.getEtsId(elem.langId));
-            t.setText(elem.text);
+            t.setText(elem.value);
             t.setColumnId(col.column);
    
             vd.textAttributes.add(t);

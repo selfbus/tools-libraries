@@ -1,9 +1,12 @@
 package org.selfbus.sbtools.common;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.selfbus.sbtools.common.ObjectDescriptor;
 import org.selfbus.sbtools.common.types.ObjectPriority;
 import org.selfbus.sbtools.common.types.ObjectType;
 
@@ -87,7 +90,7 @@ public class TestObjectDescriptor
       assertTrue(od.isReadEnabled());
       assertTrue(od.isTransEnabled());
       assertTrue(od.isWriteEnabled());
-      assertEquals(ObjectPriority.HIGH, od.getPriority());
+      assertEquals(ObjectPriority.ALARM, od.getPriority());
       assertEquals(ObjectType.BYTES_4, od.getType());
 
       final byte[] dataOut = od.toByteArray();

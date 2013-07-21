@@ -14,12 +14,15 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ListDataEvent;
 
@@ -34,6 +37,7 @@ import org.selfbus.sbtools.common.gui.components.Dialogs;
 import org.selfbus.sbtools.common.gui.components.ExtTabbedPane;
 import org.selfbus.sbtools.common.gui.misc.LookAndFeelManager;
 import org.selfbus.sbtools.common.gui.window.XmlMenuFactory;
+import org.selfbus.sbtools.prodedit.components.StatusBar;
 import org.selfbus.sbtools.prodedit.internal.I18n;
 import org.selfbus.sbtools.prodedit.model.AbstractListDataListener;
 import org.selfbus.sbtools.prodedit.model.AbstractProjectListener;
@@ -60,6 +64,9 @@ public class ProdEdit extends SingleFrameApplication
    private final Map<Class<? extends JComponent>, JComponent> tabPanels = new HashMap<Class<? extends JComponent>, JComponent>();
    private final Map<Object, JComponent> tabComponents = new HashMap<Object, JComponent>();
    private final ExtTabbedPane tabbedPane = new ExtTabbedPane();
+   private final StatusBar statusBar = new StatusBar();
+   private final JLabel statusMessagePanel = new JLabel(" ");
+   private Timer clearStatusTimer;
 
    /**
     * Start the application.
@@ -220,6 +227,19 @@ public class ProdEdit extends SingleFrameApplication
    }
 
    /**
+    * Set a message that is displayed in the status line.
+    * 
+    * @param message - the status message
+    */
+   public void setStatusMessage(String message)
+   {
+      statusMessagePanel.setText(message);
+
+      clearStatusTimer.stop();
+      clearStatusTimer.start();
+   }
+
+   /**
     * {@inheritDoc}
     */
    @Override
@@ -280,6 +300,13 @@ public class ProdEdit extends SingleFrameApplication
          Validate.notNull(in, "menubar configuration not found: " + fileName);
          mainView.setMenuBar(new XmlMenuFactory(I18n.BUNDLE).createMenuBar(in));
 
+         statusBar.add(Box.createHorizontalStrut(2), 0, false);
+         statusBar.add(statusMessagePanel, 100, true);
+         mainView.setStatusBar(statusBar);
+
+         clearStatusTimer = new Timer(5000, clearStatusHandler);
+         clearStatusTimer.setRepeats(false);
+         
 //         fileName = "org/selfbus/sbtools/prodedit/main-toolbar.xml";
 //         in = getClass().getClassLoader().getResourceAsStream(fileName);
 //         Validate.notNull(in, "toolbar configuration not found: " + fileName);
@@ -310,7 +337,7 @@ public class ProdEdit extends SingleFrameApplication
          getMainFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
          String lastProjectPath = Config.getInstance().getStringValue("project.last");
-         if (lastProjectPath != null && !lastProjectPath.isEmpty())
+         if (lastProjectPath != null && !lastProjectPath.isEmpty() && (new File(lastProjectPath)).exists())
          {
             projectService.loadProject(new File(lastProjectPath));
          }
@@ -318,11 +345,13 @@ public class ProdEdit extends SingleFrameApplication
          {
             ProductsImporter importer = new ProductsImporter(projectService);
             String fileName = "Bosch-Freebus12.vd_";
-            projectService.setProject(importer.read(getClass().getClassLoader().getResourceAsStream(fileName)));
-
-//            projectService.createExampleProject();
-//            projectService.fireProjectChanged();
+            Project project = importer.read(getClass().getClassLoader().getResourceAsStream(fileName));
+            project.setName(fileName);
+            projectService.setProject(project);
+            projectService.fireProjectChanged();
          }
+
+         setStatusMessage(I18n.formatMessage("Project.loaded", projectService.getProject().getName()));
       }
       catch (Exception e)
       {
@@ -344,14 +373,18 @@ public class ProdEdit extends SingleFrameApplication
       Project project = projectService.getProject();
       File projFile = project == null ? null : project.getFile();
 
-      if (projFile == null)
+      if (projFile != null)
       {
-         mainFrame.setTitle(I18n.getMessage("ProdEdit.title"));
+         mainFrame.setTitle(I18n.formatMessage("ProdEdit.titleLoaded", projFile.getName()));
+         
+      }
+      else if (project != null && !project.getName().isEmpty())
+      {
+         mainFrame.setTitle(I18n.formatMessage("ProdEdit.titleLoaded", project.getName()));
       }
       else
       {
-         String projName = projFile.getName();
-         mainFrame.setTitle(I18n.formatMessage("ProdEdit.titleLoaded", projName));
+         mainFrame.setTitle(I18n.getMessage("ProdEdit.title"));
       }
    }
 
@@ -481,6 +514,18 @@ public class ProdEdit extends SingleFrameApplication
          tabComponents.remove(group);
          tabbedPane.remove(comp);
          updateViewMenu();
+      }
+   };
+
+   /**
+    * Clear the status message after a delay.
+    */
+   private final ActionListener clearStatusHandler = new ActionListener()
+   {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+         statusMessagePanel.setText(" ");
       }
    };
 }

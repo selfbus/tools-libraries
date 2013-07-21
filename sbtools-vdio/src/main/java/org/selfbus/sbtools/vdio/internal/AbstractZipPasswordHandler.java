@@ -42,7 +42,7 @@ public abstract class AbstractZipPasswordHandler
    /**
     * @return True if a ZIP password is present and not empty.
     */
-   public boolean hasZipPassword()
+   public boolean haveZipPassword()
    {
       return zipPasswd != null && !zipPasswd.isEmpty();
    }

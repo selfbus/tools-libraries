@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.selfbus.sbtools.prodedit.model.common.MultiLingualText;
-import org.selfbus.sbtools.prodedit.model.interfaces.Identifiable;
 
 import com.jgoodies.binding.beans.Model;
 
@@ -16,12 +15,9 @@ import com.jgoodies.binding.beans.Model;
  */
 @XmlType(propOrder = {})
 @XmlAccessorType(XmlAccessType.NONE)
-public class ParameterValue extends Model implements Identifiable
+public class ParameterValue extends Model
 {
    private static final long serialVersionUID = -6983752023306872120L;
-
-   @XmlAttribute(name = "id", required = true)
-   private int id;
 
    @XmlAttribute(name = "order", required = true)
    private int order;
@@ -43,32 +39,6 @@ public class ParameterValue extends Model implements Identifiable
     */
    public ParameterValue()
    {
-   }
-
-   /**
-    * Create a parameter value.
-    *
-    * @param id - the ID
-    */
-   public ParameterValue(int id)
-   {
-      this.id = id;
-   }
-
-   /**
-    * @return the id
-    */
-   public int getId()
-   {
-      return id;
-   }
-
-   /**
-    * @param id the id to set
-    */
-   public void setId(int id)
-   {
-      this.id = id;
    }
 
    /**
@@ -162,14 +132,5 @@ public class ParameterValue extends Model implements Identifiable
    public void setDoubleValue(Double doubleValue)
    {
       this.doubleValue = doubleValue;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public int hashCode()
-   {
-      return id;
    }
 }

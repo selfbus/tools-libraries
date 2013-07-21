@@ -33,34 +33,34 @@ public class VdApplicationProgram
    @XmlAttribute(name = "program_version_number")
    private Integer versionNumber;
 
-   @XmlAttribute(name = "linkable", required = true)
+   @XmlAttribute(name = "linkable")
    private int linkable;
 
    @XmlAttribute(name = "device_type", required = true)
    private int deviceType;
 
-   @XmlAttribute(name = "pei_type", required = true)
+   @XmlAttribute(name = "pei_type")
    private int peiType;
 
-   @XmlAttribute(name = "address_tab_size", required = true)
+   @XmlAttribute(name = "address_tab_size")
    private int addrTabSize;
 
-   @XmlAttribute(name = "assoctab_address", required = true)
+   @XmlAttribute(name = "assoctab_address")
    private int assocTabAddr;
 
-   @XmlAttribute(name = "assoctab_size", required = true)
+   @XmlAttribute(name = "assoctab_size")
    private int assocTabSize;
 
-   @XmlAttribute(name = "commstab_address", required = true)
+   @XmlAttribute(name = "commstab_address")
    private int commsTabAddr;
 
-   @XmlAttribute(name = "commstab_size", required = true)
+   @XmlAttribute(name = "commstab_size")
    private int commsTabSize;
 
    @XmlAttribute(name = "program_serial_number")
    private String serial;
 
-   @XmlAttribute(name = "manufacturer_id", required = true)
+   @XmlAttribute(name = "manufacturer_id")
    private int manufacturerId;
 
    private byte[] eepromData;

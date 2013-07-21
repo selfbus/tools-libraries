@@ -1,5 +1,9 @@
 package org.selfbus.sbtools.prodedit.model.enums;
 
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
+import javax.xml.bind.annotation.XmlType;
+
 import org.selfbus.sbtools.prodedit.internal.I18n;
 
 /**
@@ -8,26 +12,32 @@ import org.selfbus.sbtools.prodedit.internal.I18n;
  * The {@link #ordinal() ordinal} of the communication object gives the ID for KNX devices, e.g. in
  * the EEPROM communication table.
  */
+@XmlType
+@XmlEnum
 public enum ObjectType
 {
    /**
     * 1 bit.
     */
+   @XmlEnumValue("1")
    BITS_1(1),
 
    /**
     * 2 bits.
     */
+   @XmlEnumValue("1")
    BITS_2(2),
 
    /**
     * 3 bits.
     */
+   @XmlEnumValue("1")
    BITS_3(3),
 
    /**
     * 4 bits.
     */
+   @XmlEnumValue("1")
    BITS_4(4),
 
    /**
