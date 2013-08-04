@@ -589,7 +589,12 @@ public class ProductsImporter
          param.setBitOffset(p.getBitOffset());
          param.setSize(p.getSize());
          param.setOrder(p.getOrder());
-         param.setParentId(p.getParentId());
+         if (p.getParentId() != null)
+         {
+            Parameter parent = params.get(p.getParentId());
+            Validate.notNull(parent, "No mapping found for parent parameter #" + p.getParentId());
+            param.setParentId(parent.getId());
+         }
          param.setParentValue(p.getParentValue());
          param.setDefaultInt(p.getDefaultInt());
          param.setDefaultDouble(p.getDefaultDouble());
@@ -638,6 +643,7 @@ public class ProductsImporter
          {
             parent = params.get(parentId);
             Validate.notNull(parent, "Parent parameter #{0} for com-object #{1} not found", parentId, o.getId());
+            parentId = parent.getId();
          }
 
          CommunicationObject comObject = program.createCommunicationObject(parent);
@@ -646,7 +652,7 @@ public class ProductsImporter
          comObject.setDescription(getText(o.getId(), TextColumn.COM_OBJECT_DESCRIPTION, o.getDescription()));
          comObject.setType(ObjectType.valueOf(o.getTypeId()));
          comObject.setNumber(o.getNumber());
-         comObject.setParentId(o.getParentParameterId());
+         comObject.setParentId(parentId);
          comObject.setParentValue(o.getParentParameterValue());
          comObject.setCommEnabled(o.isCommEnabled());
          comObject.setReadEnabled(o.isReadEnabled());

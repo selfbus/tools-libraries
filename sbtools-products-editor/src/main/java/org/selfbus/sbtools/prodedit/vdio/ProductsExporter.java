@@ -15,6 +15,7 @@ import java.util.Properties;
 
 import javax.xml.bind.DatatypeConverter;
 
+import org.apache.commons.lang3.Validate;
 import org.selfbus.sbtools.common.Config;
 import org.selfbus.sbtools.common.types.ObjectPriority;
 import org.selfbus.sbtools.prodedit.ProdEdit;
@@ -897,14 +898,10 @@ public class ProductsExporter
       {
          if (paramNode instanceof Parameter)
             exportParameter(program, (Parameter) paramNode);
-         else if (paramNode instanceof CommunicationObject)
-            exportComObject(program, (CommunicationObject) paramNode);
-      }
-
-      for (AbstractParameterNode paramNode : cont.getChilds())
-      {
          if (paramNode instanceof AbstractParameterContainer)
             exportParameters(program, (AbstractParameterContainer) paramNode);
+         if (paramNode instanceof CommunicationObject)
+            exportComObject(program, (CommunicationObject) paramNode);
       }
    }
 
@@ -931,7 +928,12 @@ public class ProductsExporter
       p.setBitOffset(param.getBitOffset());
       p.setDescription(param.getDescription().getText(defaultLangId));
       p.setId(id);
-      p.setParentId(paramIdMap.get(param.getParentId()));
+      if (param.getParentId() != null)
+      {
+         Integer parentId = paramIdMap.get(param.getParentId());
+         Validate.notNull(parentId, "No mapping found for parent parameter #" + param.getParentId() + " of parameter #" + param.getId());
+         p.setParentId(parentId);
+      }
       p.setLabel(null); // TODO null ok here?
       p.setDefaultInt(param.getDefaultInt());
       p.setDefaultString(param.getDefaultString());
@@ -976,7 +978,12 @@ public class ProductsExporter
       c.setOrder(comObject.getOrder());
       c.setParentParameterValue(comObject.getParentValue());
       c.setId(id);
-      c.setParentParameterId(paramIdMap.get(comObject.getParentId()));
+      if (comObject.getParentId() != null)
+      {
+         Integer parentId = paramIdMap.get(comObject.getParentId());
+         Validate.notNull(parentId, "No mapping found for parent parameter #" + comObject.getParentId() + " for com object #" + comObject.getId());
+         c.setParentParameterId(parentId);
+      }
       c.setNumber(comObject.getNumber());
       c.setDescription(comObject.getDescription().getText(defaultLangId));
       c.setTypeId(comObject.getType().getId());
