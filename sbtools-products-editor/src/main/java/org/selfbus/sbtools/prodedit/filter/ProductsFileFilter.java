@@ -16,7 +16,7 @@ public final class ProductsFileFilter extends FileFilter
    public boolean accept(File file)
    {
       if (file.isDirectory()) return true;
-      return file.getName().matches(".*\\.vd[_0-9]");
+      return file.getName().toLowerCase().matches(".*\\.vd[_0-9]");
    }
 
    @Override
