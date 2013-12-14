@@ -556,7 +556,8 @@ public class ProductsImporter
             @Override
             public int compare(VdParameter a, VdParameter b)
             {
-               return a.getOrder() - b.getOrder();
+               return a.getId() - b.getId();
+//               return a.getOrder() - b.getOrder();
             }
          });
       }
@@ -576,6 +577,11 @@ public class ProductsImporter
 
       for (VdParameter p : sortedParameters())
       {
+         if (p.getId() == 58514)
+         {
+            LOGGER.debug("Parameter {}", p);
+         }
+
          if (p.getProgramId() != vdProgramId)
             continue;
 
@@ -592,8 +598,15 @@ public class ProductsImporter
          if (p.getParentId() != null)
          {
             Parameter parent = params.get(p.getParentId());
-            Validate.notNull(parent, "No mapping found for parent parameter #" + p.getParentId());
-            param.setParentId(parent.getId());
+            if (parent != null)
+            {
+               Validate.notNull(parent, "No mapping found for parent parameter #" + p.getParentId());
+               param.setParentId(parent.getId());
+            }
+            else
+            {
+               LOGGER.error("Parameter #{}: No mapping found for parent parameter #{}", p.getId(), p.getParentId());
+            }
          }
          param.setParentValue(p.getParentValue());
          param.setDefaultInt(p.getDefaultInt());
