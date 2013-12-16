@@ -88,8 +88,8 @@ public class TestVdReader
       assertEquals(1, vd.deviceInfos.size());
       assertEquals("BCU 1", vd.deviceInfos.get(0).getName());
 
-      assertEquals(4, vd.languages.size());
-      assertEquals("German", vd.languages.get(0).getName());
+      assertEquals(13, vd.languages.size());
+      assertEquals("Danish", vd.languages.get(0).getName());
 
       assertEquals(1, vd.deviceInfoValues.size());
       assertEquals(20783, vd.deviceInfoValues.get(0).getId());

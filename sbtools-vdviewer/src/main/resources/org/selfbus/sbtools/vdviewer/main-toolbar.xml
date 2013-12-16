@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<toolbars id="MainToolBars">
+ <toolbar id="File">
+  <action id="org.selfbus.sbtools.vdviewer.actions.ExitAction" />
+  <separator />
+  <action id="org.selfbus.sbtools.vdviewer.actions.OpenProductsAction" />
+ </toolbar>
+ <toolbar id="Table">
+  <action id="org.selfbus.sbtools.vdviewer.actions.OpenTableAction" />
+ </toolbar>
+</toolbars>

@@ -6,4 +6,4 @@ if [ -n "$topDir" ]; then
 fi
 
 set -x
-java -cp 'libs/*' -Dsun.java2d.xrender=True org.selfbus.sbtools.prodedit.ProdTool $*
+java -cp 'libs/*' -Dsun.java2d.xrender=True org.selfbus.sbtools.vdviewer.VdViewer $*

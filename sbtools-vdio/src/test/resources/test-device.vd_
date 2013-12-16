@@ -595,20 +595,56 @@ C1 T18 1 4 N LANGUAGE_ID
 C2 T18 3 50 Y LANGUAGE_NAME
 C3 T18 2 2 Y DATABASE_LANGUAGE
 R 1 T 18 ete_language
+1030
+Danish
+0
+R 2 T 18 ete_language
 1031
 German
 1
-R 2 T 18 ete_language
+R 3 T 18 ete_language
 1033
 English
 0
-R 3 T 18 ete_language
+R 4 T 18 ete_language
 1034
 Spanish
 0
-R 4 T 18 ete_language
+R 5 T 18 ete_language
 1036
 French
+0
+R 6 T 18 ete_language
+1040
+Italian
+0
+R 7 T 18 ete_language
+1043
+Dutch
+0
+R 8 T 18 ete_language
+1044
+Norwegian
+0
+R 9 T 18 ete_language
+1047
+Rhaeto-Romanic
+0
+R 10 T 18 ete_language
+1052
+Albanian
+0
+R 11 T 18 ete_language
+1053
+Swedish
+0
+R 12 T 18 ete_language
+1057
+Bahasa
+0
+R 13 T 18 ete_language
+2057
+UK English
 0
 -------------------------------------
 T 19 device_info_value

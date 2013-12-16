@@ -68,16 +68,23 @@ public class ProductsReader extends AbstractZipPasswordHandler
     */
    public VD read(File file) throws FileNotFoundException, VdioException
    {
+      VD vd;
+
       if (file.getName().toLowerCase().matches(".*\\.vd[0-9]"))
       {
          LOGGER.debug("Reading ZIP file {}", file);
-         return readZip(file);
+         vd = readZip(file);
       }
       else
       {
          LOGGER.debug("Reading plain file {}", file);
-         return read(new FileInputStream(file));
+         vd = read(new FileInputStream(file));
       }
+
+      if (vd != null)
+         vd.setFile(file);
+
+      return vd;
    }
 
    /**

@@ -1,5 +1,6 @@
 package org.selfbus.sbtools.vdio.model;
 
+import java.io.File;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -147,6 +148,26 @@ public class VD
    @XmlElementWrapper(name = "device_parameter")
    @XmlElement(name = "device_parameter")
    public List<VdDeviceParameter> deviceParameters;
+
+   private File file;
+
+   /**
+    * @return the file of the VD.
+    */
+   public File getFile()
+   {
+      return file;
+   }
+
+   /**
+    * Set the file of the VD.
+    *
+    * @param file - the file to set
+    */
+   public void setFile(File file)
+   {
+      this.file = file;
+   }
 
    /**
     * Find a catalog entry by ID.

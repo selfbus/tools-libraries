@@ -349,7 +349,7 @@ public class ProductsImporter
       {
          int entityId = d.getFunctionalEntityId();
          FunctionalEntity topEntity = topEntities.get(entityId);
-         Validate.notNull(topEntity, "top level functional entity for functional entity #" + entityId + " not found");
+         Validate.notNull(topEntity, "top level functional entity for functional entity #{} not found", entityId);
 
          group = groups.get(topEntity);
          if (group == null)
@@ -384,6 +384,7 @@ public class ProductsImporter
       if (program == null)
       {
          VdApplicationProgram p = vd.findProgram(vdProgramId);
+         Validate.notNull(p, "application program #{} not found in virtual device", vdProgramId);
 
          program = group.createProgram(p.getName());
          programs.put(d.getProgramId(), program);
