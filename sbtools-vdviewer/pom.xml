@@ -40,12 +40,12 @@
      </execution>
     </executions>
     <configuration>
-     <finalName>sbtools-products-editor-${project.version}-${maven.build.timestamp}</finalName>
+     <finalName>sbtools-vdviewer-${project.version}-${maven.build.timestamp}</finalName>
      <ignorePermissions>false</ignorePermissions>
      <appendAssemblyId>false</appendAssemblyId>
      <archive>
       <manifest>
-       <mainClass>org.selfbus.sbtools.prodedit.ProdEdit</mainClass>
+       <mainClass>org.selfbus.sbtools.vdviewer.VdViewer</mainClass>
       </manifest>
      </archive>
      <descriptors>
