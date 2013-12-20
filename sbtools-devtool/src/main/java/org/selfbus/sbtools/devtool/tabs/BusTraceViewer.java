@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -63,6 +64,7 @@ public class BusTraceViewer extends JPanel
 
    private final JList<BusMonitorItem> list;
    private final JScrollPane treeView;
+   private final JLabel fileNameLabel = new JLabel();
 
    private final FrameFilter filter = new FrameFilter();
    private final DefaultListModel<BusMonitorItem> model = new DefaultListModel<BusMonitorItem>();
@@ -139,6 +141,9 @@ public class BusTraceViewer extends JPanel
             }
          }
       });
+
+      toolBar.addSeparator();
+      toolBar.add(fileNameLabel);
    }
 
    /**
@@ -223,7 +228,8 @@ public class BusTraceViewer extends JPanel
          }
 
          filteredModel.update();
-         setName(file.getName());
+         fileNameLabel.setText(file.getName());
+//         setName(file.getName());  // TODO broken
       }
       finally
       {

@@ -195,7 +195,8 @@ public class DevTool extends SingleFrameApplication
          JComponent tabPanel = getPanel(panelClass);
          // TODO ensure that the panel is not yet in the tabbed pane
          tabbedPane.add(tabPanel);
-         // TODO ensure that the panel is 
+         tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
+
          return tabPanel;
       }
    }
@@ -276,6 +277,7 @@ public class DevTool extends SingleFrameApplication
          showPanel(BusMonitor.class);
          showPanel(GroupsPanel.class);
          showPanel(TestsPanel.class);
+         tabbedPane.setSelectedIndex(0);
 
          show(mainView);
 

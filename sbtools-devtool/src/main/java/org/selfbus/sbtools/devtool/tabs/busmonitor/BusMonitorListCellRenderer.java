@@ -139,9 +139,20 @@ public final class BusMonitorListCellRenderer<E> implements ListCellRenderer<E>
             lblDest.setText(I18n.formatMessage("BusMonitorCellRenderer.Dest", telegram.getDest().toString(), busMonitorItem.getDestName()));
 
             final Application app = telegram.getApplication();
+            String appData;
             if (app == null)
-               lblAppData.setText(telegram.getTransport().name());
-            else lblAppData.setText(app.toString());
+               appData = telegram.getTransport().name();
+            else appData = app.toString();
+
+            if (telegram.getTransport().hasSequence)
+            {
+               appData += " (";
+               appData += I18n.getMessage("BusMonitorCellRenderer.Sequence");
+               appData += ' ';
+               appData += Integer.toString(telegram.getSequence());
+               appData += ')';
+            }
+            lblAppData.setText(appData);
          }
          else
          {

@@ -27,7 +27,7 @@
  <scm>
   <connection>scm:git:git://github.com/selfbus/java-bus-tools.git</connection>
   <developerConnection>scm:git:ssh://git@github.com:selfbus/java-bus-tools.git</developerConnection>
-  <url>http://git.selfbus.org/java-bus-tools</url>
+  <url>git:ssh://git@github.com/java-bus-tools.git</url>
  </scm>
  <properties>
   <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

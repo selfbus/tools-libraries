@@ -139,8 +139,22 @@ public final class BusMonitorCellRenderer implements TreeCellRenderer
 
                final Application app = telegram.getApplication();
                if (app == null)
+               {
                   lblAppData.setText(telegram.getTransport().name());
-               else lblAppData.setText(app.toString());
+               }
+               else
+               {
+                  String appData = app.toString();
+                  if (telegram.getTransport().hasSequence)
+                  {
+                     appData += " (";
+                     appData += I18n.getMessage("BusMonitorCellRenderer.Sequence");
+                     appData += ' ';
+                     appData += Integer.toString(telegram.getSequence());
+                     appData += ')';
+                  }
+                  lblAppData.setText(appData);
+               }
             }
             else
             {
