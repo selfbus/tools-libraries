@@ -135,8 +135,8 @@ public class BusMonitor extends JPanel implements TelegramListener, ProjectListe
             {
                sequence = 0;
                model.clear();
-               updateButtons();
             }
+            updateButtons();
          }
       };
 

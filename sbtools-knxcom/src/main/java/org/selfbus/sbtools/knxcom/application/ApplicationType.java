@@ -300,7 +300,7 @@ public enum ApplicationType
     * 4+ data bytes: object index, property id, 4bit number of requested elems,
     * 12bit start index, the data.
     */
-   PropertyValue_Response(0x3d6, 10, 4, 16),
+   PropertyValue_Response(0x3d6, 10, 4, 16, null, PropertyValueResponse.class),
 
    /**
     * Read the value of a property of an interface object.
@@ -308,7 +308,7 @@ public enum ApplicationType
     * 4 data bytes: object index, property id, 4bit number of requested elems,
     * 12bit start index
     */
-   PropertyValue_Read(0x3d5, 10, 4, 4, PropertyValue_Response),
+   PropertyValue_Read(0x3d5, 10, 4, 4, PropertyValue_Response, PropertyValueRead.class),
 
    /**
     * Set the value of a property of an interface object.
@@ -316,7 +316,7 @@ public enum ApplicationType
     * 4+ data bytes: object index, property id, 4bit number of requested elems,
     * 12bit start index, the data.
     */
-   PropertyValue_Write(0x3d7, 10, 4, 16),
+   PropertyValue_Write(0x3d7, 10, 4, 16, null, PropertyValueWrite.class),
 
    /**
     * Response to the {@link #PropertyDescription_Read} request.
