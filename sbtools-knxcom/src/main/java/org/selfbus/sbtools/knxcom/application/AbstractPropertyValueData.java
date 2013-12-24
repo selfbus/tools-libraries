@@ -58,7 +58,7 @@ public abstract class AbstractPropertyValueData extends AbstractPropertyValue
 
       if (count > 0)
       {
-         data = new byte[count];
+         data = new byte[length - 4];
          in.readFully(data);
       }
       else data = null;
