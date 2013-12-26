@@ -1,7 +1,6 @@
 package org.selfbus.sbtools.prodedit.tabs.prodgroup.parameter;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;

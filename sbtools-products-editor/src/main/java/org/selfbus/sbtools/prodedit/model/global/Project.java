@@ -23,6 +23,8 @@ import org.selfbus.sbtools.prodedit.internal.I18n;
 import org.selfbus.sbtools.prodedit.model.Namespaces;
 import org.selfbus.sbtools.prodedit.model.ProjectService;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
+import org.selfbus.sbtools.prodedit.utils.ClassPathPropertiesLoader;
+import org.selfbus.sbtools.vdio.VdioException;
 
 import com.jgoodies.common.collect.ArrayListModel;
 
@@ -36,6 +38,7 @@ public class Project
 {
    private final Map<Integer, Manufacturer> manufacturers = new TreeMap<Integer, Manufacturer>();
    private final ArrayListModel<ProductGroup> productGroups = new ArrayListModel<ProductGroup>();
+   private final Map<Integer, Mask> masks = new TreeMap<Integer, Mask>();
    private ProjectService projectService;
    private File file;
 
@@ -279,6 +282,32 @@ public class Project
       }
 
       return null;
+   }
+
+   /**
+    * Get a specific mask. Throws a runtime exception if the mask is not found.
+    * 
+    * @param version - the version of the mask.
+    * 
+    * @return The mask.
+    */
+   public Mask getMask(int version)
+   {
+      Mask mask = masks.get(version);
+      if (mask == null)
+      {
+         String fileName = "mask_" + Integer.toHexString(version) + ".properties";
+         try
+         {
+            mask = new Mask(version, ClassPathPropertiesLoader.getProperties(fileName));
+            masks.put(version, mask);
+         }
+         catch (VdioException e)
+         {
+            throw new RuntimeException("Failed to load " + fileName);
+         }
+      }
+      return mask;
    }
 
    /**

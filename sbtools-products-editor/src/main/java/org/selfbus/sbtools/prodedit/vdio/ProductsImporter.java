@@ -7,10 +7,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.TreeMap;
-
-import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.lang3.Validate;
 import org.selfbus.sbtools.common.Config;

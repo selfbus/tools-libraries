@@ -29,6 +29,7 @@ import org.selfbus.sbtools.prodedit.tabs.internal.AbstractAccordionDetailsTab;
 import org.selfbus.sbtools.prodedit.tabs.internal.MixedCategoryElem;
 import org.selfbus.sbtools.prodedit.tabs.prodgroup.general.ApplicationProgramElem;
 import org.selfbus.sbtools.prodedit.tabs.prodgroup.general.VirtualDeviceElem;
+import org.selfbus.sbtools.prodedit.tabs.prodgroup.memory.MemoryElem;
 import org.selfbus.sbtools.prodedit.tabs.prodgroup.parameter.ParametersElem;
 import org.selfbus.sbtools.prodedit.utils.FontUtils;
 
@@ -55,6 +56,7 @@ public class ProductGroupTab extends AbstractAccordionDetailsTab implements Clos
    private final ApplicationProgramElem applicationProgramElem;
    private final ParameterTypesElem parameterTypesElem;
    private final ParametersElem parametersElem;
+   private final MemoryElem memoryElem;
 
 
    /**
@@ -86,6 +88,9 @@ public class ProductGroupTab extends AbstractAccordionDetailsTab implements Clos
       parametersElem = new ParametersElem(group);
       addCategory(parametersElem);
 
+      memoryElem = new MemoryElem(group);
+      addCategory(memoryElem);
+
       ProdEdit.getInstance().getProjectService().addListener(projectListener);
 
       selectionInList.getSelectionHolder().addValueChangeListener(new PropertyChangeListener()
@@ -98,6 +103,7 @@ public class ProductGroupTab extends AbstractAccordionDetailsTab implements Clos
             applicationProgramElem.setDevice(device);
             parameterTypesElem.setDevice(device);
             parametersElem.setDevice(device);
+            memoryElem.setDevice(device);
          }
       });
 
