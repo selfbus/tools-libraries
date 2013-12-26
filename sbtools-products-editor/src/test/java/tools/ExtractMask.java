@@ -9,6 +9,7 @@ import java.util.Properties;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.bind.DatatypeConverter;
 
@@ -93,8 +94,8 @@ public class ExtractMask
       putProp(props, "routecnt_address", m.getRouteCountAddress());
       putProp(props, "manufacturer_id_protected", m.isManufacturerIdProtected());
       putProp(props, "mask_version_name", m.getMaskVersionName());
-      putProp(props, "mask_eeprom_data", DatatypeConverter.printHexBinary(m.getMaskEepromData()));
-      putProp(props, "mask_data_length", m.getMaskEepromData().length);
+      putProp(props, "mask_eeprom_data", m.getEepromData() == null ? "" : DatatypeConverter.printHexBinary(m.getEepromData()));
+      putProp(props, "mask_data_length", m.getEepromData() == null ? 0 : m.getEepromData().length);
       putProp(props, "address_tab_lcs", m.getAddressTabLCS());
       putProp(props, "assoc_tab_lcs", m.getAssocTabLCS());
       putProp(props, "application_program_lcs", m.getApplicationProgramLCS());
@@ -108,7 +109,7 @@ public class ExtractMask
       putProp(props, "port_a_ddr", m.getPortADdr());
       putProp(props, "port_address_protected", m.isPortAddressProtected());
 
-      props.store(out, "Mask version " + m.getVersion());
+      props.store(out, "Mask version 0x" + Integer.toHexString(m.getVersion()));
    }
 
    public void writeMaskEntries(OutputStream out, VdMask mask, List<VdMaskEntry> entries) throws IOException
@@ -126,11 +127,13 @@ public class ExtractMask
             putProp(props, entry.getName(), entry.getAddress());
       }
 
-      props.store(out, "Mask entries for mask version " + mask.getVersion());
+      props.store(out, "Mask entries for mask version 0x" + Integer.toHexString(mask.getVersion()));
    }
 
    public void run() throws VdioException, IOException
    {
+      File entriesFile, maskFile;
+
       File vdFile = getVdFile();
       if (vdFile == null) return;
 
@@ -139,17 +142,30 @@ public class ExtractMask
 
       VD vd = reader.read(vdFile);
       if (vd == null) return;
-
+      
       Validate.notNull(vd.masks, "The VD contains no masks");
       for (VdMask mask : vd.masks)
       {
-         File maskFile = new File(homeDir + "/mask_" + mask.getVersion() + ".properties");
-         LOGGER.info("Writing mask {} to {}", mask.getVersion(), maskFile);
+         String maskVersion = Integer.toHexString(mask.getVersion());
+
+         maskFile = new File(homeDir + "/mask_" + maskVersion + ".properties");
+         LOGGER.info("Writing mask 0x{} to {}", maskVersion, maskFile);
          writeMask(new FileOutputStream(maskFile), mask);
 
-         File entriesFile = new File(homeDir + "/mask_entries_" + mask.getVersion() + ".properties");
-         LOGGER.info("Writing mask {} entries to {}", mask.getVersion(), entriesFile);
-         writeMaskEntries(new FileOutputStream(entriesFile), mask, vd.maskEntries);
+         try
+         {
+            entriesFile = new File(homeDir + "/mask_entries_" + maskVersion + ".properties");
+            LOGGER.info("Writing mask 0x{} entries to {}", maskVersion, entriesFile);
+            writeMaskEntries(new FileOutputStream(entriesFile), mask, vd.maskEntries);
+         }
+         catch (RuntimeException e)
+         {
+            Dialogs.showExceptionDialog(e, "Failed to create mask entries file");
+            entriesFile = null;
+         }
+
+         JOptionPane.showMessageDialog(null, "Wrote files for mask 0x" + maskVersion +
+            ":\n\nMask: " + maskFile + "\nMask entries: " + entriesFile);
       }
    }
 

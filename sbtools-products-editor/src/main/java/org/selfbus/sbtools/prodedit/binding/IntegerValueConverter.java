@@ -9,6 +9,26 @@ public class IntegerValueConverter implements BindingConverter
 {
 //   private static final Logger LOGGER = LoggerFactory.getLogger(IntegerValueConverter.class);
 
+   private final int radix;
+   
+   /**
+    * Create an integer value converter for decimal values.
+    */
+   public IntegerValueConverter()
+   {
+      this(10);
+   }
+
+   /**
+    * Create an integer value converter.
+    * 
+    * @param radix - the radix of the values.
+    */
+   public IntegerValueConverter(int radix)
+   {
+      this.radix = radix;
+   }
+   
    /**
     * {@inheritDoc}
     */
@@ -20,7 +40,7 @@ public class IntegerValueConverter implements BindingConverter
 
       try
       {
-         return Integer.toString((Integer) sourceValue);
+         return Integer.toString((Integer) sourceValue, radix);
       }
       catch (Exception e)
       {
@@ -39,7 +59,7 @@ public class IntegerValueConverter implements BindingConverter
 
       try
       {
-         return Integer.parseInt((String) targetValue);
+         return Integer.parseInt((String) targetValue, radix);
       }
       catch (NumberFormatException e)
       {

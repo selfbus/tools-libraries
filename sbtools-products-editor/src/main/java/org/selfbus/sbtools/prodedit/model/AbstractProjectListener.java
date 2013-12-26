@@ -12,6 +12,14 @@ public abstract class AbstractProjectListener implements ProjectListener
     * {@inheritDoc}
     */
    @Override
+   public void projectLoaded(Project project)
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public void projectChanged(Project project)
    {
    }

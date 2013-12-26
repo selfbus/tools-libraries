@@ -7,7 +7,10 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.TreeMap;
+
+import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.lang3.Validate;
 import org.selfbus.sbtools.common.Config;
@@ -40,6 +43,7 @@ import org.selfbus.sbtools.vdio.model.VdCommunicationObject;
 import org.selfbus.sbtools.vdio.model.VdFunctionalEntity;
 import org.selfbus.sbtools.vdio.model.VdLanguage;
 import org.selfbus.sbtools.vdio.model.VdManufacturer;
+import org.selfbus.sbtools.vdio.model.VdMask;
 import org.selfbus.sbtools.vdio.model.VdParameter;
 import org.selfbus.sbtools.vdio.model.VdParameterType;
 import org.selfbus.sbtools.vdio.model.VdParameterValue;
@@ -55,7 +59,7 @@ import com.jgoodies.common.collect.ArrayListModel;
 /**
  * The products importer can import ETS .vd_ products files.
  */
-public class ProductsImporter
+public class ProductsImporter extends AbstractProductsExpImp
 {
    private static final Logger LOGGER = LoggerFactory.getLogger(ProductsImporter.class);
 
@@ -73,7 +77,10 @@ public class ProductsImporter
 
    // Application programs map, one per group
    private final Map<ProductGroup, Map<Integer, ApplicationProgram>> groupPrograms = new HashMap<ProductGroup, Map<Integer, ApplicationProgram>>();
-   
+
+   // Map application program to mask.
+   private final Map<ApplicationProgram, VdMask> programMasks = new HashMap<ApplicationProgram, VdMask>();
+
    // Map parameter types from external ID to internal parameter type.
    private final Map<Integer, ParameterType> paramTypes = new HashMap<Integer, ParameterType>();
 
@@ -170,6 +177,7 @@ public class ProductsImporter
       params.clear();
       paramTypes.clear();
       symbolIds.clear();
+      programMasks.clear();
 
       project = new Project();
       project.setProjectService(projectService);
@@ -371,7 +379,7 @@ public class ProductsImporter
          importVirtualDevice(d);
       }
    }
-
+   
    /**
     * Import a virtual device to the current product group.
     * 
@@ -389,7 +397,10 @@ public class ProductsImporter
          program = group.createProgram(p.getName());
          programs.put(d.getProgramId(), program);
 
-         program.setMaskId(p.getMaskId());
+         VdMask mask = vd.findMask(p.getMaskId());
+         programMasks.put(program, mask);
+
+         program.setMaskVersion(mask.getVersion());
          program.setVersion(p.getVersion());
          program.setDeviceType(p.getDeviceType());
          program.setAddrTabSize(p.getAddrTabSize());
@@ -578,10 +589,10 @@ public class ProductsImporter
 
       for (VdParameter p : sortedParameters())
       {
-         if (p.getId() == 58514)
-         {
-            LOGGER.debug("Parameter {}", p);
-         }
+//         if (p.getId() == 58514)
+//         {
+//            LOGGER.debug("Parameter {}", p);
+//         }
 
          if (p.getProgramId() != vdProgramId)
             continue;
@@ -639,6 +650,40 @@ public class ProductsImporter
    }
 
    /**
+    * Get the address of a com-object.
+    * 
+    * @param objno - the number of the com-object.
+    * @param program - the program that owns the com-object.
+    * @param mask - the mask
+    *
+    * @return The address of the com-object.
+    */
+   protected int getComObjectAddress(int objno, ApplicationProgram program, VdMask mask)
+   {
+      byte[] eeprom = program.getEepromData();
+      if (eeprom == null)
+      {
+         eeprom = mask.getEepromData();
+      }
+
+      int commsTabPtr = program.getCommsTabAddr() - 256;
+
+      int numObjs = eeprom[commsTabPtr] & 255;
+      if (objno >= numObjs)
+      {
+         LOGGER.error("Invalid com-object #{} (have {} objects)", objno, numObjs);
+         return 0;
+      }
+      int comObjPtr = commsTabPtr + 2 + objno * 3;
+
+      int dataPtr = eeprom[comObjPtr] & 255;
+      if ((eeprom[comObjPtr + 1] & 0x20) != 0)
+         dataPtr += 0x100;
+
+      return dataPtr;
+   }
+
+   /**
     * Import the communication objects of an application program.
     * 
     * @param program - the program to import the parameters for
@@ -646,6 +691,8 @@ public class ProductsImporter
     */
    protected void importComObjects(ApplicationProgram program, int vdProgramId)
    {
+      VdMask mask = programMasks.get(program);
+
       for (VdCommunicationObject o : vd.communicationObjects)
       {
          if (o.getProgramId() != vdProgramId)
@@ -666,6 +713,7 @@ public class ProductsImporter
          comObject.setDescription(getText(o.getId(), TextColumn.COM_OBJECT_DESCRIPTION, o.getDescription()));
          comObject.setType(ObjectType.valueOf(o.getTypeId()));
          comObject.setNumber(o.getNumber());
+         comObject.setAddress(getComObjectAddress(o.getNumber(), program, mask));
          comObject.setParentId(parentId);
          comObject.setParentValue(o.getParentParameterValue());
          comObject.setCommEnabled(o.isCommEnabled());

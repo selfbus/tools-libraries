@@ -225,4 +225,44 @@ public class VD
       
       return null;
    }
+
+   /**
+    * Find a mask by ID.
+    *
+    * @param id - the ID to find
+    * @return The found object or null if not found.
+    */
+   public VdMask findMask(int id)
+   {
+      if (masks == null)
+         return null;
+
+      for (VdMask e : masks)
+      {
+         if (e.getId() == id)
+            return e;
+      }
+      
+      return null;
+   }
+
+   /**
+    * Find a mask by the mask version.
+    *
+    * @param version - the mask version to find
+    * @return The found object or null if not found.
+    */
+   public VdMask findMaskByVersion(int version)
+   {
+      if (masks == null)
+         return null;
+
+      for (VdMask e : masks)
+      {
+         if (e.getVersion() == version)
+            return e;
+      }
+      
+      return null;
+   }
 }

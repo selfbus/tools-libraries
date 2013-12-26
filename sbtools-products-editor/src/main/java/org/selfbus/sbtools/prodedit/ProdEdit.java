@@ -12,7 +12,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.Box;
 import javax.swing.JComponent;
@@ -348,7 +350,6 @@ public class ProdEdit extends SingleFrameApplication
             Project project = importer.read(getClass().getClassLoader().getResourceAsStream(fileName));
             project.setName(fileName);
             projectService.setProject(project);
-            projectService.fireProjectChanged();
          }
 
          setStatusMessage(I18n.formatMessage("Project.loaded", projectService.getProject().getName()));
@@ -462,10 +463,37 @@ public class ProdEdit extends SingleFrameApplication
    }
 
    /**
+    * Close all product group tabs.
+    */
+   public void closeAllProductGroups()
+   {
+      Set<Object> keys = new HashSet<Object>();
+      keys.addAll(tabComponents.keySet());
+
+      for (Object key : keys)
+      {
+         if (key instanceof ProductGroup)
+         {
+            JComponent comp = tabComponents.get(key);
+            tabbedPane.remove(comp);
+            comp.setVisible(false);
+
+            tabComponents.remove(key);
+         }
+      }
+   }
+
+   /**
     * Private project listener
     */
    private final ProjectListener projectListener = new AbstractProjectListener()
    {
+      @Override
+      public void projectLoaded(Project project)
+      {
+         closeAllProductGroups();
+      }
+
       @Override
       public void projectChanged(final Project project)
       {

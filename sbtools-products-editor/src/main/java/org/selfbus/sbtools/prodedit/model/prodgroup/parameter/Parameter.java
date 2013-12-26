@@ -32,9 +32,6 @@ public class Parameter extends AbstractParameterContainer
    @XmlAttribute(name = "size", required = true)
    private int size;
 
-   @XmlAttribute(name = "address")
-   private Integer address;
-
    @XmlAttribute(name = "bit_offset")
    private Integer bitOffset;
 
@@ -150,22 +147,6 @@ public class Parameter extends AbstractParameterContainer
    public void setSize(int size)
    {
       this.size = size;
-   }
-
-   /**
-    * @return the address
-    */
-   public Integer getAddress()
-   {
-      return address;
-   }
-
-   /**
-    * @param address the address to set
-    */
-   public void setAddress(Integer address)
-   {
-      this.address = address;
    }
 
    /**

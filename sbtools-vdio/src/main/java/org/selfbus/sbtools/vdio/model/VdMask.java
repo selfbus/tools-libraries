@@ -368,7 +368,7 @@ public class VdMask
    /**
     * @return the maskEepromData
     */
-   public byte[] getMaskEepromData()
+   public byte[] getEepromData()
    {
       return maskEepromData;
    }
@@ -376,7 +376,7 @@ public class VdMask
    /**
     * @param maskEepromData the maskEepromData to set
     */
-   public void setMaskEepromData(byte[] maskEepromData)
+   public void setEepromData(byte[] maskEepromData)
    {
       this.maskEepromData = maskEepromData;
    }

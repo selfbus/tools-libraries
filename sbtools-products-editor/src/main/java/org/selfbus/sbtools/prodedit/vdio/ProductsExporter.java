@@ -2,8 +2,6 @@ package org.selfbus.sbtools.prodedit.vdio;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -75,7 +73,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The products exporter exports a {@link Project} as an ETS .vd_ products files.
  */
-public class ProductsExporter
+public class ProductsExporter extends AbstractProductsExpImp
 {
    private static final Logger LOGGER = LoggerFactory.getLogger(ProductsExporter.class);
 
@@ -421,33 +419,6 @@ public class ProductsExporter
       vd.deviceInfoValues.add(dv);
    }
 
-   /**
-    * Load a properties file that is searched in the directory "org.selfbus.sbtools.prodedit"
-    * in the class path.
-    * 
-    * @param name - name of the properties file.
-    * @return The properties
-    * @throws VdioException if the properties file could not be loaded
-    */
-   Properties getProperties(String name) throws VdioException
-   {
-      String fileName = "org/selfbus/sbtools/prodedit/" + name;
-      Properties prop = new Properties();
-      try
-      {
-         InputStream in = getClass().getClassLoader().getResourceAsStream(fileName);
-         if (in == null)
-            throw new VdioException("property file not found in class path: " + fileName);
-
-         prop.load(in);
-      }
-      catch (IOException e)
-      {
-         throw new VdioException("failed to read property file: " + fileName, e);
-      }
-      return prop;
-   }
-
    Integer getIntValue(Properties prop, String key)
    {
       String v = prop.getProperty(key);
@@ -464,8 +435,8 @@ public class ProductsExporter
       vd.masks = new LinkedList<VdMask>();
       vd.maskEntries = new LinkedList<VdMaskEntry>();
 
-      exportMask(maskId, 17);
-      exportMaskEntries(maskId, 17);
+      exportMask(maskId, 0x11);
+      exportMaskEntries(maskId, 0x11);
    }
 
    /**
@@ -478,7 +449,7 @@ public class ProductsExporter
     */
    void exportMask(int maskId, int version) throws VdioException
    {
-      Properties mask = getProperties("mask_" + version + ".properties");
+      Properties mask = getProperties("mask_" + Integer.toHexString(version) + ".properties");
 
       VdMask m = new VdMask();
       m.setId(maskId);
@@ -497,7 +468,7 @@ public class ProductsExporter
       m.setRouteCountAddress(getIntValue(mask, "routecnt_address"));
       m.setManufacturerIdProtected("true".equalsIgnoreCase(mask.getProperty("manufacturer_id_protected")));
       m.setMaskVersionName(mask.getProperty("mask_version_name"));
-      m.setMaskEepromData(DatatypeConverter.parseHexBinary(mask.getProperty("mask_eeprom_data")));
+      m.setEepromData(DatatypeConverter.parseHexBinary(mask.getProperty("mask_eeprom_data")));
       //getIntValue(mask, "mask_data_length");
       m.setAddressTabLCS(getIntValue(mask, "address_tab_lcs"));
       m.setAssocTabLCS(getIntValue(mask, "assoc_tab_lcs"));
@@ -525,7 +496,7 @@ public class ProductsExporter
     */
    void exportMaskEntries(int maskId, int version) throws VdioException
    {
-      Properties props = getProperties("mask_entries_" + version + ".properties");
+      Properties props = getProperties("mask_entries_" + Integer.toHexString(version) + ".properties");
 
       for (Object key : props.keySet())
       {

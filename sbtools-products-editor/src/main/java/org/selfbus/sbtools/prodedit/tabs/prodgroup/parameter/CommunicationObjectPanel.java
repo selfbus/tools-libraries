@@ -54,6 +54,7 @@ public class CommunicationObjectPanel extends JPanel implements CloseableCompone
    protected CommunicationObject comObject;
 
    private final IntegerValueConverter intValueConverter = new IntegerValueConverter();
+   private final IntegerValueConverter hexIntValueConverter = new IntegerValueConverter(16);
    private final IdValueConverter idValueConverter = new IdValueConverter();
    
    private final PresentationModel<CommunicationObject> detailsModel = new PresentationModel<CommunicationObject>();
@@ -83,6 +84,13 @@ public class CommunicationObjectPanel extends JPanel implements CloseableCompone
    @SuppressWarnings("unchecked")
    private final JComboBox<ObjectType> typeCombo = BasicComponentFactory.createComboBox(selectionInType);
 
+   private final ValueModel numberValue = new ConverterValueModel(detailsModel.getModel("number"), intValueConverter);
+   private final JTextComponent numberValueField = BasicComponentFactory.createTextField(numberValue);
+
+   private final ValueModel addressValue = new ConverterValueModel(detailsModel.getModel("address"), hexIntValueConverter);
+   private final JTextComponent addressValueField = BasicComponentFactory.createTextField(addressValue);
+   
+   
    private final ValueModel commEnabledValue = detailsModel.getModel("commEnabled");
    private final JComponent commEnabledField =  BasicComponentFactory.createCheckBox(commEnabledValue, I18n.getMessage("CommunicationObjectPanel.commEnabled"));
 
@@ -105,7 +113,7 @@ public class CommunicationObjectPanel extends JPanel implements CloseableCompone
       FormLayout layout = new FormLayout("6dlu,l:p,4dlu,f:p:g,6dlu", 
          "8dlu, p, 6dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, " +
          "4dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, " +
-         "4dlu, f:p:g, p, 4dlu");
+         "4dlu, p, 4dlu, p, 4dlu, f:p:g, p, 4dlu");
 
       PanelBuilder builder = new PanelBuilder(layout);
       CellConstraints cc = new CellConstraints();
@@ -137,33 +145,44 @@ public class CommunicationObjectPanel extends JPanel implements CloseableCompone
       builder.add(new JSeparator(), cc.rcw(row, 2, 3));
 
       row = 10;
+      builder.addLabel(I18n.getMessage("CommunicationObjectPanel.number"), cc.rc(row, 2));
+      builder.add(numberValueField, cc.rc(row, 4));
+
+      row = 12;
       builder.addLabel(I18n.getMessage("CommunicationObjectPanel.type"), cc.rc(row, 2));
       builder.add(typeCombo, cc.rc(row, 4));
 
-      row = 12;
-      builder.addLabel(I18n.getMessage("CommunicationObjectPanel.parentId"), cc.rc(row, 2));
-      builder.add(parentIdField, cc.rc(row, 4));
-
       row = 14;
-      builder.addLabel(I18n.getMessage("CommunicationObjectPanel.parentValue"), cc.rc(row, 2));
-      builder.add(parentValueField, cc.rc(row, 4));
+      builder.addLabel(I18n.getMessage("CommunicationObjectPanel.address"), cc.rc(row, 2));
+      builder.add(addressValueField, cc.rc(row, 4));
 
       row = 15;
       builder.add(new JSeparator(), cc.rcw(row, 2, 3));
 
       row = 16;
-      builder.addLabel(I18n.getMessage("CommunicationObjectPanel.defaultValues") + ':', cc.rcw(row, 2, 3));
+      builder.addLabel(I18n.getMessage("CommunicationObjectPanel.parentId"), cc.rc(row, 2));
+      builder.add(parentIdField, cc.rc(row, 4));
 
       row = 18;
+      builder.addLabel(I18n.getMessage("CommunicationObjectPanel.parentValue"), cc.rc(row, 2));
+      builder.add(parentValueField, cc.rc(row, 4));
+
+      row = 19;
+      builder.add(new JSeparator(), cc.rcw(row, 2, 3));
+
+      row = 20;
+      builder.addLabel(I18n.getMessage("CommunicationObjectPanel.defaultValues") + ':', cc.rcw(row, 2, 3));
+
+      row = 22;
       builder.add(readEnabledField, cc.rc(row, 2));
       builder.add(commEnabledField, cc.rc(row, 4));
 
-      row = 20;
+      row = 24;
       builder.add(writeEnabledField, cc.rc(row, 2));
       builder.add(transEnabledField, cc.rc(row, 4));
 
       
-      row = 22;
+      row = 26;
       builder.add(Box.createVerticalGlue(), cc.rcw(row, 2, 3));
 
       nameElems = MultiLingualTextUtil.createFormElements(builder, 5);

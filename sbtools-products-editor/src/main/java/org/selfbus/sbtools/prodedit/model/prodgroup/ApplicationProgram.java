@@ -46,8 +46,8 @@ public class ApplicationProgram extends Model implements Identifiable, Symbolize
    @XmlAttribute(name = "symbol_id")
    private Integer symbolId;
 
-   @XmlAttribute(name = "mask_id", required = true)
-   private int maskId;
+   @XmlAttribute(name = "mask_version", required = true)
+   private int maskVersion;
 
    @XmlAttribute(name = "program_name", required = true)
    private String name = "";
@@ -112,13 +112,13 @@ public class ApplicationProgram extends Model implements Identifiable, Symbolize
     * 
     * @param id - the database ID of the object.
     * @param name - the name of the object.
-    * @param maskId - the mask.
+    * @param maskVersion - the mask version.
     */
-   public ApplicationProgram(int id, String name, int maskId)
+   public ApplicationProgram(int id, String name, int maskVersion)
    {
       this.id = id;
       this.name = name;
-      this.maskId = maskId;
+      this.maskVersion = maskVersion;
    }
 
    /**
@@ -222,21 +222,21 @@ public class ApplicationProgram extends Model implements Identifiable, Symbolize
    }
 
    /**
-    * @return the mask.
+    * @return the mask version.
     */
-   public int getMaskId()
+   public int getMaskVersion()
    {
-      return maskId;
+      return maskVersion;
    }
 
    /**
-    * Set the mask.
+    * Set the mask version.
     * 
-    * @param mask - the mask to set.
+    * @param maskVersion - the mask version to set.
     */
-   public void setMaskId(int maskId)
+   public void setMaskVersion(int maskVersion)
    {
-      this.maskId = maskId;
+      this.maskVersion = maskVersion;
    }
 
    /**

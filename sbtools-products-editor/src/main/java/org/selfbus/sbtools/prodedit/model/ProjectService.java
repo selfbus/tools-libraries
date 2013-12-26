@@ -141,6 +141,7 @@ public class ProjectService
          project = newProject;
 
          Config.getInstance().remove("project.last");
+         fireProjectLoaded();
          fireProjectChanged();
       }
 
@@ -177,6 +178,7 @@ public class ProjectService
       project.getManufacturers().put(manufacturerId, new Manufacturer(manufacturerId, "Selfbus"));
 
       Config.getInstance().remove("project.last");
+      fireProjectLoaded();
       fireProjectChanged();
 
       return project;
@@ -249,6 +251,7 @@ public class ProjectService
       paramTypes.add(paramType);
 
       Config.getInstance().remove("project.last");
+      fireProjectLoaded();
       fireProjectChanged();
 
       return project;
@@ -270,6 +273,7 @@ public class ProjectService
    public void setProject(Project project)
    {
       this.project = project;
+      fireProjectLoaded();
       fireProjectChanged();
    }
 
@@ -296,6 +300,18 @@ public class ProjectService
       synchronized (listeners)
       {
          listeners.remove(listener);
+      }
+   }
+
+   /**
+    * Inform all listeners that the project was loaded.
+    */
+   public void fireProjectLoaded()
+   {
+      synchronized (listeners)
+      {
+         for (ProjectListener listener : listeners)
+            listener.projectLoaded(project);
       }
    }
 

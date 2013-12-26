@@ -9,6 +9,13 @@ import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
 public interface ProjectListener
 {
    /**
+    * The project was loaded.
+    * 
+    * @param project - the new project.
+    */
+   public void projectLoaded(Project project);
+
+   /**
     * The project was changed.
     * 
     * @param project - the new or changed project.

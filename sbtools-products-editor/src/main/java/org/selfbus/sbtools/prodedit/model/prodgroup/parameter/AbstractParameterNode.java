@@ -41,6 +41,9 @@ public class AbstractParameterNode extends Model implements Identifiable, Ordera
    @XmlAttribute(name = "number")
    private Integer number;
 
+   @XmlAttribute(name = "address")
+   private Integer address;
+
    protected AbstractParameterNode()
    {
    }
@@ -153,6 +156,22 @@ public class AbstractParameterNode extends Model implements Identifiable, Ordera
    public void setNumber(Integer number)
    {
       this.number = number;
+   }
+
+   /**
+    * @return the address
+    */
+   public Integer getAddress()
+   {
+      return address;
+   }
+
+   /**
+    * @param address the address to set
+    */
+   public void setAddress(Integer address)
+   {
+      this.address = address;
    }
 
    /**
