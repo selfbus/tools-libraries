@@ -3,6 +3,7 @@ package org.selfbus.sbtools.prodedit.tabs.prodgroup.memory;
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -22,7 +23,6 @@ import org.selfbus.sbtools.prodedit.model.global.Project;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ApplicationProgram;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
 import org.selfbus.sbtools.prodedit.model.prodgroup.VirtualDevice;
-import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.AbstractParameterContainer;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.AbstractParameterNode;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.CommunicationObject;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.Parameter;
@@ -30,7 +30,6 @@ import org.selfbus.sbtools.prodedit.renderer.ParameterMemoryListCellRenderer;
 import org.selfbus.sbtools.prodedit.tabs.internal.AbstractCategoryElem;
 import org.selfbus.sbtools.prodedit.utils.FontUtils;
 
-import com.jgoodies.common.collect.ArrayListModel;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -202,7 +201,7 @@ public class MemoryElem extends AbstractCategoryElem
       MemoryRange comObjRange = createRange(0, 0, I18n.getMessage("MemoryElem.comObject"));
 
       ApplicationProgram program = group.getProgram(device);
-      addParameterRanges(program.getParameterTreeModel().getRoot().getChilds(), paramRange, comObjRange);
+      addParameterRanges(program.getParameterTreeModel().getRoot(), paramRange, comObjRange);
    }
 
    /**
@@ -212,15 +211,15 @@ public class MemoryElem extends AbstractCategoryElem
     * @param paramRange - the memory range for parameters
     * @param comObjRange - the memory range for com-objects
     */
-   protected void addParameterRanges(ArrayListModel<AbstractParameterNode> params,
-      MemoryRange paramRange, MemoryRange comObjRange)
+   protected void addParameterRanges(AbstractParameterNode parentNode, MemoryRange paramRange, MemoryRange comObjRange)
    {
-      for (AbstractParameterNode node : params)
+      Enumeration<AbstractParameterNode> it = parentNode.children();
+      while (it.hasMoreElements())
       {
-         if (node instanceof AbstractParameterContainer)
-         {
-            addParameterRanges(((AbstractParameterContainer) node).getChilds(), paramRange, comObjRange);
-         }
+         AbstractParameterNode node = it.nextElement();
+
+         if (!node.isLeaf())
+            addParameterRanges(node, paramRange, comObjRange);
 
          Integer addr = node.getAddress();
          if (addr == null || addr == 0)

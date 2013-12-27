@@ -308,7 +308,7 @@ public class ProdEdit extends SingleFrameApplication
 
          clearStatusTimer = new Timer(5000, clearStatusHandler);
          clearStatusTimer.setRepeats(false);
-         
+
 //         fileName = "org/selfbus/sbtools/prodedit/main-toolbar.xml";
 //         in = getClass().getClassLoader().getResourceAsStream(fileName);
 //         Validate.notNull(in, "toolbar configuration not found: " + fileName);

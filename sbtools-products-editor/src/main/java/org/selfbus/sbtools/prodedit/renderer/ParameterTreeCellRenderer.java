@@ -54,6 +54,10 @@ public class ParameterTreeCellRenderer implements TreeCellRenderer
       if (value instanceof Parameter)
       {
          Parameter param = (Parameter) value;
+
+         if (param.getId() == 11)
+            icon = null;
+
          ParameterCategory category = param.getCategory();
          if (category == ParameterCategory.LABEL)
             icon = paramLabelIcon;

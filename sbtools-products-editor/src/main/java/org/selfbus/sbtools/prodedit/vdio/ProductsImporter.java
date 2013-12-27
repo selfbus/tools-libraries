@@ -586,7 +586,7 @@ public class ProductsImporter extends AbstractProductsExpImp
 
       for (VdParameter p : sortedParameters())
       {
-//         if (p.getId() == 58514)
+//         if (p.getId() == 161508)
 //         {
 //            LOGGER.debug("Parameter {}", p);
 //         }
@@ -631,7 +631,7 @@ public class ProductsImporter extends AbstractProductsExpImp
             pageParam = param;
             program.addParameter(param);
          }
-         else if (p.getAddress() == 0)
+         else if (p.getSize() == null || p.getSize() == 0)
          {
             param.setCategory(ParameterCategory.LABEL);
             pageParam.addChild(param);

@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -674,16 +675,22 @@ public class ProductsExporter extends AbstractProductsExpImp
     */
    void exportDeviceParameters(AbstractParameterContainer cont)
    {
-      for (AbstractParameterNode paramNode : cont.getChilds())
+      Enumeration<AbstractParameterNode> it = cont.children();
+      while (it.hasMoreElements())
       {
+         AbstractParameterNode paramNode = it.nextElement();
+
          if (paramNode instanceof Parameter)
             exportDeviceParameter((Parameter) paramNode);
          else if (paramNode instanceof CommunicationObject)
             exportDeviceObject((CommunicationObject) paramNode);
       }
 
-      for (AbstractParameterNode paramNode : cont.getChilds())
+      it = cont.children();
+      while (it.hasMoreElements())
       {
+         AbstractParameterNode paramNode = it.nextElement();
+
          if (paramNode instanceof AbstractParameterContainer)
             exportDeviceParameters((AbstractParameterContainer) paramNode);
       }
@@ -865,8 +872,11 @@ public class ProductsExporter extends AbstractProductsExpImp
     */
    void exportParameters(ApplicationProgram program, AbstractParameterContainer cont)
    {
-      for (AbstractParameterNode paramNode : cont.getChilds())
+      Enumeration<AbstractParameterNode> it = cont.children();
+      while (it.hasMoreElements())
       {
+         AbstractParameterNode paramNode = it.nextElement();
+
          if (paramNode instanceof Parameter)
             exportParameter(program, (Parameter) paramNode);
          if (paramNode instanceof AbstractParameterContainer)

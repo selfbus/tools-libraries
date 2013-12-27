@@ -19,17 +19,39 @@ public class AbstractParameterContainer extends AbstractParameterNode implements
 {
    private static final long serialVersionUID = 4327394838211456868L;
 
+   protected AbstractParameterContainer()
+   {
+      super();
+   }
+
+   /**
+    * @return The children as an ArrayListModel.
+    */
    //@XmlMixed
    @XmlElementWrapper(name = "childs")
    @XmlElementRefs({
       @XmlElementRef(name = "parameter", type = Parameter.class),
       @XmlElementRef(name = "communication_object", type = CommunicationObject.class)
    })
-   private ArrayListModel<AbstractParameterNode> childs;
-
-   protected AbstractParameterContainer()
+   public ArrayListModel<AbstractParameterNode> getChildrenModel()
    {
-      super();
+      return childs;
+   }
+
+   /**
+    * Set the children.
+    *
+    * @param childs - the new children
+    */
+   public void setChildrenModel(ArrayListModel<AbstractParameterNode> childs)
+   {
+      this.childs = childs;
+
+      if (childs != null)
+      {
+         for (AbstractParameterNode child : childs)
+            child.setParent(this);
+      }
    }
 
    /**
@@ -41,40 +63,8 @@ public class AbstractParameterContainer extends AbstractParameterNode implements
       if (childs == null)
          childs = new ArrayListModel<AbstractParameterNode>();
    
+      child.setParent(this);
       childs.add(child);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public AbstractParameterNode getChild(int index)
-   {
-      if (childs == null)
-         return null;
-   
-      return childs.get(index);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public ArrayListModel<AbstractParameterNode> getChilds()
-   {
-      if (childs == null)
-         childs = new ArrayListModel<AbstractParameterNode>();
-   
-      return childs;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setChilds(ArrayListModel<AbstractParameterNode> childs)
-   {
-      this.childs = childs;
    }
 
    /**
@@ -84,14 +74,21 @@ public class AbstractParameterContainer extends AbstractParameterNode implements
     */
    public void removeChild(AbstractParameterNode child)
    {
+      child.setParent(null);
       childs.remove(child);
    }
 
    /**
     * Remove all children.
     */
-   public void removeChilds()
+   public void removeChildren()
    {
       childs.clear();
+   }
+
+   @Override
+   public boolean getAllowsChildren()
+   {
+      return true;
    }
 }

@@ -1,5 +1,7 @@
 package org.selfbus.sbtools.prodedit.model.prodgroup;
 
+import java.util.Enumeration;
+
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -475,7 +477,7 @@ public class ApplicationProgram extends Model implements Identifiable, Symbolize
    public void removeAllParameters()
    {
       if (parameterTree != null)
-         parameterTree.getRoot().removeChilds();
+         parameterTree.getRoot().removeChildren();
    }
 
    /**
@@ -637,8 +639,11 @@ public class ApplicationProgram extends Model implements Identifiable, Symbolize
     */
    private void updateUniqueParamId(AbstractParameterContainer cont)
    {
-      for (AbstractParameterNode param : cont.getChilds())
+      Enumeration<AbstractParameterNode> it = cont.children();
+      while (it.hasMoreElements())
       {
+         AbstractParameterNode param = it.nextElement();
+
          if (param.getId() >= uniqueParamId)
             uniqueParamId = param.getId() + 1;
 

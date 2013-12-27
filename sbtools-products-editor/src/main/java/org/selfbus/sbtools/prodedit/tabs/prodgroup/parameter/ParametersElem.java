@@ -44,8 +44,8 @@ public class ParametersElem extends AbstractCategoryElem implements CloseableCom
    private final JTree paramTree = new JTree(selectionInTree);
    private final ParameterTreeCellRenderer paramTreeCellRenderer = new ParameterTreeCellRenderer(paramTree.getCellRenderer());
 
-   private final ParameterPanel paramPanel = new ParameterPanel();
-   private final CommunicationObjectPanel comObjectPanel = new CommunicationObjectPanel();
+   private final ParameterPanel paramPanel = new ParameterPanel(this);
+   private final CommunicationObjectPanel comObjectPanel = new CommunicationObjectPanel(this);
    private final JPanel emptyPanel = new JPanel();
    private JPanel currentPanel;
 
@@ -198,5 +198,16 @@ public class ParametersElem extends AbstractCategoryElem implements CloseableCom
       paramTreeCellRenderer.setProgram(program);
       selectionInTree.setTree(paramTreeModel);
       paramTree.setModel(paramTreeModel);
+   }
+
+   /**
+    * Set the selected parameter.
+    *
+    * @param paramId - the ID of the parameter.
+    */
+   public void setSelectedParam(int paramId)
+   {
+      ParameterTreeModel paramTreeModel = (ParameterTreeModel) paramTree.getModel();
+      selectionInTree.setSelection(paramTreeModel.findById(paramId));
    }
 }

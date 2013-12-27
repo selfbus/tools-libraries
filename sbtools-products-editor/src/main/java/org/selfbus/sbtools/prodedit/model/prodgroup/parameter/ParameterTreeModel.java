@@ -1,7 +1,10 @@
 package org.selfbus.sbtools.prodedit.model.prodgroup.parameter;
 
+import java.util.Enumeration;
+
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.selfbus.sbtools.prodedit.model.prodgroup.ApplicationProgram;
@@ -34,17 +37,14 @@ public class ParameterTreeModel implements TreeModel
    public AbstractParameterNode getChild(Object parent, int index)
    {
       ParameterContainer parentCont = (ParameterContainer) parent;
-      return parentCont.getChild(index);
+      return parentCont.getChildAt(index);
    }
 
    @Override
    public int getChildCount(Object parent)
    {
-      if (parent instanceof ParameterContainer)
-      {
-         ParameterContainer parentCont = (ParameterContainer) parent;
-         return parentCont.getChilds().size();
-      }
+      if (parent instanceof TreeNode)
+         return ((TreeNode) parent).getChildCount();
 
       return 0;
    }
@@ -52,7 +52,7 @@ public class ParameterTreeModel implements TreeModel
    @Override
    public boolean isLeaf(Object node)
    {
-      return !(node instanceof ParameterContainer) || ((ParameterContainer) node).getChilds().isEmpty();
+      return !(node instanceof TreeNode) || ((TreeNode) node).isLeaf();
    }
 
    @Override
@@ -64,17 +64,11 @@ public class ParameterTreeModel implements TreeModel
    @Override
    public int getIndexOfChild(Object parent, Object child)
    {
-      if (parent == null || child == null)
+      if (parent == null || !(child instanceof TreeNode))
          return -1;
 
-      ParameterContainer parentCont = (ParameterContainer) parent;
-      for (int index = parentCont.getChilds().size() - 1; index >= 0; --index)
-      {
-         if (parentCont.getChild(index) == child)
-            return index;
-      }
-
-      return -1;
+      TreeNode parentNode = (TreeNode) parent;
+      return parentNode.getIndex((TreeNode) child);
    }
 
    /**
@@ -98,16 +92,19 @@ public class ParameterTreeModel implements TreeModel
     * 
     * @return The parameter, or null if not found.
     */
-   public AbstractParameterNode findById(ParameterContainer parent, int id)
+   public AbstractParameterNode findById(AbstractParameterNode parent, int id)
    {
-      for (AbstractParameterNode node : parent.getChilds())
+      Enumeration<AbstractParameterNode> it = parent.children();
+      while (it.hasMoreElements())
       {
+         AbstractParameterNode node = it.nextElement();
+
          if (node.id == id)
             return node;
 
-         if (node instanceof ParameterContainer)
+         if (!node.isLeaf())
          {
-            node = findById((ParameterContainer) node, id);
+            node = findById(node, id);
             if (node != null)
                return node;
          }

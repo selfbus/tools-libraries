@@ -1,6 +1,6 @@
 package org.selfbus.sbtools.prodedit.model.prodgroup.parameter;
 
-import com.jgoodies.common.collect.ArrayListModel;
+import java.util.Enumeration;
 
 public interface ParameterContainer
 {
@@ -15,12 +15,7 @@ public interface ParameterContainer
    /**
     * @return The child parameters / com-object.
     */
-   public ArrayListModel<AbstractParameterNode> getChilds();
-
-   /**
-    * @param childs the childs to set
-    */
-   public void setChilds(ArrayListModel<AbstractParameterNode> childs);
+   public Enumeration<AbstractParameterNode> children();
 
    /**
     * Get a child.
@@ -28,5 +23,5 @@ public interface ParameterContainer
     * @param index - the index of the child to get
     * @return The child
     */
-   public AbstractParameterNode getChild(int index);
+   public AbstractParameterNode getChildAt(int index);
 }

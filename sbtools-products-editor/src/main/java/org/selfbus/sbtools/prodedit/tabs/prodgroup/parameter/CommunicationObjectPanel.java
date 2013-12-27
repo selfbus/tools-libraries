@@ -1,11 +1,17 @@
 package org.selfbus.sbtools.prodedit.tabs.prodgroup.parameter;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -17,6 +23,7 @@ import javax.swing.event.ListDataListener;
 import javax.swing.text.JTextComponent;
 
 import org.selfbus.sbtools.common.gui.components.CloseableComponent;
+import org.selfbus.sbtools.common.gui.misc.ImageCache;
 import org.selfbus.sbtools.prodedit.ProdEdit;
 import org.selfbus.sbtools.prodedit.binding.IdValueConverter;
 import org.selfbus.sbtools.prodedit.binding.IntegerValueConverter;
@@ -76,6 +83,8 @@ public class CommunicationObjectPanel extends JPanel implements CloseableCompone
    private final ValueModel parentIdValue = new ConverterValueModel(detailsModel.getModel("parentId"), intValueConverter);
    private final JTextComponent parentIdField = BasicComponentFactory.createTextField(parentIdValue);
 
+   private final JButton gotoParentButton = new JButton(ImageCache.getIcon("icons/jump_to"));
+
    private final ValueModel parentValueValue = new ConverterValueModel(detailsModel.getModel("parentValue"), intValueConverter);
    private final JTextComponent parentValueField = BasicComponentFactory.createTextField(parentValueValue);
 
@@ -89,7 +98,6 @@ public class CommunicationObjectPanel extends JPanel implements CloseableCompone
 
    private final ValueModel addressValue = new ConverterValueModel(detailsModel.getModel("address"), hexIntValueConverter);
    private final JTextComponent addressValueField = BasicComponentFactory.createTextField(addressValue);
-   
    
    private final ValueModel commEnabledValue = detailsModel.getModel("commEnabled");
    private final JComponent commEnabledField =  BasicComponentFactory.createCheckBox(commEnabledValue, I18n.getMessage("CommunicationObjectPanel.commEnabled"));
@@ -106,11 +114,11 @@ public class CommunicationObjectPanel extends JPanel implements CloseableCompone
    /**
     * Create a panel for editing a {@link CommunicationObject}.
     */
-   public CommunicationObjectPanel()
+   public CommunicationObjectPanel(final ParametersElem parent)
    {
       setLayout(new BorderLayout(0, 2));
 
-      FormLayout layout = new FormLayout("6dlu,l:p,4dlu,f:p:g,6dlu", 
+      FormLayout layout = new FormLayout("6dlu, l:p, 4dlu, f:p:g, 4dlu, l:p, 6dlu", 
          "8dlu, p, 6dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, " +
          "4dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, " +
          "4dlu, p, 4dlu, p, 4dlu, f:p:g, p, 4dlu");
@@ -162,6 +170,8 @@ public class CommunicationObjectPanel extends JPanel implements CloseableCompone
       row = 16;
       builder.addLabel(I18n.getMessage("CommunicationObjectPanel.parentId"), cc.rc(row, 2));
       builder.add(parentIdField, cc.rc(row, 4));
+      builder.add(gotoParentButton, cc.rc(row, 6));
+      gotoParentButton.setPreferredSize(new Dimension(gotoParentButton.getPreferredSize().width, parentValueField.getPreferredSize().height));
 
       row = 18;
       builder.addLabel(I18n.getMessage("CommunicationObjectPanel.parentValue"), cc.rc(row, 2));
@@ -196,6 +206,28 @@ public class CommunicationObjectPanel extends JPanel implements CloseableCompone
       add(reportPane, BorderLayout.SOUTH);
 
       ProdEdit.getInstance().getProject().getLanguages().addListDataListener(languagesListener);
+
+      gotoParentButton.setEnabled(false);
+      parentIdValue.addValueChangeListener(new PropertyChangeListener()
+      {
+         @Override
+         public void propertyChange(PropertyChangeEvent evt)
+         {
+            String val = (String) evt.getNewValue();
+            gotoParentButton.setEnabled(val != null && !val.isEmpty());
+         }
+      });
+
+      gotoParentButton.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            String val = (String) parentIdValue.getValue();
+            if (!val.isEmpty())
+               parent.setSelectedParam(Integer.parseInt(val));
+         }
+      });
    }
 
    /**

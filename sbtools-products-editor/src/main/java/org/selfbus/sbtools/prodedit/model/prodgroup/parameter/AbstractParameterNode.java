@@ -1,5 +1,9 @@
 package org.selfbus.sbtools.prodedit.model.prodgroup.parameter;
 
+import java.util.Collections;
+import java.util.Enumeration;
+
+import javax.swing.tree.TreeNode;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -12,13 +16,14 @@ import org.selfbus.sbtools.prodedit.model.interfaces.Orderable;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
 
 import com.jgoodies.binding.beans.Model;
+import com.jgoodies.common.collect.ArrayListModel;
 
 /**
  * An abstract base class for {@link CommunicationObject} and {@link Parameter}.
  */
 @XmlType(propOrder = {})
 @XmlAccessorType(XmlAccessType.NONE)
-public class AbstractParameterNode extends Model implements Identifiable, Orderable
+public class AbstractParameterNode extends Model implements Identifiable, Orderable, TreeNode
 {
    private static final long serialVersionUID = 8492676566007169620L;
 
@@ -44,8 +49,16 @@ public class AbstractParameterNode extends Model implements Identifiable, Ordera
    @XmlAttribute(name = "address")
    private Integer address;
 
+   protected ArrayListModel<AbstractParameterNode> childs;
+   protected AbstractParameterNode parent;
+
    protected AbstractParameterNode()
    {
+   }
+
+   protected AbstractParameterNode(AbstractParameterNode parent)
+   {
+      this.parent = parent;
    }
 
    /**
@@ -172,6 +185,76 @@ public class AbstractParameterNode extends Model implements Identifiable, Ordera
    public void setAddress(Integer address)
    {
       this.address = address;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public AbstractParameterNode getChildAt(int index)
+   {
+      if (childs == null)
+         return null;
+   
+      return childs.get(index);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Enumeration<AbstractParameterNode> children()
+   {
+      if (childs == null)
+         childs = new ArrayListModel<AbstractParameterNode>();
+   
+      return Collections.enumeration(childs);
+   }
+
+   @Override
+   public int getChildCount()
+   {
+      if (childs == null)
+         return 0;
+
+      return childs.getSize();
+   }
+
+   /**
+    * Set the parent node.
+    * 
+    * @param parent - the parent node.
+    */
+   public void setParent(AbstractParameterNode parent)
+   {
+      this.parent = parent;
+   }
+
+   @Override
+   public AbstractParameterNode getParent()
+   {
+      return parent;
+   }
+
+   @Override
+   public int getIndex(TreeNode node)
+   {
+      if (childs == null)
+         return -1;
+
+      return childs.indexOf(node);
+   }
+
+   @Override
+   public boolean getAllowsChildren()
+   {
+      return false;
+   }
+
+   @Override
+   public boolean isLeaf()
+   {
+      return childs == null || childs.isEmpty();
    }
 
    /**

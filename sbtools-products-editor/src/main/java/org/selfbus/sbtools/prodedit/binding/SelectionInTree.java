@@ -25,6 +25,8 @@ package org.selfbus.sbtools.prodedit.binding;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JTree;
@@ -204,17 +206,38 @@ public class SelectionInTree extends Model implements TreeSelectionListener, Tre
 
       for (TreeNode treeNode : TreeUtils.getChildTreeNodes((TreeNode) model.getRoot()))
       {
-         DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeNode;
-         if (node.getUserObject() == newSelection)
+         if (treeNode instanceof DefaultMutableTreeNode)
          {
-            selectionHolder.setValue(newSelection);
-            selectionModel.setSelectionPath(new TreePath(node.getPath()));
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeNode;
+            if (node.getUserObject() == newSelection)
+            {
+               // selectionHolder.setValue(newSelection);
+               selectionModel.setSelectionPath(new TreePath(node.getPath()));
+               return;
+            }
+         }
+         else if (treeNode == newSelection)
+         {
+            selectionModel.setSelectionPath(createTreePath(treeNode));
             return;
          }
       }
 
       selectionHolder.setValue(null);
       selectionModel.clearSelection();
+   }
+
+   private TreePath createTreePath(TreeNode treeNode)
+   {
+      List<TreeNode> nodes = new LinkedList<TreeNode>();
+
+      while (treeNode != null)
+      {
+         nodes.add(0, treeNode);
+         treeNode = treeNode.getParent();
+      }
+
+      return new TreePath(nodes.toArray());
    }
 
    public TreeSelectionModel getSelectionModel()

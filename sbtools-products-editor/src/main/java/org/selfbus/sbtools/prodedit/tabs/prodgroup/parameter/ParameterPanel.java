@@ -1,6 +1,9 @@
 package org.selfbus.sbtools.prodedit.tabs.prodgroup.parameter;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
@@ -9,17 +12,20 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.text.JTextComponent;
 
 import org.selfbus.sbtools.common.gui.components.CloseableComponent;
+import org.selfbus.sbtools.common.gui.misc.ImageCache;
 import org.selfbus.sbtools.prodedit.ProdEdit;
 import org.selfbus.sbtools.prodedit.binding.IdValueConverter;
 import org.selfbus.sbtools.prodedit.binding.IdentifiableConverter;
@@ -66,6 +72,7 @@ public class ParameterPanel extends JPanel implements CloseableComponent
    protected ApplicationProgram program;
    protected Parameter parameter;
 
+   private final IntegerValueConverter hexIntValueConverter = new IntegerValueConverter(16);
    private final IntegerValueConverter intValueConverter = new IntegerValueConverter();
    private final IdValueConverter idValueConverter = new IdValueConverter();
 
@@ -92,6 +99,8 @@ public class ParameterPanel extends JPanel implements CloseableComponent
       intValueConverter);
    private final JTextComponent parentValueField = BasicComponentFactory.createTextField(parentValueValue);
 
+   private final JButton gotoParentButton = new JButton(ImageCache.getIcon("icons/jump_to"));
+
    private final ValueModel categoryValue = detailsModel.getModel("category");
    private SelectionInList<ParameterCategory> selectionInCategory = new SelectionInList<ParameterCategory>(
       ParameterCategory.values(), categoryValue);
@@ -113,6 +122,12 @@ public class ParameterPanel extends JPanel implements CloseableComponent
    @SuppressWarnings("unchecked")
    private final JComboBox<ParameterValue> defaultEnumField = BasicComponentFactory.createComboBox(selectionInEnum);
 
+   private final ValueModel addressValue = new ConverterValueModel(detailsModel.getModel("address"), hexIntValueConverter);
+   private final JTextComponent addressValueField = BasicComponentFactory.createTextField(addressValue);
+
+   private final ValueModel bitOffsetValue = new ConverterValueModel(detailsModel.getModel("bitOffset"), hexIntValueConverter);
+   private final JTextComponent bitOffsetValueField = BasicComponentFactory.createTextField(bitOffsetValue);
+
    private final ValueModel defaultStringValue = detailsModel.getModel("defaultString");
    private final JTextComponent defaultStringField = BasicComponentFactory.createTextField(defaultStringValue, false);
 
@@ -121,8 +136,10 @@ public class ParameterPanel extends JPanel implements CloseableComponent
 
    /**
     * Create a panel for editing a {@link Parameter}.
+    * 
+    * @param parent - the parent element
     */
-   public ParameterPanel()
+   public ParameterPanel(final ParametersElem parent)
    {
       setLayout(new BorderLayout(0, 2));
 
@@ -130,8 +147,10 @@ public class ParameterPanel extends JPanel implements CloseableComponent
       defaultEnumRenderer.setShowValue(true);
       defaultEnumField.setRenderer(defaultEnumRenderer);
 
-      FormLayout layout = new FormLayout("6dlu,l:p,4dlu,f:p:g,6dlu", "8dlu, p, 6dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, "
-         + "4dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, " + "4dlu, p, 4dlu, f:p:g, p, 4dlu");
+      FormLayout layout = new FormLayout("6dlu, l:p, 4dlu, f:p:g, 4dlu, l:p, 6dlu",
+         "8dlu, p, 6dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, " +
+         "4dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, " +
+         "4dlu, p, 4dlu, f:p:g, p, 4dlu");
 
       PanelBuilder builder = new PanelBuilder(layout);
       CellConstraints cc = new CellConstraints();
@@ -174,17 +193,27 @@ public class ParameterPanel extends JPanel implements CloseableComponent
       builder.add(defaultStringField, cc.rc(row, 4));
       builder.add(defaultEnumField, cc.rc(row, 4));
 
+      row = 14;
+      builder.addLabel(I18n.getMessage("ParameterPanel.address"), cc.rc(row, 2));
+      builder.add(addressValueField, cc.rc(row, 4));
+
+      row = 16;
+      builder.addLabel(I18n.getMessage("ParameterPanel.bitOffset"), cc.rc(row, 2));
+      builder.add(bitOffsetValueField, cc.rc(row, 4));
+
       row = 19;
       builder.add(new JSeparator(), cc.rcw(row, 2, 3));
 
       row = 20;
       builder.addLabel(I18n.getMessage("ParameterPanel.parentId"), cc.rc(row, 2));
       builder.add(parentIdField, cc.rc(row, 4));
+      builder.add(gotoParentButton, cc.rc(row, 6));
+      gotoParentButton.setPreferredSize(new Dimension(gotoParentButton.getPreferredSize().width, parentValueField.getPreferredSize().height));
 
       row = 22;
       builder.addLabel(I18n.getMessage("ParameterPanel.parentValue"), cc.rc(row, 2));
       builder.add(parentValueField, cc.rc(row, 4));
-
+      
       row = 23;
       builder.add(Box.createVerticalGlue(), cc.rcw(row, 2, 3));
 
@@ -204,6 +233,28 @@ public class ParameterPanel extends JPanel implements CloseableComponent
          public void propertyChange(final PropertyChangeEvent e)
          {
             parameterTypeChanged();
+         }
+      });
+
+      gotoParentButton.setEnabled(false);
+      parentIdValue.addValueChangeListener(new PropertyChangeListener()
+      {
+         @Override
+         public void propertyChange(PropertyChangeEvent evt)
+         {
+            String val = (String) evt.getNewValue();
+            gotoParentButton.setEnabled(val != null && !val.isEmpty());
+         }
+      });
+
+      gotoParentButton.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            String val = (String) parentIdValue.getValue();
+            if (!val.isEmpty())
+               parent.setSelectedParam(Integer.parseInt(val));
          }
       });
    }
