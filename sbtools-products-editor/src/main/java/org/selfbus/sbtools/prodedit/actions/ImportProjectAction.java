@@ -44,10 +44,11 @@ public final class ImportProjectAction extends BasicAction
       final JFrame mainWin = app.getMainFrame();
 
       final Config cfg = Config.getInstance();
-      String lastDir = cfg.getStringValue("project.lastImportDir");
+      File lastFile = new File(cfg.getStringValue("project.lastImport"));
 
       final JFileChooser dlg = new JFileChooser();
-      dlg.setCurrentDirectory(new File(lastDir));
+      dlg.setCurrentDirectory(lastFile.getParentFile());
+      dlg.setSelectedFile(lastFile);
       final FileFilter fileFilter = new ProductsFileFilter();
       dlg.addChoosableFileFilter(fileFilter);
       dlg.addChoosableFileFilter(dlg.getAcceptAllFileFilter());
@@ -60,7 +61,7 @@ public final class ImportProjectAction extends BasicAction
       final File file = dlg.getSelectedFile();
       if (file == null) return;
 
-      cfg.put("project.lastImportDir", file.getParent());
+      cfg.put("project.lastImport", file.getPath());
 
       try
       {
