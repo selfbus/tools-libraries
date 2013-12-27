@@ -19,7 +19,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.text.JTextComponent;
@@ -31,6 +30,7 @@ import org.selfbus.sbtools.prodedit.binding.IdValueConverter;
 import org.selfbus.sbtools.prodedit.binding.IdentifiableConverter;
 import org.selfbus.sbtools.prodedit.binding.IntegerValueConverter;
 import org.selfbus.sbtools.prodedit.binding.ListValidationHandler;
+import org.selfbus.sbtools.prodedit.binding.ParameterTypeSizeConverter;
 import org.selfbus.sbtools.prodedit.internal.I18n;
 import org.selfbus.sbtools.prodedit.model.common.MultiLingualText;
 import org.selfbus.sbtools.prodedit.model.enums.ParameterAtomicType;
@@ -75,6 +75,7 @@ public class ParameterPanel extends JPanel implements CloseableComponent
    private final IntegerValueConverter hexIntValueConverter = new IntegerValueConverter(16);
    private final IntegerValueConverter intValueConverter = new IntegerValueConverter();
    private final IdValueConverter idValueConverter = new IdValueConverter();
+   private final ParameterTypeSizeConverter paramTypeSizeConverter = new ParameterTypeSizeConverter();
 
    private final PresentationModel<Parameter> detailsModel = new PresentationModel<Parameter>();
    private final DetailsFormValidator validator = new DetailsFormValidator();
@@ -88,7 +89,6 @@ public class ParameterPanel extends JPanel implements CloseableComponent
    private final JLabel idField = BasicComponentFactory.createLabel(idValue);
 
    private final ValueModel labelValue = detailsModel.getModel("description");
-   private final JLabel labelLabel;
    private Map<String, PropertyAdapter<MultiLingualText.Element>> labelElems = new HashMap<String, PropertyAdapter<MultiLingualText.Element>>();
 
    private final ValueModel parentIdValue = new ConverterValueModel(detailsModel.getModel("parentId"),
@@ -127,6 +127,9 @@ public class ParameterPanel extends JPanel implements CloseableComponent
 
    private final ValueModel bitOffsetValue = new ConverterValueModel(detailsModel.getModel("bitOffset"), hexIntValueConverter);
    private final JTextComponent bitOffsetValueField = BasicComponentFactory.createTextField(bitOffsetValue);
+
+   private final ValueModel sizeValue = new ConverterValueModel(typeValue, paramTypeSizeConverter);
+   private final JLabel sizeField = BasicComponentFactory.createLabel(sizeValue);
 
    private final ValueModel defaultStringValue = detailsModel.getModel("defaultString");
    private final JTextComponent defaultStringField = BasicComponentFactory.createTextField(defaultStringValue, false);
@@ -177,7 +180,7 @@ public class ParameterPanel extends JPanel implements CloseableComponent
       builder.add(new JSeparator(), cc.rcw(row, 2, 3));
 
       row = 8;
-      labelLabel = builder.addLabel(I18n.getMessage("ParameterPanel.label") + ':', cc.rc(row, 2));
+      builder.addLabel(I18n.getMessage("ParameterPanel.label") + ':', cc.rc(row, 2));
 
       row = 9;
       builder.add(new JSeparator(), cc.rcw(row, 2, 3));
@@ -200,6 +203,10 @@ public class ParameterPanel extends JPanel implements CloseableComponent
       row = 16;
       builder.addLabel(I18n.getMessage("ParameterPanel.bitOffset"), cc.rc(row, 2));
       builder.add(bitOffsetValueField, cc.rc(row, 4));
+
+      row = 18;
+      builder.addLabel(I18n.getMessage("ParameterPanel.size"), cc.rc(row, 2));
+      builder.add(sizeField, cc.rc(row, 4));
 
       row = 19;
       builder.add(new JSeparator(), cc.rcw(row, 2, 3));

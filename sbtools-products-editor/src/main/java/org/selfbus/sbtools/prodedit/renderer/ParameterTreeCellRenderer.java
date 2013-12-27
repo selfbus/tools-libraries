@@ -1,7 +1,6 @@
 package org.selfbus.sbtools.prodedit.renderer;
 
 import java.awt.Component;
-import java.awt.Dimension;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -77,6 +76,7 @@ public class ParameterTreeCellRenderer implements TreeCellRenderer
          if (label == null || label.isEmpty())
             label = param.getName();
 
+         label = label.replaceAll("\\\\n", " / ").replaceAll("\\\\r", "").replaceAll("^ / ", "");
          label += "  [" + param.getId() + ']';
       }
       else if (value instanceof CommunicationObject)

@@ -565,8 +565,8 @@ public class ProductsImporter extends AbstractProductsExpImp
             @Override
             public int compare(VdParameter a, VdParameter b)
             {
-               return a.getId() - b.getId();
-//               return a.getOrder() - b.getOrder();
+//               return a.getId() - b.getId();
+               return a.getOrder() - b.getOrder();
             }
          });
       }
@@ -583,6 +583,7 @@ public class ProductsImporter extends AbstractProductsExpImp
    protected void importParameters(ApplicationProgram program, int vdProgramId)
    {
       AbstractParameterContainer pageParam = program.getParameterRoot();
+      Map<Parameter, Integer> unmappedParams = new HashMap<Parameter, Integer>(1000);
 
       for (VdParameter p : sortedParameters())
       {
@@ -609,12 +610,12 @@ public class ProductsImporter extends AbstractProductsExpImp
             Parameter parent = params.get(p.getParentId());
             if (parent != null)
             {
-               Validate.notNull(parent, "No mapping found for parent parameter #" + p.getParentId());
                param.setParentId(parent.getId());
             }
             else
             {
-               LOGGER.error("Parameter #{}: No mapping found for parent parameter #{}", p.getId(), p.getParentId());
+//               LOGGER.error("Parameter #{}: No mapping found for parent parameter #{}", p.getId(), p.getParentId());
+               unmappedParams.put(param, p.getParentId());
             }
          }
          param.setParentValue(p.getParentValue());
@@ -643,6 +644,20 @@ public class ProductsImporter extends AbstractProductsExpImp
          }
 
          params.put(p.getId(), param);
+      }
+
+      for (Parameter param: unmappedParams.keySet())
+      {
+         int parentId = unmappedParams.get(param);
+         Parameter parent = params.get(parentId);
+         if (parent != null)
+         {
+            param.setParentId(parent.getId());
+         }
+         else
+         {
+            LOGGER.error("Parent parameter #{} not found", parentId);
+         }
       }
    }
 
