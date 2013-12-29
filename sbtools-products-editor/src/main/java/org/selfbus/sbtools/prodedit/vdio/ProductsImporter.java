@@ -542,6 +542,7 @@ public class ProductsImporter extends AbstractProductsExpImp
          paramValue.setLabel(getText(v.getId(), TextColumn.PARAM_VALUE, v.getLabel()));
       }
 
+      program.sortParameterTypes();
       for (ParameterType paramType : paramTypes.values())
       {
          paramType.sortValues();

@@ -24,9 +24,10 @@ public class AbstractAccordionDetailsTab extends JPanel
    private final JPanel leftPanel = new JPanel();
    private final Accordion accordion = new Accordion();
    private JToolBar leftToolBar;
+   private String title;
 
    /**
-    * Create a project tab.
+    * Create an accordion details tab.
     */
    public AbstractAccordionDetailsTab()
    {
@@ -41,6 +42,24 @@ public class AbstractAccordionDetailsTab extends JPanel
 
       basePane.setLeftComponent(leftPanel);
       basePane.setRightComponent(emptyDetails);
+   }
+
+   /**
+    * @return The title of the tab.
+    */
+   public String getTitle()
+   {
+      return title;
+   }
+
+   /**
+    * Set the title of the tab.
+    *
+    * @param title - the title to set
+    */
+   public void setTitle(String title)
+   {
+      this.title = title;
    }
 
    /**

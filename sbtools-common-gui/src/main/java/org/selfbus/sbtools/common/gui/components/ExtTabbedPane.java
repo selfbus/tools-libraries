@@ -66,8 +66,10 @@ public class ExtTabbedPane extends JTabbedPane
    {
       super.addTab(title, component);
 
-      final ExtTab tab = new ExtTab(title, true);
-      tab.addCloseListener(closeListener);
+      ExtTab tab = new ExtTab(title, component instanceof CloseableComponent);
+
+      if (component instanceof CloseableComponent)
+         tab.addCloseListener(closeListener);
 
       setTabComponentAt(getTabCount() - 1, tab);
    }

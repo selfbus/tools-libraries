@@ -1,45 +1,21 @@
 package org.selfbus.sbtools.prodedit;
 
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
-import javax.swing.Box;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ListDataEvent;
 
-import org.apache.commons.lang3.Validate;
 import org.jdesktop.application.Application;
-import org.jdesktop.application.FrameView;
-import org.jdesktop.application.SingleFrameApplication;
 import org.selfbus.sbtools.common.Config;
 import org.selfbus.sbtools.common.Environment;
-import org.selfbus.sbtools.common.exception.SbToolsRuntimeException;
 import org.selfbus.sbtools.common.gui.components.Dialogs;
-import org.selfbus.sbtools.common.gui.components.ExtTabbedPane;
 import org.selfbus.sbtools.common.gui.misc.LookAndFeelManager;
-import org.selfbus.sbtools.common.gui.window.XmlMenuFactory;
-import org.selfbus.sbtools.prodedit.components.StatusBar;
+import org.selfbus.sbtools.prodedit.components.AbstractProdEdit;
 import org.selfbus.sbtools.prodedit.internal.I18n;
 import org.selfbus.sbtools.prodedit.model.AbstractListDataListener;
 import org.selfbus.sbtools.prodedit.model.AbstractProjectListener;
@@ -56,20 +32,13 @@ import com.jgoodies.common.collect.ArrayListModel;
 /**
  * The application class.
  */
-public class ProdEdit extends SingleFrameApplication
+public class ProdEdit extends AbstractProdEdit
 {
    //   private static final Logger LOGGER = LoggerFactory.getLogger(ProdEdit.class);
 
    private Config config = Config.getInstance();
    private String configFileName;
    private final ProjectService projectService = new ProjectService();
-   private final Map<Class<? extends JComponent>, JComponent> tabPanels = new HashMap<Class<? extends JComponent>, JComponent>();
-   private final Map<Object, JComponent> tabComponents = new HashMap<Object, JComponent>();
-   private final ExtTabbedPane tabbedPane = new ExtTabbedPane();
-   private final StatusBar statusBar = new StatusBar();
-   private final JLabel statusMessagePanel = new JLabel(" ");
-   private Timer clearStatusTimer;
-
    /**
     * Start the application.
     * 
@@ -149,99 +118,6 @@ public class ProdEdit extends SingleFrameApplication
    }
 
    /**
-    * Get a specific tab panel. The tab panel is created if it does not exist.
-    * 
-    * @param panelClass - the class of the tab panel.
-    */
-   public JComponent getPanel(final Class<? extends JComponent> panelClass)
-   {
-      synchronized (tabPanels)
-      {
-         JComponent tabPanel = tabPanels.get(panelClass);
-         if (tabPanel == null)
-         {
-            try
-            {
-               tabPanel = panelClass.newInstance();
-            }
-            catch (InstantiationException | IllegalAccessException e)
-            {
-               Dialogs.showExceptionDialog(e, I18n.formatMessage("Error.newInstance", panelClass.getSimpleName()));
-               throw new SbToolsRuntimeException(e);
-            }
-
-            tabPanels.put(panelClass, tabPanel);
-            JMenuItem menuItem = new JMenuItem(tabPanel.getName());
-            menuItem.addActionListener(new ActionListener()
-            {
-               @Override
-               public void actionPerformed(ActionEvent e)
-               {
-                  showPanel(panelClass);
-               }
-            });
-
-            JMenu menu = getMenu("View");
-            if (menu != null)
-               menu.add(menuItem);
-         }
-
-         return tabPanel;
-      }
-   }
-
-   /**
-    * Get a specific menu of the main menu bar.
-    * 
-    * @param name - the name of the menu.
-    * 
-    * @return The requested menu or null if not found.
-    */
-   protected JMenu getMenu(String name)
-   {
-      JMenuBar menuBar = getMainView().getMenuBar();
-      for (int i = menuBar.getMenuCount() - 1; i >= 0; --i)
-      {
-         JMenu menu = menuBar.getMenu(i);
-
-         if (name.equalsIgnoreCase(menu.getName()))
-            return menu;
-      }
-
-      return null;
-   }
-
-   /**
-    * Ensure that a specific tab panel exists and is shown.
-    * 
-    * @param panelClass - the class of the tab panel.
-    */
-   public JComponent showPanel(Class<? extends JComponent> panelClass)
-   {
-      synchronized (tabPanels)
-      {
-         JComponent tabPanel = getPanel(panelClass);
-         // TODO ensure that the panel is not yet in the tabbed pane
-         tabbedPane.add(tabPanel);
-         // TODO ensure that the panel is 
-         return tabPanel;
-      }
-   }
-
-   /**
-    * Set a message that is displayed in the status line.
-    * 
-    * @param message - the status message
-    */
-   public void setStatusMessage(String message)
-   {
-      statusMessagePanel.setText(message);
-
-      clearStatusTimer.stop();
-      clearStatusTimer.start();
-   }
-
-   /**
     * {@inheritDoc}
     */
    @Override
@@ -290,36 +166,14 @@ public class ProdEdit extends SingleFrameApplication
    {
       try
       {
-         FrameView mainView = getMainView();
-         final JFrame mainFrame = mainView.getFrame();
-
+         final JFrame mainFrame = getMainView().getFrame();
          mainFrame.setName("sbtools-prodedit");
          mainFrame.setMinimumSize(new Dimension(800, 600));
          mainFrame.setTitle(I18n.getMessage("ProdEdit.title"));
+         setupMainFrame();        
 
-         String fileName = "org/selfbus/sbtools/prodedit/main-menubar.xml";
-         InputStream in = getClass().getClassLoader().getResourceAsStream(fileName);
-         Validate.notNull(in, "menubar configuration not found: " + fileName);
-         mainView.setMenuBar(new XmlMenuFactory(I18n.BUNDLE).createMenuBar(in));
-
-         statusBar.add(Box.createHorizontalStrut(2), 0, false);
-         statusBar.add(statusMessagePanel, 100, true);
-         mainView.setStatusBar(statusBar);
-
-         clearStatusTimer = new Timer(5000, clearStatusHandler);
-         clearStatusTimer.setRepeats(false);
-
-//         fileName = "org/selfbus/sbtools/prodedit/main-toolbar.xml";
-//         in = getClass().getClassLoader().getResourceAsStream(fileName);
-//         Validate.notNull(in, "toolbar configuration not found: " + fileName);
-//         mainView.setToolBar(new XmlToolBarFactory().createToolBar(in));
-
-         mainFrame.add(tabbedPane);
-
-         showPanel(ProjectTab.class);
-
-         updateViewMenu();
-         show(mainView);
+         showProjectTab();
+         show(getMainView());
       }
       catch (Exception e)
       {
@@ -390,97 +244,56 @@ public class ProdEdit extends SingleFrameApplication
    }
 
    /**
-    * Lazily update the view menu.
-    */
-   public void updateViewMenu()
-   {
-      SwingUtilities.invokeLater(new Runnable()
-      {
-         @Override
-         public void run()
-         {
-            final JMenu viewMenu = getMenu("View");
-            if (viewMenu == null)
-               return;
-
-            viewMenu.removeAll();
-            for (int idx = 0; idx < tabbedPane.getTabCount(); ++idx)
-            {
-               final Component comp = tabbedPane.getComponentAt(idx);
-
-               JMenuItem menuItem = new JMenuItem(comp.getName());
-               menuItem.addActionListener(new ActionListener()
-               {
-                  @Override
-                  public void actionPerformed(ActionEvent e)
-                  {
-                     tabbedPane.setSelectedComponent(comp);
-                  }
-               });
-
-               viewMenu.add(menuItem);
-            }
-         }
-      });
-   }
-
-   /**
-    * Open a tab with the specified product group.
+    * Show the tab of the specified product group. Creates a tab for the product
+    * group if none exists.
     *
-    * @param group - the product group to edit.
+    * @param group - the product group to show.
     */
-   public void editProductGroup(final ProductGroup group)
+   public void showProductGroupTab(ProductGroup group)
    {
-      JComponent comp = tabComponents.get(group);
-      if (comp == null)
+      String name = getTabPanelName(group);
+      ProductGroupTab tab = (ProductGroupTab) findTabPanel(name);
+      if (tab == null)
       {
-         final ProductGroupTab prodGroupTab = new ProductGroupTab(group);
-         comp = prodGroupTab;
-
-         tabComponents.put(group, prodGroupTab);
-         tabbedPane.add(group.toString(), prodGroupTab);
-
-         group.addPropertyChangeListener(new PropertyChangeListener()
-         {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt)
-            {
-               int idx = tabbedPane.indexOfComponent(tabComponents.get(group));
-               if (idx >= 0)
-               {
-                  String title = group.toString();
-                  tabbedPane.setTitleAt(idx, title);
-                  tabbedPane.getTabComponentAt(idx).setName(title);
-                  prodGroupTab.setName(title);
-                  updateViewMenu();
-               }
-            }
-         });
+         tab = new ProductGroupTab(group);
+         tab.setName(name);
+         addTabPanel(tab, tab.getTitle());
       }
-
-      tabbedPane.setSelectedComponent(comp);
-      updateViewMenu();
+      else
+      {
+         showTabPanel(tab);
+      }
    }
 
    /**
-    * Close all product group tabs.
+    * Shows the project tab. Creates the project tab if it does not exist.
     */
-   public void closeAllProductGroups()
+   public ProjectTab showProjectTab()
    {
-      Set<Object> keys = new HashSet<Object>();
-      keys.addAll(tabComponents.keySet());
-
-      for (Object key : keys)
+      ProjectTab tab = (ProjectTab) findTabPanel("project");
+      if (tab == null)
       {
-         if (key instanceof ProductGroup)
-         {
-            JComponent comp = tabComponents.get(key);
-            tabbedPane.remove(comp);
-            comp.setVisible(false);
-
-            tabComponents.remove(key);
-         }
+         tab = new ProjectTab();
+         tab.setName("project");
+         addTabPanel(tab, tab.getTitle());
       }
+      else
+      {
+         showTabPanel(tab);
+      }
+
+      return tab;
+   }
+
+   /**
+    * Get the name of the tab panel for the given product group.
+    * 
+    * @param group - the product group
+    * @return The name of the tab panel for the product group.
+    */
+   static public String getTabPanelName(ProductGroup group)
+   {
+      return "product-group:" + group.getId();
    }
 
    /**
@@ -491,19 +304,14 @@ public class ProdEdit extends SingleFrameApplication
       @Override
       public void projectLoaded(Project project)
       {
-         closeAllProductGroups();
+         closeAllCloseableTabPanels();
+         showProjectTab();
       }
 
       @Override
       public void projectChanged(final Project project)
       {
          updateMainTitle();
-
-         for (JComponent tab : tabComponents.values())
-         {
-            tab.setVisible(false);
-         }
-         tabComponents.clear();
 
          project.getProductGroups().addListDataListener(new AbstractListDataListener()
          {
@@ -520,7 +328,7 @@ public class ProdEdit extends SingleFrameApplication
                {
                   ProductGroup group = groups.get(listIndex);
 
-                  int idx = tabbedPane.indexOfComponent(tabComponents.get(group));
+                  int idx = tabbedPane.indexOfComponent(findTabPanel(getTabPanelName(group)));
                   if (idx >= 0)
                   {
                      tabbedPane.setTitleAt(idx, group.getName());
@@ -535,25 +343,7 @@ public class ProdEdit extends SingleFrameApplication
       @Override
       public void productGroupRemoved(ProductGroup group)
       {
-         JComponent comp = tabComponents.get(group);
-         if (comp == null)
-            return;
-         
-         tabComponents.remove(group);
-         tabbedPane.remove(comp);
-         updateViewMenu();
-      }
-   };
-
-   /**
-    * Clear the status message after a delay.
-    */
-   private final ActionListener clearStatusHandler = new ActionListener()
-   {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
-         statusMessagePanel.setText(" ");
+         closeTabPanel(findTabPanel(getTabPanelName(group)));
       }
    };
 }

@@ -129,7 +129,7 @@ public class ProductGroupsElem implements CloseableComponent, CategoryElem
             ProductGroup group = selectionInList.getSelection();
             if (group != null && e.getClickCount() == 2)
             {
-               ProdEdit.getInstance().editProductGroup(group);
+               ProdEdit.getInstance().showProductGroupTab(group);
             }
          }
       });
@@ -198,7 +198,7 @@ public class ProductGroupsElem implements CloseableComponent, CategoryElem
             ProductGroup group = selectionInList.getSelection();
             if (group != null)
             {
-               ProdEdit.getInstance().editProductGroup(group);
+               ProdEdit.getInstance().showProductGroupTab(group);
             }
          }
       });

@@ -15,7 +15,6 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
 import org.selfbus.sbtools.common.gui.actions.BasicAction;
-import org.selfbus.sbtools.common.gui.components.CloseableComponent;
 import org.selfbus.sbtools.common.gui.misc.ImageCache;
 import org.selfbus.sbtools.prodedit.ProdEdit;
 import org.selfbus.sbtools.prodedit.actions.RemoveSelectionInListAction;
@@ -25,7 +24,7 @@ import org.selfbus.sbtools.prodedit.model.ProjectListener;
 import org.selfbus.sbtools.prodedit.model.global.Project;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
 import org.selfbus.sbtools.prodedit.model.prodgroup.VirtualDevice;
-import org.selfbus.sbtools.prodedit.tabs.internal.AbstractAccordionDetailsTab;
+import org.selfbus.sbtools.prodedit.tabs.internal.AbstractCloseableAccordionDetailsTab;
 import org.selfbus.sbtools.prodedit.tabs.internal.MixedCategoryElem;
 import org.selfbus.sbtools.prodedit.tabs.prodgroup.general.ApplicationProgramElem;
 import org.selfbus.sbtools.prodedit.tabs.prodgroup.general.VirtualDeviceElem;
@@ -39,7 +38,7 @@ import com.jgoodies.binding.list.SelectionInList;
 /**
  * A tab panel for editing a {@link ProductGroup products group}.
  */
-public class ProductGroupTab extends AbstractAccordionDetailsTab implements CloseableComponent
+public class ProductGroupTab extends AbstractCloseableAccordionDetailsTab
 {
    private static final long serialVersionUID = -7440697803186717305L;
 
@@ -71,7 +70,7 @@ public class ProductGroupTab extends AbstractAccordionDetailsTab implements Clos
       setupTopToolBar();
 
       this.group = group;
-      setName(group.getName());
+      setTitle(group.getName());
 
       MixedCategoryElem mixed = new MixedCategoryElem(I18n.getMessage("ProductGroupTab.generalName"));
       addCategory(mixed);
@@ -156,6 +155,7 @@ public class ProductGroupTab extends AbstractAccordionDetailsTab implements Clos
    public void close()
    {
       ProdEdit.getInstance().getProjectService().removeListener(projectListener);
+      super.close();
    }
 
    /**

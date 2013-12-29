@@ -3,8 +3,8 @@ package org.selfbus.sbtools.prodedit.model;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.selfbus.sbtools.common.Config;
 import org.selfbus.sbtools.prodedit.internal.I18n;
@@ -32,7 +32,7 @@ import com.jgoodies.common.collect.ArrayListModel;
 public class ProjectService
 {
    private static final Logger LOGGER = LoggerFactory.getLogger(ProjectService.class);
-   private final Set<ProjectListener> listeners = new HashSet<ProjectListener>();
+   private final Set<ProjectListener> listeners = new CopyOnWriteArraySet<ProjectListener>();
    private Project project = new Project();
 
    /**

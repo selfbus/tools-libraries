@@ -107,7 +107,7 @@ public class FunctionalEntitiesElem implements CloseableComponent, CategoryElem
             FunctionalEntity parentEntity = (FunctionalEntity) selectionInTree.getSelection();
             selectionInTree.setSelection(null);
 
-            final FunctionalEntity newEntity = project.createFunctionalEntity(parentEntity);
+            /*final FunctionalEntity newEntity =*/ project.createFunctionalEntity(parentEntity);
 
             // FIXME setSelection is buggy
 //            SwingUtilities.invokeLater(new Runnable()

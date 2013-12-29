@@ -1,5 +1,8 @@
 package org.selfbus.sbtools.prodedit.model.prodgroup;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 
 import javax.xml.bind.DatatypeConverter;
@@ -556,7 +559,7 @@ public class ApplicationProgram extends Model implements Identifiable, Symbolize
    }
 
    /**
-    * @return the parameterTypes
+    * @return The parameter types.
     */
    public ArrayListModel<ParameterType> getParameterTypes()
    {
@@ -585,6 +588,27 @@ public class ApplicationProgram extends Model implements Identifiable, Symbolize
 
       LOGGER.info("Parameter type #{} not found", id);
       return null;
+   }
+
+   /**
+    * Sort the parameter types by name.
+    */
+   public void sortParameterTypes()
+   {
+      ParameterType[] arr = new ParameterType[parameterTypes.size()];
+      parameterTypes.toArray(arr);
+
+      Arrays.sort(arr, new Comparator<ParameterType>()
+      {
+         @Override
+         public int compare(ParameterType a, ParameterType b)
+         {
+            return a.getName().compareToIgnoreCase(b.getName());
+         }
+      });
+
+      parameterTypes.clear();
+      Collections.addAll(parameterTypes, arr);
    }
 
    /**

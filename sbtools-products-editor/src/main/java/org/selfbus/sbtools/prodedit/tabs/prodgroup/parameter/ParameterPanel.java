@@ -24,6 +24,7 @@ import javax.swing.event.ListDataListener;
 import javax.swing.text.JTextComponent;
 
 import org.selfbus.sbtools.common.gui.components.CloseableComponent;
+import org.selfbus.sbtools.common.gui.components.ToolBarButton;
 import org.selfbus.sbtools.common.gui.misc.ImageCache;
 import org.selfbus.sbtools.prodedit.ProdEdit;
 import org.selfbus.sbtools.prodedit.binding.IdValueConverter;
@@ -99,7 +100,7 @@ public class ParameterPanel extends JPanel implements CloseableComponent
       intValueConverter);
    private final JTextComponent parentValueField = BasicComponentFactory.createTextField(parentValueValue);
 
-   private final JButton gotoParentButton = new JButton(ImageCache.getIcon("icons/jump_to"));
+   private final JButton gotoParentButton = new JButton(ImageCache.getIcon("icons/forward3"));
 
    private final ValueModel categoryValue = detailsModel.getModel("category");
    private SelectionInList<ParameterCategory> selectionInCategory = new SelectionInList<ParameterCategory>(
@@ -150,7 +151,7 @@ public class ParameterPanel extends JPanel implements CloseableComponent
       defaultEnumRenderer.setShowValue(true);
       defaultEnumField.setRenderer(defaultEnumRenderer);
 
-      FormLayout layout = new FormLayout("6dlu, l:p, 4dlu, f:p:g, 4dlu, l:p, 6dlu",
+      FormLayout layout = new FormLayout("6dlu, l:p, 4dlu, f:p:g, 2dlu, l:p, 6dlu",
          "8dlu, p, 6dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, " +
          "4dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, " +
          "4dlu, p, 4dlu, f:p:g, p, 4dlu");
@@ -215,6 +216,8 @@ public class ParameterPanel extends JPanel implements CloseableComponent
       builder.addLabel(I18n.getMessage("ParameterPanel.parentId"), cc.rc(row, 2));
       builder.add(parentIdField, cc.rc(row, 4));
       builder.add(gotoParentButton, cc.rc(row, 6));
+      ToolBarButton.useToolBarStyle(gotoParentButton);
+      gotoParentButton.setToolTipText(I18n.getMessage("ParameterPanel.gotoParentToolTip"));
       gotoParentButton.setPreferredSize(new Dimension(gotoParentButton.getPreferredSize().width, parentValueField.getPreferredSize().height));
 
       row = 22;

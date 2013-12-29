@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.Box;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
@@ -15,6 +16,8 @@ import org.selfbus.sbtools.common.gui.actions.BasicAction;
 import org.selfbus.sbtools.common.gui.components.CloseableComponent;
 import org.selfbus.sbtools.common.gui.misc.ImageCache;
 import org.selfbus.sbtools.common.gui.tree.MutableIconTreeNode;
+import org.selfbus.sbtools.prodedit.actions.CollapseAllTreeAction;
+import org.selfbus.sbtools.prodedit.actions.ExpandAllTreeAction;
 import org.selfbus.sbtools.prodedit.actions.RemoveSelectionInTreeAction;
 import org.selfbus.sbtools.prodedit.binding.SelectionInTree;
 import org.selfbus.sbtools.prodedit.internal.I18n;
@@ -111,9 +114,7 @@ public class ParametersElem extends AbstractCategoryElem implements CloseableCom
     */
    private void setupToolBar()
    {
-      //
-      //  Action: add a com object
-      //
+      //  Action: add a com-object
       toolBar.add(new BasicAction("add", I18n.getMessage("ParametersElem.addComObjectTip"), ImageCache.getIcon("icons/connect_new"))
       {
          private static final long serialVersionUID = 1;
@@ -125,9 +126,7 @@ public class ParametersElem extends AbstractCategoryElem implements CloseableCom
          }
       });
 
-      //
       //  Action: add a page
-      //
       toolBar.add(new BasicAction("add", I18n.getMessage("ParametersElem.addPageTip"), ImageCache.getIcon("icons/page_new"))
       {
          private static final long serialVersionUID = 1;
@@ -139,9 +138,7 @@ public class ParametersElem extends AbstractCategoryElem implements CloseableCom
          }
       });
 
-      //
       //  Action: add a parameter
-      //
       toolBar.add(new BasicAction("add", I18n.getMessage("ParametersElem.addParamTip"), ImageCache.getIcon("icons/parameter_new"))
       {
          private static final long serialVersionUID = 1;
@@ -155,10 +152,16 @@ public class ParametersElem extends AbstractCategoryElem implements CloseableCom
 
       toolBar.addSeparator();
 
-      //
       //  Action: remove the current virtual device
-      //
       toolBar.add(new RemoveSelectionInTreeAction(selectionInTree, I18n.getMessage("ParametersElem.removeTip"))); 
+
+      toolBar.add(Box.createHorizontalGlue());
+
+      //  Action: expand the list
+      toolBar.add(new ExpandAllTreeAction(paramTree)); 
+
+      //  Action: collapse the list
+      toolBar.add(new CollapseAllTreeAction(paramTree)); 
    }
 
    /**
@@ -209,5 +212,6 @@ public class ParametersElem extends AbstractCategoryElem implements CloseableCom
    {
       ParameterTreeModel paramTreeModel = (ParameterTreeModel) paramTree.getModel();
       selectionInTree.setSelection(paramTreeModel.findById(paramId));
+      paramTree.scrollRowToVisible(paramTree.getSelectionRows()[0]);
    }
 }

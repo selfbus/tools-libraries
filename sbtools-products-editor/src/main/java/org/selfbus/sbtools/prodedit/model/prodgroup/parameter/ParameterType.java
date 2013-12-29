@@ -1,13 +1,13 @@
 package org.selfbus.sbtools.prodedit.model.prodgroup.parameter;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
 import org.selfbus.sbtools.prodedit.internal.I18n;
@@ -324,8 +324,7 @@ public class ParameterType extends Model implements Identifiable
       });
 
       values.clear();
-      for (ParameterValue value : arr)
-         values.add(value);
+      Collections.addAll(values, arr);
    }
 
    /**
