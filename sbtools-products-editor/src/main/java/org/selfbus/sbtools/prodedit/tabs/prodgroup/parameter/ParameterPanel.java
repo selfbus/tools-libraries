@@ -1,7 +1,6 @@
 package org.selfbus.sbtools.prodedit.tabs.prodgroup.parameter;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -43,6 +42,7 @@ import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterType;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterValue;
 import org.selfbus.sbtools.prodedit.renderer.ParameterCategoryComboBoxRenderer;
 import org.selfbus.sbtools.prodedit.renderer.ParameterValueListCellRenderer;
+import org.selfbus.sbtools.prodedit.tabs.prodgroup.ProductGroupTab;
 import org.selfbus.sbtools.prodedit.utils.FontUtils;
 import org.selfbus.sbtools.prodedit.utils.MultiLingualTextUtil;
 
@@ -96,8 +96,6 @@ public class ParameterPanel extends JPanel implements CloseableComponent
    private final ValueModel parentValueValue = new ConverterValueModel(detailsModel.getModel("parentValue"), intValueConverter);
    private final JTextComponent parentValueField = BasicComponentFactory.createTextField(parentValueValue);
 
-   private final JButton gotoParentButton = new JButton(ImageCache.getIcon("icons/forward3"));
-
    private final ValueModel categoryValue = detailsModel.getModel("category");
    private SelectionInList<ParameterCategory> selectionInCategory = new SelectionInList<ParameterCategory>( ParameterCategory.values(), categoryValue);
    @SuppressWarnings("unchecked")
@@ -139,6 +137,9 @@ public class ParameterPanel extends JPanel implements CloseableComponent
 
    private final ValueModel orderValue = detailsModel.getModel("order");
    private final JTextComponent orderValueField = BasicComponentFactory.createTextField(new ConverterValueModel(orderValue, intValueConverter), true);
+
+   private final JButton gotoParentButton = new JButton(ImageCache.getIcon("icons/forward3"));
+   private final JButton gotoParamTypeButton = new JButton(ImageCache.getIcon("icons/forward3"));
 
    /**
     * Create a panel for editing a {@link Parameter}.
@@ -195,10 +196,13 @@ public class ParameterPanel extends JPanel implements CloseableComponent
       lbl = builder.addLabel(I18n.getMessage("ParameterPanel.typeCaption"), cc.rcw(row, 2, 3));
       lbl.setFont(FontUtils.getSubCaptionFont());
       lbl.setOpaque(false);      
-      
+
       row = 12;
       builder.addLabel(I18n.getMessage("ParameterPanel.type"), cc.rc(row, 2));
       builder.add(typeCombo, cc.rc(row, 4));
+      builder.add(gotoParamTypeButton, cc.rc(row, 6));
+      ToolBarButton.useToolBarStyle(gotoParamTypeButton);
+      gotoParamTypeButton.setToolTipText(I18n.getMessage("ParameterPanel.gotoParamTypeToolTip"));
 
       row = 14;
       builder.addLabel(I18n.getMessage("ParameterPanel.defaultValue"), cc.rc(row, 2));
@@ -235,7 +239,6 @@ public class ParameterPanel extends JPanel implements CloseableComponent
       builder.add(gotoParentButton, cc.rc(row, 6));
       ToolBarButton.useToolBarStyle(gotoParentButton);
       gotoParentButton.setToolTipText(I18n.getMessage("ParameterPanel.gotoParentToolTip"));
-      gotoParentButton.setPreferredSize(new Dimension(gotoParentButton.getPreferredSize().width, parentValueField.getPreferredSize().height));
 
       row = 26;
       builder.addLabel(I18n.getMessage("ParameterPanel.parentValue"), cc.rc(row, 2));
@@ -282,7 +285,6 @@ public class ParameterPanel extends JPanel implements CloseableComponent
             gotoParentButton.setEnabled(val != null && !val.isEmpty());
          }
       });
-
       gotoParentButton.addActionListener(new ActionListener()
       {
          @Override
@@ -291,6 +293,21 @@ public class ParameterPanel extends JPanel implements CloseableComponent
             String val = (String) parentIdValue.getValue();
             if (!val.isEmpty())
                parent.setSelectedParam(Integer.parseInt(val));
+         }
+      });
+
+      gotoParamTypeButton.addActionListener(new ActionListener()
+      {
+         @Override
+         public void actionPerformed(ActionEvent e)
+         {
+            ParameterType type = (ParameterType) typeValue.getValue();
+
+            JPanel currentPanel = ProdEdit.getInstance().getCurrentTabPanel();
+            if (currentPanel instanceof ProductGroupTab)
+            {
+               ((ProductGroupTab) currentPanel).showParameterType(type);
+            }
          }
       });
    }

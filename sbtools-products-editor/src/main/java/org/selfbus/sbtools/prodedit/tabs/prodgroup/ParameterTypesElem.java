@@ -224,6 +224,16 @@ public class ParameterTypesElem extends AbstractCategoryElem implements Closeabl
    }
 
    /**
+    * Set the selected / visible parameter type.
+    *
+    * @param type - the parameter type to make visible.
+    */
+   public void setSelected(ParameterType type)
+   {
+      selectionInList.setSelection(type);
+   }
+
+   /**
     * Private validator for details form input.
     */
    private class DetailsFormValidator implements Validator<ParameterType>

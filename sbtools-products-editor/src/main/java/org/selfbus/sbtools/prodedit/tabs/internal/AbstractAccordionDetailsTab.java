@@ -104,6 +104,16 @@ public class AbstractAccordionDetailsTab extends JPanel
    }
 
    /**
+    * Set the category element that is visible.
+    * 
+    * @param category - the category to make visible.
+    */
+   public void setVisibleCategory(CategoryElem category)
+   {
+      accordion.setVisibleBar(category.getName());
+   }
+
+   /**
     * @return The base splitter pane.
     */
    public JSplitPane getBasePane()

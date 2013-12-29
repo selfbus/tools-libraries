@@ -243,17 +243,17 @@ public class LanguagesElem implements CloseableComponent, CategoryElem
    /**
     * Converter that translates the language ID to the numeric ETS ID.
     */
-   private final BindingConverter etsIdValueConverter = new BindingConverter()
+   private final BindingConverter<String,String> etsIdValueConverter = new BindingConverter<String,String>()
    {
       @Override
-      public Object targetValue(Object sourceValue)
+      public String targetValue(String sourceValue)
       {
          if (sourceValue == null)
             return "";
 
          try
          {
-            return Integer.toString(LanguageMapper.getEtsId((String) sourceValue));
+            return Integer.toString(LanguageMapper.getEtsId(sourceValue));
          }
          catch (IllegalArgumentException e)
          {
@@ -262,9 +262,9 @@ public class LanguagesElem implements CloseableComponent, CategoryElem
       }
       
       @Override
-      public Object sourceValue(Object targetValue)
+      public String sourceValue(String targetValue)
       {
-         return targetValue;
+         throw new IllegalAccessError("This converter is read-only");
       }
    };
 }

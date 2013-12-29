@@ -11,7 +11,7 @@ import com.jgoodies.common.collect.ArrayListModel;
  * A converter that converts between the numeric ID in the model and 
  * the {@link Identifiable} in the presentation.
  */
-public class IdentifiableConverter implements BindingConverter
+public class IdentifiableConverter implements BindingConverter<Integer,Identifiable>
 {
    private ArrayListModel<ParameterType> list;
 
@@ -29,10 +29,10 @@ public class IdentifiableConverter implements BindingConverter
     * {@inheritDoc}
     */
    @Override
-   public Object targetValue(Object sourceValue)
+   public Identifiable targetValue(Integer sourceValue)
    {
       if (list == null)
-         return sourceValue;
+         return null;
 
       return IdentifiableUtils.findById(list, (Integer) sourceValue);
    }
@@ -41,7 +41,7 @@ public class IdentifiableConverter implements BindingConverter
     * {@inheritDoc}
     */
    @Override
-   public Object sourceValue(Object targetValue)
+   public Integer sourceValue(Identifiable targetValue)
    {
       return Integer.valueOf(((Identifiable) targetValue).getId());
    }

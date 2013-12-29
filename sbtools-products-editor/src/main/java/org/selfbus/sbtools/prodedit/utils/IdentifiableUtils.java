@@ -63,7 +63,7 @@ public final class IdentifiableUtils
     * @param id - the ID to search
     * @return The first {@link Identifiable} with the ID, or null if not found.
     */
-   public static Object findById(Collection<? extends Identifiable> list, int id)
+   public static Identifiable findById(Collection<? extends Identifiable> list, int id)
    {
       for (Identifiable o : list)
       {

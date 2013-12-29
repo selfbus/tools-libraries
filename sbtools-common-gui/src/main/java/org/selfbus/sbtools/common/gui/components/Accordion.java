@@ -154,7 +154,7 @@ public class Accordion extends JPanel implements ActionListener
    }
 
    /**
-    * Programmatically sets the currently visible bar; the visible bar index must be in the range of
+    * Set the currently visible bar; the visible bar index must be in the range of
     * 0 to size() - 1
     * 
     * @param visibleBar The zero-based index of the component to make visible
@@ -166,6 +166,18 @@ public class Accordion extends JPanel implements ActionListener
          this.visibleBar = visibleBar;
          render();
       }
+   }
+
+   /**
+    * Set the currently visible bar.
+    *
+    * @param name - the name of the bar to make visible.
+    */
+   public void setVisibleBar(String name)
+   {
+      BarInfo barInfo = this.bars.get(name);
+      if (barInfo != null)
+         barInfo.getButton().doClick();
    }
    
    /**

@@ -11,7 +11,6 @@ import org.selfbus.sbtools.prodedit.model.common.MultiLingualText;
 import org.selfbus.sbtools.prodedit.model.global.Language;
 import org.selfbus.sbtools.prodedit.model.global.Project;
 
-import com.jgoodies.binding.PresentationModel;
 import com.jgoodies.binding.adapter.BasicComponentFactory;
 import com.jgoodies.binding.beans.PropertyAdapter;
 import com.jgoodies.common.collect.ArrayListModel;

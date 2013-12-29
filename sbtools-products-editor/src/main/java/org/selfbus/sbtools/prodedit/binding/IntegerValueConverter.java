@@ -3,9 +3,9 @@ package org.selfbus.sbtools.prodedit.binding;
 import com.jgoodies.binding.value.BindingConverter;
 
 /**
- * A converter that converts to/from an integer value.
+ * A converter that converts an integer value to a string value.
  */
-public class IntegerValueConverter implements BindingConverter
+public class IntegerValueConverter implements BindingConverter<Integer, String>
 {
 //   private static final Logger LOGGER = LoggerFactory.getLogger(IntegerValueConverter.class);
 
@@ -33,7 +33,7 @@ public class IntegerValueConverter implements BindingConverter
     * {@inheritDoc}
     */
    @Override
-   public Object targetValue(Object sourceValue)
+   public String targetValue(Integer sourceValue)
    {
       if (sourceValue == null)
          return "";
@@ -52,7 +52,7 @@ public class IntegerValueConverter implements BindingConverter
     * {@inheritDoc}
     */
    @Override
-   public Object sourceValue(Object targetValue)
+   public Integer sourceValue(String targetValue)
    {
       if (targetValue == null || ((String) targetValue).isEmpty())
          return null;

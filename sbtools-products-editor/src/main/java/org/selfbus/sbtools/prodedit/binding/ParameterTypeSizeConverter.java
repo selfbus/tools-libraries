@@ -7,18 +7,15 @@ import com.jgoodies.binding.value.BindingConverter;
 
 /**
  * A converter that converts a {@link ParameterType} to the parameter type's
- * bit size.
+ * bit size as string.
  */
-public class ParameterTypeSizeConverter implements BindingConverter
+public class ParameterTypeSizeConverter implements BindingConverter<ParameterType, String>
 {
    private final String fmtBits = I18n.getMessage("ParameterTypeSizeConverter.bits");
    private final String fmtBytes = I18n.getMessage("ParameterTypeSizeConverter.bytes");
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public String targetValue(Object sourceValue)
+   public String targetValue(ParameterType sourceValue)
    {
       if (sourceValue instanceof ParameterType)
       {
@@ -32,12 +29,9 @@ public class ParameterTypeSizeConverter implements BindingConverter
       return "";
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
-   public Object sourceValue(Object targetValue)
+   public ParameterType sourceValue(String targetValue)
    {
-      return null;
+      throw new IllegalAccessError("This converter is read-only");
    }
 }

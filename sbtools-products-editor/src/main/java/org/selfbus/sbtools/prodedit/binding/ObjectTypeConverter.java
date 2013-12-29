@@ -8,13 +8,13 @@ import com.jgoodies.binding.value.BindingConverter;
  * A converter that converts between the numeric ID in the model and 
  * the {@link ObjectType}.
  */
-public class ObjectTypeConverter implements BindingConverter
+public class ObjectTypeConverter implements BindingConverter<ObjectType, String>
 {
    /**
     * {@inheritDoc}
     */
    @Override
-   public Object targetValue(Object sourceValue)
+   public String targetValue(ObjectType sourceValue)
    {
       if (sourceValue == null)
          return null;
@@ -26,8 +26,8 @@ public class ObjectTypeConverter implements BindingConverter
     * {@inheritDoc}
     */
    @Override
-   public Object sourceValue(Object targetValue)
+   public ObjectType sourceValue(String targetValue)
    {
-      return targetValue;
+      throw new IllegalAccessError("This converter is read only");
    }
 }

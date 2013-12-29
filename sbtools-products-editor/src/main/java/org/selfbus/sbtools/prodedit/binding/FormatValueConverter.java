@@ -7,7 +7,7 @@ import com.jgoodies.binding.value.BindingConverter;
 /**
  * A read-only converter that converts an integer value to a string containing the value.
  */
-public class FormatValueConverter implements BindingConverter
+public class FormatValueConverter implements BindingConverter<Integer, String>
 {
 //   private static final Logger LOGGER = LoggerFactory.getLogger(IntegerValueConverter.class);
    private final String format;
@@ -28,10 +28,10 @@ public class FormatValueConverter implements BindingConverter
     * {@inheritDoc}
     */
    @Override
-   public Object targetValue(Object sourceValue)
+   public String targetValue(Integer sourceValue)
    {
       if (sourceValue == null)
-         sourceValue = "";
+         return "";
 
       return MessageFormat.format(format, sourceValue.toString());
    }
@@ -40,7 +40,7 @@ public class FormatValueConverter implements BindingConverter
     * {@inheritDoc}
     */
    @Override
-   public Object sourceValue(Object targetValue)
+   public Integer sourceValue(String targetValue)
    {
       throw new IllegalAccessError("this converter is read only");
    }

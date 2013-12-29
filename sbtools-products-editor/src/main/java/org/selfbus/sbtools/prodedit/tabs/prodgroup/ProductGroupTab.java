@@ -24,6 +24,7 @@ import org.selfbus.sbtools.prodedit.model.ProjectListener;
 import org.selfbus.sbtools.prodedit.model.global.Project;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
 import org.selfbus.sbtools.prodedit.model.prodgroup.VirtualDevice;
+import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterType;
 import org.selfbus.sbtools.prodedit.tabs.internal.AbstractCloseableAccordionDetailsTab;
 import org.selfbus.sbtools.prodedit.tabs.internal.MixedCategoryElem;
 import org.selfbus.sbtools.prodedit.tabs.prodgroup.general.ApplicationProgramElem;
@@ -164,6 +165,17 @@ public class ProductGroupTab extends AbstractCloseableAccordionDetailsTab
    protected void updateContents()
    {
       selectionInList.setList(group.getDevices());
+   }
+
+   /**
+    * Switch to the parameter types category and show the given parameter type.
+    *
+    * @param type - the parameter type to make visible.
+    */
+   public void showParameterType(ParameterType type)
+   {
+      setVisibleCategory(parameterTypesElem);
+      parameterTypesElem.setSelected(type);
    }
 
    /**

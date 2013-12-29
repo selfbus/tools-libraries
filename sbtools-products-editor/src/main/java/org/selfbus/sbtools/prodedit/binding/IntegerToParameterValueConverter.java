@@ -8,7 +8,7 @@ import com.jgoodies.common.collect.ArrayListModel;
 /**
  * A converter that converts an integer to a {@link ParameterValue} object.
  */
-public class IntegerToParameterValueConverter implements BindingConverter
+public class IntegerToParameterValueConverter implements BindingConverter<Integer, ParameterValue>
 {
    private ArrayListModel<ParameterValue> paramValues;
 
@@ -26,7 +26,7 @@ public class IntegerToParameterValueConverter implements BindingConverter
     * {@inheritDoc}
     */
    @Override
-   public ParameterValue targetValue(Object sourceValue)
+   public ParameterValue targetValue(Integer sourceValue)
    {
       if (paramValues == null || !(sourceValue instanceof Integer))
          return null;
@@ -46,7 +46,7 @@ public class IntegerToParameterValueConverter implements BindingConverter
     * {@inheritDoc}
     */
    @Override
-   public Integer sourceValue(Object targetValue)
+   public Integer sourceValue(ParameterValue targetValue)
    {
       if (paramValues == null || !(targetValue instanceof ParameterValue))
          return null;

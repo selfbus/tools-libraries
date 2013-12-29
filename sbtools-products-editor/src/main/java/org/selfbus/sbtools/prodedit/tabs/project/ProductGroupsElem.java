@@ -60,18 +60,18 @@ public class ProductGroupsElem implements CloseableComponent, CategoryElem
    private final JToolBar toolBar = new JToolBar();
    private final JPanel detailsPanel;
 
-   private final BindingConverter manufacturerNameConverter = new BindingConverter()
+   private final BindingConverter<Manufacturer, String> manufacturerNameConverter = new BindingConverter<Manufacturer, String>()
    {
       @Override
-      public Object targetValue(Object sourceValue)
+      public String targetValue(Manufacturer sourceValue)
       {
-         return sourceValue == null ? null : ((Manufacturer) sourceValue).getName();
+         return sourceValue == null ? null : sourceValue.getName();
       }
       
       @Override
-      public Object sourceValue(Object targetValue)
+      public Manufacturer sourceValue(String targetValue)
       {
-         return targetValue;
+         throw new IllegalAccessError("This converter is read-only");
       }
    };
    private final ConverterValueModel manufacturerValueModel = new ConverterValueModel(validationHandler.getModel("manufacturer"), manufacturerNameConverter);

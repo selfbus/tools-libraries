@@ -72,25 +72,23 @@ public class VirtualDeviceElem implements CategoryElem
     * Converter that sets the name of the dependent objects (ApplicationProgram, ...)
     * when the name of the device is changed
     */
-   private final BindingConverter nameSyncConverter = new BindingConverter()
+   private final BindingConverter<String, String> nameSyncConverter = new BindingConverter<String, String>()
    {
       @Override
-      public Object targetValue(Object sourceValue)
+      public String targetValue(String sourceValue)
       {
          return sourceValue;
       }
-      
+
       @Override
-      public Object sourceValue(Object targetValue)
+      public String sourceValue(String targetValue)
       {
          VirtualDevice device = selectionInList.getSelection();
-         String newName = (String) targetValue;
-
          if (device != null)
          {
             ApplicationProgram program = group.getProgram(device.getProgramId());
             if (program != null)
-               program.setName(newName);
+               program.setName(targetValue);
          }
 
          return targetValue;

@@ -80,6 +80,14 @@ public abstract class AbstractProdEdit extends SingleFrameApplication
    }
 
    /**
+    * @return The tab panel that is currently shown.
+    */
+   public JPanel getCurrentTabPanel()
+   {
+      return (JPanel) tabbedPane.getSelectedComponent();
+   }
+   
+   /**
     * Add a tab panel.
     * 
     * @param panel - the panel to add.
