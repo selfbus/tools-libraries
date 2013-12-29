@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -26,6 +27,7 @@ import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
 import org.selfbus.sbtools.prodedit.model.prodgroup.Symbol;
 import org.selfbus.sbtools.prodedit.model.prodgroup.VirtualDevice;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.AbstractParameterContainer;
+import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.AbstractParameterNode;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.CommunicationObject;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.Parameter;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterCategory;
@@ -89,6 +91,9 @@ public class ProductsImporter extends AbstractProductsExpImp
 
    // The VD parameters, sorted by order
    private VdParameter[] sortedParams;
+
+   // The VD com-objects, sorted by order
+   private VdCommunicationObject[] sortedComObjects;
 
    /**
     * Text lookup cache. Always use {@link #getText(int,int)} to access the texts.
@@ -169,6 +174,8 @@ public class ProductsImporter extends AbstractProductsExpImp
       Validate.notNull(vd, "input stream is null");
 
       sortedParams = null;
+      sortedComObjects = null;
+
       groups.clear();
       groupPrograms.clear();
       params.clear();
@@ -576,6 +583,32 @@ public class ProductsImporter extends AbstractProductsExpImp
    }
 
    /**
+    * Sort the VD com-objects by order number.
+    * 
+    * @return The sorted com-objects
+    */
+   protected VdCommunicationObject[] sortedComObjects()
+   {
+      if (sortedComObjects == null)
+      {
+         sortedComObjects = new VdCommunicationObject[vd.communicationObjects.size()];
+         vd.communicationObjects.toArray(sortedComObjects);
+
+         Arrays.sort(sortedComObjects, new Comparator<VdCommunicationObject>()
+         {
+            @Override
+            public int compare(VdCommunicationObject a, VdCommunicationObject b)
+            {
+//               return a.getId() - b.getId();
+               return a.getOrder() - b.getOrder();
+            }
+         });
+      }
+
+      return sortedComObjects; 
+   }
+
+   /**
     * Import the parameters of an application program.
     * 
     * @param program - the program to import the parameters for
@@ -583,16 +616,12 @@ public class ProductsImporter extends AbstractProductsExpImp
     */
    protected void importParameters(ApplicationProgram program, int vdProgramId)
    {
-      AbstractParameterContainer pageParam = program.getParameterRoot();
-      Map<Parameter, Integer> unmappedParams = new HashMap<Parameter, Integer>(1000);
+      final AbstractParameterContainer rootParam = program.getParameterRoot();
+//      AbstractParameterContainer pageParam = rootParam;
+      LinkedHashMap<Integer, Parameter> appParams = new LinkedHashMap<Integer, Parameter>(4096);
 
       for (VdParameter p : sortedParameters())
       {
-//         if (p.getId() == 161508)
-//         {
-//            LOGGER.debug("Parameter {}", p);
-//         }
-
          if (p.getProgramId() != vdProgramId)
             continue;
 
@@ -606,60 +635,73 @@ public class ProductsImporter extends AbstractProductsExpImp
          param.setBitOffset(p.getBitOffset());
          param.setSize(p.getSize());
          param.setOrder(p.getOrder());
-         if (p.getParentId() != null)
-         {
-            Parameter parent = params.get(p.getParentId());
-            if (parent != null)
-            {
-               param.setParentId(parent.getId());
-            }
-            else
-            {
-//               LOGGER.error("Parameter #{}: No mapping found for parent parameter #{}", p.getId(), p.getParentId());
-               unmappedParams.put(param, p.getParentId());
-            }
-         }
+         param.setParentId(p.getParentId()); // ID will be corrected below
          param.setParentValue(p.getParentValue());
          param.setDefaultInt(p.getDefaultInt());
          param.setDefaultDouble(p.getDefaultDouble());
          param.setDefaultString(p.getDefaultString());
          param.setNumber(p.getNumber());
-         // TODO param.setVisible(...);
+         param.setVisible(p.getLowAccess() != 0 || p.getHighAccess() != 0);
 
          if (p.getAddress() == null)
-         {
             param.setCategory(ParameterCategory.PAGE);
-
-            pageParam = param;
-            program.addParameter(param);
-         }
          else if (p.getSize() == null || p.getSize() == 0)
-         {
             param.setCategory(ParameterCategory.LABEL);
-            pageParam.addChild(param);
-         }
-         else
-         {
-            param.setCategory(ParameterCategory.VALUE);
-            pageParam.addChild(param);
-         }
+         else param.setCategory(ParameterCategory.VALUE);
 
+         appParams.put(p.getId(), param);
          params.put(p.getId(), param);
       }
 
-      for (Parameter param: unmappedParams.keySet())
+      for (Parameter param : appParams.values())
       {
-         int parentId = unmappedParams.get(param);
-         Parameter parent = params.get(parentId);
-         if (parent != null)
+//         ParameterCategory category = param.getCategory();
+         Integer parentId = param.getParentId();
+         Parameter parentParam = null;
+
+         // Lookup the parent parameter and correct the parent ID
+         if (parentId != null)
          {
-            param.setParentId(parent.getId());
+            parentParam = params.get(parentId);
+            Validate.notNull(parentParam, "Parent parameter #{} not found in VD", parentId);
+
+            parentId = parentParam.getId();
+            param.setParentId(parentId);
          }
-         else
-         {
-            LOGGER.error("Parent parameter #{} not found", parentId);
-         }
+
+//         if (category == ParameterCategory.PAGE)
+//         {
+//            pageParam = param;
+//            rootParam.addChild(param);
+//         }
+
+         if (parentParam != null) // && getParentPageParam(parentParam) == pageParam)
+            parentParam.addChild(param);
+//         else if (pageParam != param)
+//            pageParam.addChild(param);
+         else rootParam.addChild(param);
       }
+
+      // Ensure that all parameters were added
+      for (Parameter param : appParams.values())
+         Validate.notNull(param.getParent(), "parameter was not added anywhere");
+   }
+
+   /**
+    * Lookup the page parameter of a parameter. This is done by searching the parameter's
+    * parents until a parameter with category {@link ParameterCategory#PAGE} is found.
+    * 
+    * @param param - the parameter to search the parent page.
+    * @return The parent page parameter, or null if not found.
+    */
+   protected Parameter getParentPageParam(Parameter param)
+   {
+      for (AbstractParameterNode parent = param.getParent(); parent != null; parent = parent.getParent())
+      {
+         if (parent instanceof Parameter && ((Parameter) parent).getCategory() == ParameterCategory.PAGE)
+            return (Parameter) parent;
+      }
+      return null;
    }
 
    /**
@@ -706,7 +748,7 @@ public class ProductsImporter extends AbstractProductsExpImp
    {
       VdMask mask = programMasks.get(program);
 
-      for (VdCommunicationObject o : vd.communicationObjects)
+      for (VdCommunicationObject o : sortedComObjects())
       {
          if (o.getProgramId() != vdProgramId)
             continue;
@@ -726,6 +768,7 @@ public class ProductsImporter extends AbstractProductsExpImp
          comObject.setDescription(getText(o.getId(), TextColumn.COM_OBJECT_DESCRIPTION, o.getDescription()));
          comObject.setType(ObjectType.valueOf(o.getTypeId()));
          comObject.setNumber(o.getNumber());
+         comObject.setOrder(o.getOrder());
          comObject.setAddress(getComObjectAddress(o.getNumber(), program, mask));
          comObject.setParentId(parentId);
          comObject.setParentValue(o.getParentParameterValue());

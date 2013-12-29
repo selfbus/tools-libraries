@@ -19,11 +19,15 @@ import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterType;
 public class ParameterTreeCellRenderer implements TreeCellRenderer
 {
    private static final Icon comObjectIcon = ImageCache.getIcon("icons/connect");
+   private static final Icon paramRootIcon = ImageCache.getIcon("icons/param_root");
    private static final Icon paramPageIcon = ImageCache.getIcon("icons/parameter");
    private static final Icon paramLabelIcon = ImageCache.getIcon("icons/param_label");
    private static final Icon paramFieldIcon = ImageCache.getIcon("icons/param_field");
    private static final Icon paramEnumIcon = ImageCache.getIcon("icons/param_enum");
-   private static final Icon paramRootIcon = ImageCache.getIcon("icons/param_root");
+   private static final Icon paramPageHiddenIcon = ImageCache.getIcon("icons/parameter", "icons/param_invisible_overlay");
+   private static final Icon paramLabelHiddenIcon = ImageCache.getIcon("icons/param_label", "icons/param_invisible_overlay");
+   private static final Icon paramFieldHiddenIcon = ImageCache.getIcon("icons/param_field", "icons/param_invisible_overlay");
+   private static final Icon paramEnumHiddenIcon = ImageCache.getIcon("icons/param_enum", "icons/param_invisible_overlay");
 
    private final TreeCellRenderer defaultRenderer;
    private ApplicationProgram program;
@@ -47,29 +51,30 @@ public class ParameterTreeCellRenderer implements TreeCellRenderer
    public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf,
       int row, boolean hasFocus)
    {
-      String label = null;
+      String str, label = null;
       Icon icon = null;
 
       if (value instanceof Parameter)
       {
          Parameter param = (Parameter) value;
+         boolean visible = param.isVisible();
 
          if (param.getId() == 11)
             icon = null;
 
          ParameterCategory category = param.getCategory();
          if (category == ParameterCategory.LABEL)
-            icon = paramLabelIcon;
+            icon = visible ? paramLabelIcon : paramLabelHiddenIcon;
          else if (category == ParameterCategory.PAGE)
-            icon = paramPageIcon;
+            icon = visible ? paramPageIcon : paramPageHiddenIcon;
          else if (program != null)
          {
             ParameterType paramType = program.getParameterType(param.getTypeId());
             ParameterAtomicType atomicType = paramType.getAtomicType();
 
             if (atomicType == ParameterAtomicType.ENUM || atomicType == ParameterAtomicType.LONG_ENUM)
-               icon = paramEnumIcon;
-            else icon = paramFieldIcon;
+               icon = visible ? paramEnumIcon : paramEnumHiddenIcon;
+            else icon = visible ? paramFieldIcon : paramFieldHiddenIcon;
          }
 
          label = param.getDescription().getDefaultText();
@@ -85,8 +90,9 @@ public class ParameterTreeCellRenderer implements TreeCellRenderer
 
          icon = comObjectIcon;
          label = ((CommunicationObject) value).getName().getDefaultText();
-         label += '.';
-         label += ((CommunicationObject) value).getFunction().getDefaultText();
+         str = ((CommunicationObject) value).getFunction().getDefaultText();
+         if (str != null)
+            label += '.' + str; 
          label += "  [" + comObject.getId() + ']';
       }
       else if (value instanceof ParameterRoot)

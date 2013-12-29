@@ -84,7 +84,7 @@ public class CommunicationObjectPanel extends JPanel implements CloseableCompone
    private final ValueModel parentIdValue = new ConverterValueModel(detailsModel.getModel("parentId"), intValueConverter);
    private final JTextComponent parentIdField = BasicComponentFactory.createTextField(parentIdValue);
 
-   private final JButton gotoParentButton = new JButton(ImageCache.getIcon("icons/jump_to"));
+   private final JButton gotoParentButton = new JButton(ImageCache.getIcon("icons/forward3"));
 
    private final ValueModel parentValueValue = new ConverterValueModel(detailsModel.getModel("parentValue"), intValueConverter);
    private final JTextComponent parentValueField = BasicComponentFactory.createTextField(parentValueValue);
@@ -112,6 +112,9 @@ public class CommunicationObjectPanel extends JPanel implements CloseableCompone
    private final ValueModel transEnabledValue = detailsModel.getModel("transEnabled");
    private final JComponent transEnabledField =  BasicComponentFactory.createCheckBox(transEnabledValue, I18n.getMessage("CommunicationObjectPanel.transEnabled"));
 
+   private final ValueModel orderValue = detailsModel.getModel("order");
+   private final JTextComponent orderValueField = BasicComponentFactory.createTextField(new ConverterValueModel(orderValue, intValueConverter), true);
+
    /**
     * Create a panel for editing a {@link CommunicationObject}.
     */
@@ -122,7 +125,8 @@ public class CommunicationObjectPanel extends JPanel implements CloseableCompone
       FormLayout layout = new FormLayout("6dlu, l:p, 4dlu, f:p:g, 2dlu, l:p, 6dlu", 
          "8dlu, p, 6dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, " +
          "4dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, " +
-         "4dlu, p, 4dlu, p, 4dlu, f:p:g, p, 4dlu");
+         "4dlu, p, 4dlu, p, 4dlu, p, 4dlu, " +
+         "f:p:g, p, 4dlu");
 
       PanelBuilder builder = new PanelBuilder(layout);
       CellConstraints cc = new CellConstraints();
@@ -184,18 +188,25 @@ public class CommunicationObjectPanel extends JPanel implements CloseableCompone
       builder.add(new JSeparator(), cc.rcw(row, 2, 3));
 
       row = 20;
-      builder.addLabel(I18n.getMessage("CommunicationObjectPanel.defaultValues") + ':', cc.rcw(row, 2, 3));
+      builder.addLabel(I18n.getMessage("ParameterPanel.order"), cc.rc(row, 2));
+      builder.add(orderValueField, cc.rc(row, 4));
+
+      row = 21;
+      builder.add(new JSeparator(), cc.rcw(row, 2, 3));
 
       row = 22;
+      builder.addLabel(I18n.getMessage("CommunicationObjectPanel.defaultValues") + ':', cc.rcw(row, 2, 3));
+
+      row = 24;
       builder.add(readEnabledField, cc.rc(row, 2));
       builder.add(commEnabledField, cc.rc(row, 4));
 
-      row = 24;
+      row = 26;
       builder.add(writeEnabledField, cc.rc(row, 2));
       builder.add(transEnabledField, cc.rc(row, 4));
 
-      
-      row = 26;
+
+      row = 29;
       builder.add(Box.createVerticalGlue(), cc.rcw(row, 2, 3));
 
       nameElems = MultiLingualTextUtil.createFormElements(builder, 5);

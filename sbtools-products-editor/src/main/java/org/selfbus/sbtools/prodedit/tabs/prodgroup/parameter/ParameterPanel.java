@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -86,7 +87,7 @@ public class ParameterPanel extends JPanel implements CloseableComponent
    private final ValueModel nameValue = detailsModel.getModel("name");
    private final JTextComponent nameField = BasicComponentFactory.createTextField(nameValue, false);
 
-   private final ValueModel idValue = new ConverterValueModel(detailsModel.getModel("id"), idValueConverter); //detailsModel.getModel("idStr");
+   private final ValueModel idValue = new ConverterValueModel(detailsModel.getModel("id"), idValueConverter);
    private final JLabel idField = BasicComponentFactory.createLabel(idValue);
 
    private final ValueModel labelValue = detailsModel.getModel("description");
@@ -138,6 +139,12 @@ public class ParameterPanel extends JPanel implements CloseableComponent
    private final ValueModel defaultDoubleValue = detailsModel.getModel("defaultDouble");
    private final JTextComponent defaultDoubleField = BasicComponentFactory.createTextField(defaultDoubleValue, false);
 
+   private final ValueModel visibleValue = detailsModel.getModel("visible");
+   private final JCheckBox visibleValueField = BasicComponentFactory.createCheckBox(visibleValue, "");
+
+   private final ValueModel orderValue = detailsModel.getModel("order");
+   private final JTextComponent orderValueField = BasicComponentFactory.createTextField(new ConverterValueModel(orderValue, intValueConverter), true);
+
    /**
     * Create a panel for editing a {@link Parameter}.
     * 
@@ -154,7 +161,8 @@ public class ParameterPanel extends JPanel implements CloseableComponent
       FormLayout layout = new FormLayout("6dlu, l:p, 4dlu, f:p:g, 2dlu, l:p, 6dlu",
          "8dlu, p, 6dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, " +
          "4dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, " +
-         "4dlu, p, 4dlu, f:p:g, p, 4dlu");
+         "4dlu, p, 4dlu, p, 4dlu, p, 4dlu, " +
+         "f:p:g, p, 4dlu");
 
       PanelBuilder builder = new PanelBuilder(layout);
       CellConstraints cc = new CellConstraints();
@@ -223,8 +231,20 @@ public class ParameterPanel extends JPanel implements CloseableComponent
       row = 22;
       builder.addLabel(I18n.getMessage("ParameterPanel.parentValue"), cc.rc(row, 2));
       builder.add(parentValueField, cc.rc(row, 4));
-      
+
       row = 23;
+      builder.add(new JSeparator(), cc.rcw(row, 2, 3));
+
+      row = 24;
+      builder.addLabel(I18n.getMessage("ParameterPanel.visible"), cc.rc(row, 2));
+      builder.add(visibleValueField, cc.rc(row, 4));
+
+      row = 26;
+      builder.addLabel(I18n.getMessage("ParameterPanel.order"), cc.rc(row, 2));
+      builder.add(orderValueField, cc.rc(row, 4));
+
+
+      row = 29;
       builder.add(Box.createVerticalGlue(), cc.rcw(row, 2, 3));
 
       labelElems = MultiLingualTextUtil.createFormElements(builder, 9);
