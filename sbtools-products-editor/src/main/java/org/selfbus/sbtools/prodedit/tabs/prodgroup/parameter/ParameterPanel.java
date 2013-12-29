@@ -45,8 +45,6 @@ import org.selfbus.sbtools.prodedit.renderer.ParameterCategoryComboBoxRenderer;
 import org.selfbus.sbtools.prodedit.renderer.ParameterValueListCellRenderer;
 import org.selfbus.sbtools.prodedit.utils.FontUtils;
 import org.selfbus.sbtools.prodedit.utils.MultiLingualTextUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.jgoodies.binding.PresentationModel;
 import com.jgoodies.binding.adapter.BasicComponentFactory;
@@ -68,7 +66,7 @@ import com.jgoodies.validation.view.ValidationResultViewFactory;
  */
 public class ParameterPanel extends JPanel implements CloseableComponent
 {
-   private static final Logger LOGGER = LoggerFactory.getLogger(ParameterPanel.class);
+//   private static final Logger LOGGER = LoggerFactory.getLogger(ParameterPanel.class);
    private static final long serialVersionUID = -1335749489001109671L;
 
    protected ApplicationProgram program;
@@ -131,6 +129,8 @@ public class ParameterPanel extends JPanel implements CloseableComponent
    private final ValueModel defaultStringValue = detailsModel.getModel("defaultString");
    private final JTextComponent defaultStringField = BasicComponentFactory.createTextField(defaultStringValue, false);
 
+   private final JLabel defaultNoneField = new JLabel(" ");
+
    private final ValueModel defaultDoubleValue = detailsModel.getModel("defaultDouble");
    private final JTextComponent defaultDoubleField = BasicComponentFactory.createTextField(defaultDoubleValue, false);
 
@@ -154,16 +154,18 @@ public class ParameterPanel extends JPanel implements CloseableComponent
       defaultEnumField.setRenderer(defaultEnumRenderer);
 
       FormLayout layout = new FormLayout("6dlu, l:p, 4dlu, f:p:g, 2dlu, l:p, 6dlu",
-         "8dlu, p, 6dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, " +
+         "8dlu, p, 6dlu, p, 4dlu, p, 12dlu, p, 12dlu, p, " +
          "4dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, " +
-         "4dlu, p, 4dlu, p, 4dlu, p, 4dlu, " +
+         "12dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, " +
+         "4dlu, " +
          "f:p:g, p, 4dlu");
 
       PanelBuilder builder = new PanelBuilder(layout);
       CellConstraints cc = new CellConstraints();
+      JLabel lbl;
 
       int row = 2;
-      JLabel lbl = builder.addLabel(I18n.getMessage("ParameterPanel.caption"), cc.rcw(row, 2, 3));
+      lbl = builder.addLabel(I18n.getMessage("ParameterPanel.caption"), cc.rcw(row, 2, 3));
       lbl.setFont(FontUtils.getCaptionFont());
       lbl.setOpaque(false);
       idField.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -190,32 +192,44 @@ public class ParameterPanel extends JPanel implements CloseableComponent
       builder.add(new JSeparator(), cc.rcw(row, 2, 3));
 
       row = 10;
+      lbl = builder.addLabel(I18n.getMessage("ParameterPanel.typeCaption"), cc.rcw(row, 2, 3));
+      lbl.setFont(FontUtils.getSubCaptionFont());
+      lbl.setOpaque(false);      
+      
+      row = 12;
       builder.addLabel(I18n.getMessage("ParameterPanel.type"), cc.rc(row, 2));
       builder.add(typeCombo, cc.rc(row, 4));
 
-      row = 12;
+      row = 14;
       builder.addLabel(I18n.getMessage("ParameterPanel.defaultValue"), cc.rc(row, 2));
       builder.add(defaultIntField, cc.rc(row, 4));
       builder.add(defaultDoubleField, cc.rc(row, 4));
       builder.add(defaultStringField, cc.rc(row, 4));
       builder.add(defaultEnumField, cc.rc(row, 4));
+      builder.add(defaultNoneField, cc.rc(row, 4));
+      defaultNoneField.setPreferredSize(defaultEnumField.getPreferredSize());
 
-      row = 14;
+      row = 16;
       builder.addLabel(I18n.getMessage("ParameterPanel.address"), cc.rc(row, 2));
       builder.add(addressValueField, cc.rc(row, 4));
 
-      row = 16;
+      row = 18;
       builder.addLabel(I18n.getMessage("ParameterPanel.bitOffset"), cc.rc(row, 2));
       builder.add(bitOffsetValueField, cc.rc(row, 4));
 
-      row = 18;
+      row = 20;
       builder.addLabel(I18n.getMessage("ParameterPanel.size"), cc.rc(row, 2));
       builder.add(sizeField, cc.rc(row, 4));
 
-      row = 19;
+      row = 21;
       builder.add(new JSeparator(), cc.rcw(row, 2, 3));
 
-      row = 20;
+      row = 22;
+      lbl = builder.addLabel(I18n.getMessage("ParameterPanel.displayCaption"), cc.rcw(row, 2, 3));
+      lbl.setFont(FontUtils.getSubCaptionFont());
+      lbl.setOpaque(false);      
+
+      row = 24;
       builder.addLabel(I18n.getMessage("ParameterPanel.parentId"), cc.rc(row, 2));
       builder.add(parentIdField, cc.rc(row, 4));
       builder.add(gotoParentButton, cc.rc(row, 6));
@@ -223,23 +237,20 @@ public class ParameterPanel extends JPanel implements CloseableComponent
       gotoParentButton.setToolTipText(I18n.getMessage("ParameterPanel.gotoParentToolTip"));
       gotoParentButton.setPreferredSize(new Dimension(gotoParentButton.getPreferredSize().width, parentValueField.getPreferredSize().height));
 
-      row = 22;
+      row = 26;
       builder.addLabel(I18n.getMessage("ParameterPanel.parentValue"), cc.rc(row, 2));
       builder.add(parentValueField, cc.rc(row, 4));
 
-      row = 23;
-      builder.add(new JSeparator(), cc.rcw(row, 2, 3));
-
-      row = 24;
+      row = 28;
       builder.addLabel(I18n.getMessage("ParameterPanel.visible"), cc.rc(row, 2));
       builder.add(visibleValueField, cc.rc(row, 4));
 
-      row = 26;
+      row = 30;
       builder.addLabel(I18n.getMessage("ParameterPanel.order"), cc.rc(row, 2));
       builder.add(orderValueField, cc.rc(row, 4));
 
 
-      row = 29;
+      row = 31;
       builder.add(Box.createVerticalGlue(), cc.rcw(row, 2, 3));
 
       labelElems = MultiLingualTextUtil.createFormElements(builder, 9);
@@ -292,6 +303,7 @@ public class ParameterPanel extends JPanel implements CloseableComponent
       final ParameterType paramType = (ParameterType) typeValue.getValue();
       if (paramType == null)
       {
+         defaultNoneField.setVisible(true);
          defaultIntField.setVisible(false);
          defaultDoubleField.setVisible(false);
          defaultStringField.setVisible(false);
@@ -301,15 +313,16 @@ public class ParameterPanel extends JPanel implements CloseableComponent
       {
          ParameterAtomicType atomicType = paramType.getAtomicType();
 
+         defaultNoneField.setVisible(atomicType == ParameterAtomicType.NONE);
          defaultIntField.setVisible(atomicType == ParameterAtomicType.SIGNED || atomicType == ParameterAtomicType.UNSIGNED);
-         defaultDoubleField.setVisible(false); // TODO ParameterAtomicType.DOUBLE is missing
+         defaultDoubleField.setVisible(atomicType == ParameterAtomicType.FLOAT);
          defaultStringField.setVisible(atomicType == ParameterAtomicType.STRING);
 
-         if (atomicType == ParameterAtomicType.ENUM || atomicType == ParameterAtomicType.LONG_ENUM)
+         if (atomicType == ParameterAtomicType.ENUM || atomicType == ParameterAtomicType.LONG_ENUM ||
+            atomicType == ParameterAtomicType.FLOAT_ENUM)
          {
             defaultEnumField.setVisible(true);
             selectionInEnum.setList(paramType.getValues());
-            LOGGER.debug("param #{} defaultInt is {}", parameter.getId(), parameter.getDefaultInt());
             defaultEnumValue.setValue(paramType.findValueByInt(parameter.getDefaultInt()));
          }
          else

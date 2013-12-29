@@ -629,7 +629,7 @@ public class ProductsImporter extends AbstractProductsExpImp
          Validate.notNull(paramType);
 
          int offset = p.getBitOffset();
-         if (paramType.getSize() > 0 && paramType.getSize() < 8)
+         if (p.getAddress() != null && paramType.getSize() > 0 && paramType.getSize() < 8)
             offset = 8 - offset - paramType.getSize();
 
          Parameter param = program.createParameter(paramType);

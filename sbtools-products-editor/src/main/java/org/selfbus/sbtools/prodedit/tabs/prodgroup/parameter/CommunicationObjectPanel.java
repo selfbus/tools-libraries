@@ -123,9 +123,10 @@ public class CommunicationObjectPanel extends JPanel implements CloseableCompone
       setLayout(new BorderLayout(0, 2));
 
       FormLayout layout = new FormLayout("6dlu, l:p, 4dlu, f:p:g, 2dlu, l:p, 6dlu", 
-         "8dlu, p, 6dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, " +
-         "4dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, " +
-         "4dlu, p, 4dlu, p, 4dlu, p, 4dlu, " +
+         "8dlu, p, 6dlu, p, 4dlu, p, 4dlu, p, 12dlu, p, " +
+         "4dlu, p, 4dlu, p, 4dlu, p, 12dlu, p, 4dlu, p, " +
+         "4dlu, p, 4dlu, p, 12dlu, p, 4dlu, p, 4dlu, p, " +
+         "4dlu, " +
          "f:p:g, p, 4dlu");
 
       PanelBuilder builder = new PanelBuilder(layout);
@@ -158,21 +159,31 @@ public class CommunicationObjectPanel extends JPanel implements CloseableCompone
       builder.add(new JSeparator(), cc.rcw(row, 2, 3));
 
       row = 10;
+      lbl = builder.addLabel(I18n.getMessage("CommunicationObjectPanel.typeCaption"), cc.rcw(row, 2, 3));
+      lbl.setFont(FontUtils.getSubCaptionFont());
+      lbl.setOpaque(false);      
+
+      row = 12;
       builder.addLabel(I18n.getMessage("CommunicationObjectPanel.number"), cc.rc(row, 2));
       builder.add(numberValueField, cc.rc(row, 4));
 
-      row = 12;
+      row = 14;
       builder.addLabel(I18n.getMessage("CommunicationObjectPanel.type"), cc.rc(row, 2));
       builder.add(typeCombo, cc.rc(row, 4));
 
-      row = 14;
+      row = 16;
       builder.addLabel(I18n.getMessage("CommunicationObjectPanel.address"), cc.rc(row, 2));
       builder.add(addressValueField, cc.rc(row, 4));
 
-      row = 15;
+      row = 17;
       builder.add(new JSeparator(), cc.rcw(row, 2, 3));
 
-      row = 16;
+      row = 18;
+      lbl = builder.addLabel(I18n.getMessage("CommunicationObjectPanel.displayCaption"), cc.rcw(row, 2, 3));
+      lbl.setFont(FontUtils.getSubCaptionFont());
+      lbl.setOpaque(false);      
+
+      row = 20;
       builder.addLabel(I18n.getMessage("CommunicationObjectPanel.parentId"), cc.rc(row, 2));
       builder.add(parentIdField, cc.rc(row, 4));
       builder.add(gotoParentButton, cc.rc(row, 6));
@@ -180,33 +191,32 @@ public class CommunicationObjectPanel extends JPanel implements CloseableCompone
       gotoParentButton.setToolTipText(I18n.getMessage("ParameterPanel.gotoParentToolTip"));
       gotoParentButton.setPreferredSize(new Dimension(gotoParentButton.getPreferredSize().width, parentValueField.getPreferredSize().height));
 
-      row = 18;
+      row = 22;
       builder.addLabel(I18n.getMessage("CommunicationObjectPanel.parentValue"), cc.rc(row, 2));
       builder.add(parentValueField, cc.rc(row, 4));
 
-      row = 19;
-      builder.add(new JSeparator(), cc.rcw(row, 2, 3));
-
-      row = 20;
-      builder.addLabel(I18n.getMessage("ParameterPanel.order"), cc.rc(row, 2));
+      row = 24;
+      builder.addLabel(I18n.getMessage("CommunicationObjectPanel.order"), cc.rc(row, 2));
       builder.add(orderValueField, cc.rc(row, 4));
 
-      row = 21;
+      row = 25;
       builder.add(new JSeparator(), cc.rcw(row, 2, 3));
 
-      row = 22;
-      builder.addLabel(I18n.getMessage("CommunicationObjectPanel.defaultValues") + ':', cc.rcw(row, 2, 3));
+      row = 26;
+      lbl = builder.addLabel(I18n.getMessage("CommunicationObjectPanel.defaultValues"), cc.rcw(row, 2, 3));
+      lbl.setFont(FontUtils.getSubCaptionFont());
+      lbl.setOpaque(false);      
 
-      row = 24;
+      row = 28;
       builder.add(readEnabledField, cc.rc(row, 2));
       builder.add(commEnabledField, cc.rc(row, 4));
 
-      row = 26;
+      row = 30;
       builder.add(writeEnabledField, cc.rc(row, 2));
       builder.add(transEnabledField, cc.rc(row, 4));
 
 
-      row = 29;
+      row = 33;
       builder.add(Box.createVerticalGlue(), cc.rcw(row, 2, 3));
 
       nameElems = MultiLingualTextUtil.createFormElements(builder, 5);

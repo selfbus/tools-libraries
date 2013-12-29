@@ -19,7 +19,7 @@ public final class FontUtils
       if (captionFont == null)
       {
          captionFont = UIManager.getDefaults().getFont("Label.font");
-         captionFont = captionFont.deriveFont(Font.BOLD, captionFont.getSize() * 1.2f);
+         captionFont = captionFont.deriveFont(Font.BOLD, captionFont.getSize() * 1.25f);
       }
 
       return captionFont;
@@ -33,7 +33,7 @@ public final class FontUtils
       if (subCaptionFont == null)
       {
          subCaptionFont = UIManager.getDefaults().getFont("Label.font");
-         subCaptionFont = subCaptionFont.deriveFont(Font.BOLD, subCaptionFont.getSize() * 1.05f);
+         subCaptionFont = subCaptionFont.deriveFont(Font.BOLD, subCaptionFont.getSize() * 1.02f);
       }
 
       return subCaptionFont;
