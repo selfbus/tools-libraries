@@ -81,8 +81,7 @@ public class ParameterPanel extends JPanel implements CloseableComponent
 
    private final PresentationModel<Parameter> detailsModel = new PresentationModel<Parameter>();
    private final DetailsFormValidator validator = new DetailsFormValidator();
-   private final ListValidationHandler<Parameter> validationHandler = new ListValidationHandler<Parameter>(
-      detailsModel, validator);
+   private final ListValidationHandler<Parameter> validationHandler = new ListValidationHandler<Parameter>(detailsModel, validator);
 
    private final ValueModel nameValue = detailsModel.getModel("name");
    private final JTextComponent nameField = BasicComponentFactory.createTextField(nameValue, false);
@@ -93,26 +92,22 @@ public class ParameterPanel extends JPanel implements CloseableComponent
    private final ValueModel labelValue = detailsModel.getModel("description");
    private Map<String, PropertyAdapter<MultiLingualText.Element>> labelElems = new HashMap<String, PropertyAdapter<MultiLingualText.Element>>();
 
-   private final ValueModel parentIdValue = new ConverterValueModel(detailsModel.getModel("parentId"),
-      intValueConverter);
+   private final ValueModel parentIdValue = new ConverterValueModel(detailsModel.getModel("parentId"), intValueConverter);
    private final JTextComponent parentIdField = BasicComponentFactory.createTextField(parentIdValue);
 
-   private final ValueModel parentValueValue = new ConverterValueModel(detailsModel.getModel("parentValue"),
-      intValueConverter);
+   private final ValueModel parentValueValue = new ConverterValueModel(detailsModel.getModel("parentValue"), intValueConverter);
    private final JTextComponent parentValueField = BasicComponentFactory.createTextField(parentValueValue);
 
    private final JButton gotoParentButton = new JButton(ImageCache.getIcon("icons/forward3"));
 
    private final ValueModel categoryValue = detailsModel.getModel("category");
-   private SelectionInList<ParameterCategory> selectionInCategory = new SelectionInList<ParameterCategory>(
-      ParameterCategory.values(), categoryValue);
+   private SelectionInList<ParameterCategory> selectionInCategory = new SelectionInList<ParameterCategory>( ParameterCategory.values(), categoryValue);
    @SuppressWarnings("unchecked")
    private final JComboBox<ParameterCategory> categoryCombo = BasicComponentFactory.createComboBox(selectionInCategory);
 
    private final IdentifiableConverter typeConverter = new IdentifiableConverter();
    private final ValueModel typeValue = new ConverterValueModel(detailsModel.getModel("typeId"), typeConverter);
-   private SelectionInList<ParameterType> selectionInType = new SelectionInList<ParameterType>(
-      new LinkedList<ParameterType>(), typeValue);
+   private SelectionInList<ParameterType> selectionInType = new SelectionInList<ParameterType>(new LinkedList<ParameterType>(), typeValue);
    @SuppressWarnings("unchecked")
    private final JComboBox<ParameterType> typeCombo = BasicComponentFactory.createComboBox(selectionInType);
 

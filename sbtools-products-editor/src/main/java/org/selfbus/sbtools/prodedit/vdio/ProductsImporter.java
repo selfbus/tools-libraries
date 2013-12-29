@@ -628,11 +628,15 @@ public class ProductsImporter extends AbstractProductsExpImp
          ParameterType paramType = paramTypes.get(p.getParamTypeId());
          Validate.notNull(paramType);
 
+         int offset = p.getBitOffset();
+         if (paramType.getSize() > 0 && paramType.getSize() < 8)
+            offset = 8 - offset - paramType.getSize();
+
          Parameter param = program.createParameter(paramType);
          param.setName(p.getName());
          param.setDescription(getText(p.getId(), TextColumn.PARAM_DESCRIPTION, p.getDescription()));
          param.setAddress(p.getAddress());
-         param.setBitOffset(p.getBitOffset());
+         param.setBitOffset(offset);
          param.setSize(p.getSize());
          param.setOrder(p.getOrder());
          param.setParentId(p.getParentId()); // ID will be corrected below

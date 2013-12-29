@@ -897,6 +897,11 @@ public class ProductsExporter extends AbstractProductsExpImp
       int id = uniqueId++;
       paramIdMap.put(param.getId(), id);
 
+      ParameterType paramType = program.getParameterType(param.getTypeId());
+      int offset = param.getBitOffset();
+      if (paramType.getSize() > 0 && paramType.getSize() < 8)
+         offset = 8 - offset - paramType.getSize();
+
       VdParameter p = new VdParameter();
       p.setProgramId(programMap.get(program));
       p.setParamTypeId(paramTypeIdMap.get(param.getTypeId()));
@@ -906,7 +911,7 @@ public class ProductsExporter extends AbstractProductsExpImp
       p.setSize(param.getSize());
       p.setOrder(param.getOrder());
       p.setAddress(param.getAddress());
-      p.setBitOffset(param.getBitOffset());
+      p.setBitOffset(offset);
       p.setDescription(param.getDescription().getText(defaultLangId));
       p.setId(id);
       if (param.getParentId() != null)
