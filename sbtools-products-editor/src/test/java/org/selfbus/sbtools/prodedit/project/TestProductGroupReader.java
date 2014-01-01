@@ -10,7 +10,7 @@ import java.io.InputStream;
 import org.junit.Test;
 import org.selfbus.sbtools.prodedit.model.ProductGroupReader;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
-import org.selfbus.sbtools.prodedit.model.prodgroup.ApplicationProgram;
+import org.selfbus.sbtools.prodedit.model.prodgroup.program.ApplicationProgram;
 
 
 public class TestProductGroupReader

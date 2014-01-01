@@ -22,7 +22,8 @@ import org.selfbus.sbtools.prodedit.model.global.FunctionalEntity;
 import org.selfbus.sbtools.prodedit.model.global.Language;
 import org.selfbus.sbtools.prodedit.model.global.Manufacturer;
 import org.selfbus.sbtools.prodedit.model.global.Project;
-import org.selfbus.sbtools.prodedit.model.prodgroup.ApplicationProgram;
+import org.selfbus.sbtools.prodedit.model.prodgroup.DataBlock;
+import org.selfbus.sbtools.prodedit.model.prodgroup.DataBlockParagraph;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
 import org.selfbus.sbtools.prodedit.model.prodgroup.Symbol;
 import org.selfbus.sbtools.prodedit.model.prodgroup.VirtualDevice;
@@ -33,6 +34,7 @@ import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.Parameter;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterCategory;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterType;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterValue;
+import org.selfbus.sbtools.prodedit.model.prodgroup.program.ApplicationProgram;
 import org.selfbus.sbtools.vdio.ProductsReader;
 import org.selfbus.sbtools.vdio.VdioException;
 import org.selfbus.sbtools.vdio.model.VD;
@@ -47,6 +49,8 @@ import org.selfbus.sbtools.vdio.model.VdParameter;
 import org.selfbus.sbtools.vdio.model.VdParameterType;
 import org.selfbus.sbtools.vdio.model.VdParameterValue;
 import org.selfbus.sbtools.vdio.model.VdProgramDescription;
+import org.selfbus.sbtools.vdio.model.VdS19Block;
+import org.selfbus.sbtools.vdio.model.VdS19BlockParagraph;
 import org.selfbus.sbtools.vdio.model.VdSymbol;
 import org.selfbus.sbtools.vdio.model.VdTextAttribute;
 import org.selfbus.sbtools.vdio.model.VdVirtualDevice;
@@ -420,6 +424,7 @@ public class ProductsImporter extends AbstractProductsExpImp
          importParameterTypes(program, vdProgramId);
          importParameters(program, vdProgramId);
          importComObjects(program, vdProgramId);
+         importDataBlocks(program, vdProgramId);
       }
 
       VirtualDevice device = group.createDevice(program);
@@ -781,6 +786,55 @@ public class ProductsImporter extends AbstractProductsExpImp
          comObject.setWriteEnabled(o.isWriteEnabled());
          comObject.setTransEnabled(o.isTransEnabled());
          comObject.setPriority(ObjectPriority.valueOf(o.getPriorityId()));
+      }
+   }
+
+   /**
+    * Import the S19 data blocks and S19 data block paragraphs of an application program.
+    * 
+    * @param program - the program to import the data blocks for
+    * @param vdProgramId - the program ID in the VD
+    */
+   protected void importDataBlocks(ApplicationProgram program, int vdProgramId)
+   {
+      Map<Integer, DataBlock> blocks = new HashMap<Integer, DataBlock>();
+
+      if (vd.s19Block == null) // nothing to do if there are no S19 blocks
+         return;
+
+      for (VdS19Block b : vd.s19Block)
+      {
+         if (b.getProgramId() != vdProgramId)
+            continue;
+
+         DataBlock block = program.createDataBlock();
+         block.setNumber(b.getNumber());
+         block.setName(b.getName());
+         block.setType(b.getType());
+         block.setControlCode(b.getControlCode());
+         block.setSegmentType(b.getSegmentType());
+         block.setSegmentId(b.getSegmentId());
+         block.setSegmentAddress(b.getSegmentAddress());
+         block.setSegmentLength(b.getSegmentLength());
+         block.setAccessAttributes(b.getAccessAttributes());
+         block.setMemoryType(b.getMemoryType());
+         block.setMemoryAttributes(b.getMemoryAttributes());
+         block.setData(b.getBlockData());
+         block.setBlockMask(b.getBlockMask());
+
+         blocks.put(b.getId(), block);
+      }
+
+      for (VdS19BlockParagraph p : vd.s19BlockParagraph)
+      {
+         DataBlock block = blocks.get(p.getBlockId());
+         if (block == null)
+            continue;
+
+         DataBlockParagraph paragraph = block.createParagraph();
+         paragraph.setPtColumnId(p.getPtColumnId());
+         paragraph.setDataLong(p.getDataLong());
+         paragraph.setDataBinary(p.getDataBinary());
       }
    }
 }

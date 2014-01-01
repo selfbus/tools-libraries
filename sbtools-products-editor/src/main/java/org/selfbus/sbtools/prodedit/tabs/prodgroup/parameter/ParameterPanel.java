@@ -35,11 +35,11 @@ import org.selfbus.sbtools.prodedit.binding.ParameterTypeSizeConverter;
 import org.selfbus.sbtools.prodedit.internal.I18n;
 import org.selfbus.sbtools.prodedit.model.common.MultiLingualText;
 import org.selfbus.sbtools.prodedit.model.enums.ParameterAtomicType;
-import org.selfbus.sbtools.prodedit.model.prodgroup.ApplicationProgram;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.Parameter;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterCategory;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterType;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterValue;
+import org.selfbus.sbtools.prodedit.model.prodgroup.program.ApplicationProgram;
 import org.selfbus.sbtools.prodedit.renderer.ParameterCategoryComboBoxRenderer;
 import org.selfbus.sbtools.prodedit.renderer.ParameterValueListCellRenderer;
 import org.selfbus.sbtools.prodedit.tabs.prodgroup.ProductGroupTab;
@@ -72,7 +72,7 @@ public class ParameterPanel extends JPanel implements CloseableComponent
    protected ApplicationProgram program;
    protected Parameter parameter;
 
-   private final IntegerValueConverter hexIntValueConverter = new IntegerValueConverter(16);
+   private final IntegerValueConverter hexAddrIntValueConverter = new IntegerValueConverter(16, 4);
    private final IntegerValueConverter intValueConverter = new IntegerValueConverter();
    private final IdValueConverter idValueConverter = new IdValueConverter();
    private final ParameterTypeSizeConverter paramTypeSizeConverter = new ParameterTypeSizeConverter();
@@ -115,10 +115,10 @@ public class ParameterPanel extends JPanel implements CloseableComponent
    @SuppressWarnings("unchecked")
    private final JComboBox<ParameterValue> defaultEnumField = BasicComponentFactory.createComboBox(selectionInEnum);
 
-   private final ValueModel addressValue = new ConverterValueModel(detailsModel.getModel("address"), hexIntValueConverter);
+   private final ValueModel addressValue = new ConverterValueModel(detailsModel.getModel("address"), hexAddrIntValueConverter);
    private final JTextComponent addressValueField = BasicComponentFactory.createTextField(addressValue);
 
-   private final ValueModel bitOffsetValue = new ConverterValueModel(detailsModel.getModel("bitOffset"), hexIntValueConverter);
+   private final ValueModel bitOffsetValue = new ConverterValueModel(detailsModel.getModel("bitOffset"), intValueConverter);
    private final JTextComponent bitOffsetValueField = BasicComponentFactory.createTextField(bitOffsetValue);
 
    private final ValueModel sizeValue = new ConverterValueModel(typeValue, paramTypeSizeConverter);
@@ -285,6 +285,7 @@ public class ParameterPanel extends JPanel implements CloseableComponent
             gotoParentButton.setEnabled(val != null && !val.isEmpty());
          }
       });
+
       gotoParentButton.addActionListener(new ActionListener()
       {
          @Override

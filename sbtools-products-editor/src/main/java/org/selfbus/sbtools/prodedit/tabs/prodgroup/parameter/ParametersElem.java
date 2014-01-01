@@ -21,13 +21,14 @@ import org.selfbus.sbtools.prodedit.actions.ExpandAllTreeAction;
 import org.selfbus.sbtools.prodedit.actions.RemoveSelectionInTreeAction;
 import org.selfbus.sbtools.prodedit.binding.SelectionInTree;
 import org.selfbus.sbtools.prodedit.internal.I18n;
-import org.selfbus.sbtools.prodedit.model.prodgroup.ApplicationProgram;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
 import org.selfbus.sbtools.prodedit.model.prodgroup.VirtualDevice;
+import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.AbstractParameterNode;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.CommunicationObject;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.Parameter;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterTreeModel;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterType;
+import org.selfbus.sbtools.prodedit.model.prodgroup.program.ApplicationProgram;
 import org.selfbus.sbtools.prodedit.renderer.ParameterTreeCellRenderer;
 import org.selfbus.sbtools.prodedit.tabs.internal.AbstractCategoryElem;
 
@@ -213,5 +214,15 @@ public class ParametersElem extends AbstractCategoryElem implements CloseableCom
       ParameterTreeModel paramTreeModel = (ParameterTreeModel) paramTree.getModel();
       selectionInTree.setSelection(paramTreeModel.findById(paramId));
       paramTree.scrollRowToVisible(paramTree.getSelectionRows()[0]);
+   }
+
+   /**
+    * Set the selected parameter node.
+    *
+    * @param node - the parameter node to make visible.
+    */
+   public void setSelected(AbstractParameterNode node)
+   {
+      setSelectedParam(node.getId());
    }
 }

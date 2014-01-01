@@ -128,9 +128,9 @@ public enum ObjectType
    }
 
    /**
-    * @return the bitLength
+    * @return the size in bits
     */
-   public int getBitLength()
+   public int getBitSize()
    {
       return bitLength;
    }

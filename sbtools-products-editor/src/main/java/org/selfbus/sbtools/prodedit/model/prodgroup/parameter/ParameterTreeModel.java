@@ -7,7 +7,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import org.selfbus.sbtools.prodedit.model.prodgroup.ApplicationProgram;
+import org.selfbus.sbtools.prodedit.model.prodgroup.program.ApplicationProgram;
 
 /**
  * Tree model for {@link Parameter}s and {@link CommunicationObject}s of an

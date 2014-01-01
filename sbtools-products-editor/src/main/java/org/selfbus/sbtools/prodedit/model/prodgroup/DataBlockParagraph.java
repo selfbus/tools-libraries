@@ -1,22 +1,26 @@
-package org.selfbus.sbtools.vdio.model;
+package org.selfbus.sbtools.prodedit.model.prodgroup;
 
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
-/**
- * An S19 block paragraph.
- */
-@XmlType(name = "S19BlockParagraph", propOrder = {})
-@XmlAccessorType(XmlAccessType.NONE)
-public class VdS19BlockParagraph
-{
-   @XmlAttribute(name = "s19_block_paragraph_id", required = true)
-   private int id;
+import org.selfbus.sbtools.prodedit.model.interfaces.Identifiable;
 
-   @XmlAttribute(name = "block_id", required = true)
-   private int blockId;
+import com.jgoodies.binding.beans.Model;
+
+/**
+ * An data block paragraph. In the ETS language it is called a "S19 block paragraph".
+ */
+@XmlType(name = "DataBlockParagraph", propOrder = {})
+@XmlAccessorType(XmlAccessType.NONE)
+public class DataBlockParagraph extends Model implements Identifiable
+{
+   private static final long serialVersionUID = -4426715147692224166L;
+
+   @XmlAttribute(name = "id", required = true)
+   private int id;
 
    @XmlAttribute(name = "pt_column_id")
    private Integer ptColumnId;
@@ -24,12 +28,13 @@ public class VdS19BlockParagraph
    @XmlAttribute(name = "data_long")
    private Integer dataLong;
 
-   @XmlAttribute(name = "data_binary")
+   //@XmlAttribute(name = "data_binary")
    private byte[] dataBinary;
 
    /**
     * @return the id
     */
+   @Override
    public int getId()
    {
       return id;
@@ -38,25 +43,10 @@ public class VdS19BlockParagraph
    /**
     * @param id the id to set
     */
+   @Override
    public void setId(int id)
    {
       this.id = id;
-   }
-
-   /**
-    * @return the blockId
-    */
-   public int getBlockId()
-   {
-      return blockId;
-   }
-
-   /**
-    * @param blockId the blockId to set
-    */
-   public void setBlockId(int blockId)
-   {
-      this.blockId = blockId;
    }
 
    /**
@@ -107,6 +97,17 @@ public class VdS19BlockParagraph
       this.dataBinary = dataBinary;
    }
 
+   @XmlAttribute(name = "data_binary")
+   String getDataBase64Str()
+   {
+      return DatatypeConverter.printBase64Binary(dataBinary).toLowerCase();
+   }
+
+   void setDataBase64Str(String str)
+   {
+      dataBinary = DatatypeConverter.parseBase64Binary(str);
+   }
+
    /**
     * {@inheritDoc}
     */
@@ -124,9 +125,9 @@ public class VdS19BlockParagraph
    {
       if (o == this)
          return true;
-      if (!(o instanceof VdS19BlockParagraph))
+      if (!(o instanceof DataBlockParagraph))
          return false;
-      final VdS19BlockParagraph oo = (VdS19BlockParagraph) o;
+      final DataBlockParagraph oo = (DataBlockParagraph) o;
       return id == oo.id;
    }
 }

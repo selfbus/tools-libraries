@@ -1,4 +1,4 @@
-package org.selfbus.sbtools.prodedit.model.prodgroup;
+package org.selfbus.sbtools.prodedit.model.prodgroup.program;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,6 +19,7 @@ import org.selfbus.sbtools.prodedit.model.common.MultiLingualText;
 import org.selfbus.sbtools.prodedit.model.enums.ParameterAtomicType;
 import org.selfbus.sbtools.prodedit.model.interfaces.Identifiable;
 import org.selfbus.sbtools.prodedit.model.interfaces.Symbolized;
+import org.selfbus.sbtools.prodedit.model.prodgroup.DataBlock;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.AbstractParameterContainer;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.AbstractParameterNode;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.CommunicationObject;
@@ -99,6 +100,10 @@ public class ApplicationProgram extends Model implements Identifiable, Symbolize
 
    @XmlElement(name = "description")
    private MultiLingualText description = new MultiLingualText();
+
+   @XmlElementWrapper(name = "data_blocks")
+   @XmlElement(name = "data_block")
+   private ArrayListModel<DataBlock> dataBlocks = new ArrayListModel<DataBlock>();
 
    private ParameterTreeModel parameterTree;
 
@@ -204,6 +209,20 @@ public class ApplicationProgram extends Model implements Identifiable, Symbolize
       parent.addChild(comObject);
 
       return comObject;
+   }
+
+   /**
+    * Create a data block. The created data block is added to the program's data blocks.
+    * 
+    * @return The created data block.
+    */
+   public DataBlock createDataBlock()
+   {
+      DataBlock block = new DataBlock();
+      block.setId(IdentifiableUtils.createUniqueId(dataBlocks));
+      dataBlocks.add(block);
+
+      return block;
    }
 
    /**
@@ -609,6 +628,27 @@ public class ApplicationProgram extends Model implements Identifiable, Symbolize
 
       parameterTypes.clear();
       Collections.addAll(parameterTypes, arr);
+   }
+
+   /**
+    * Set the data blocks.
+    *
+    * @param dataBlocks - the data blocks.
+    */
+   public void setDataBlocks(ArrayListModel<DataBlock> dataBlocks)
+   {
+      this.dataBlocks = dataBlocks;
+   }
+
+   /**
+    * @return The data blocks.
+    */
+   public ArrayListModel<DataBlock> getDataBlocks()
+   {
+      if (dataBlocks == null)
+         dataBlocks = new ArrayListModel<DataBlock>();
+
+      return dataBlocks;
    }
 
    /**

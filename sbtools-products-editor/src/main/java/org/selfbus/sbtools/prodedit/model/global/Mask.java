@@ -58,8 +58,8 @@ public class Mask
    @XmlAttribute(name = "routecnt_address", required = true)
    private int routeCountAddress;
 
-   // @XmlAttribute(name = "mask_eeprom_data")
-   private byte[] maskEepromData;
+   // @XmlAttribute(name = "data")
+   private byte[] data;
 
    @XmlAttribute(name = "address_tab_lcs")
    private Integer addressTabLCS;
@@ -150,7 +150,7 @@ public class Mask
       bcuTypeId = nullsafeToInteger(props.getProperty("bcu_type_number"));
 
       val = props.getProperty("mask_eeprom_data");
-      maskEepromData = val == null || val.isEmpty() ? null : DatatypeConverter.parseHexBinary(val);
+      data = val == null || val.isEmpty() ? null : DatatypeConverter.parseHexBinary(val);
    }
 
    /**
@@ -392,30 +392,30 @@ public class Mask
    }
 
    /**
-    * @return the maskEepromData
+    * @return the EEPROM data
     */
-   public byte[] getEepromData()
+   public byte[] getData()
    {
-      return maskEepromData;
+      return data;
    }
 
    /**
-    * @param maskEepromData the maskEepromData to set
+    * @param data the EEPROM data to set
     */
-   public void setEepromData(byte[] maskEepromData)
+   public void setData(byte[] data)
    {
-      this.maskEepromData = maskEepromData;
+      this.data = data;
    }
 
-   @XmlAttribute(name = "mask_eeprom_data")
-   String getMaskEepromDataStr()
+   @XmlAttribute(name = "data")
+   String getDataBase64Str()
    {
-      return DatatypeConverter.printHexBinary(maskEepromData).toLowerCase();
+      return DatatypeConverter.printBase64Binary(data).toLowerCase();
    }
 
-   void setMaskEepromDataStr(String str)
+   void setDataBase64Str(String str)
    {
-      maskEepromData = DatatypeConverter.parseHexBinary(str);
+      data = DatatypeConverter.parseBase64Binary(str);
    }
 
    /**

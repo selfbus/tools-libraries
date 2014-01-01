@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 
 import org.selfbus.sbtools.common.gui.components.CloseableComponent;
@@ -45,6 +46,7 @@ public class TableTab extends JPanel implements CloseableComponent
       scrollPane = new JScrollPane(table);
       scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
       scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+      scrollPane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
 
       // There is a strange bug in Ubuntu with OpenJDK 7 that disorts the
       // contents of the table when scrolling horizontally. Updating the scroll

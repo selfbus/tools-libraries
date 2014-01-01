@@ -1,5 +1,7 @@
 package org.selfbus.sbtools.prodedit.binding;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.jgoodies.binding.value.BindingConverter;
 
 /**
@@ -10,13 +12,14 @@ public class IntegerValueConverter implements BindingConverter<Integer, String>
 //   private static final Logger LOGGER = LoggerFactory.getLogger(IntegerValueConverter.class);
 
    private final int radix;
+   private final int digits;
    
    /**
     * Create an integer value converter for decimal values.
     */
    public IntegerValueConverter()
    {
-      this(10);
+      this(10, 0);
    }
 
    /**
@@ -26,9 +29,21 @@ public class IntegerValueConverter implements BindingConverter<Integer, String>
     */
    public IntegerValueConverter(int radix)
    {
-      this.radix = radix;
+      this(radix, 0);
    }
-   
+
+   /**
+    * Create an integer value converter.
+    * 
+    * @param radix - the radix of the values.
+    * @param digits - the number of digits to display.
+    */
+   public IntegerValueConverter(int radix, int digits)
+   {
+      this.radix = radix;
+      this.digits = digits;
+   }
+
    /**
     * {@inheritDoc}
     */
@@ -40,7 +55,10 @@ public class IntegerValueConverter implements BindingConverter<Integer, String>
 
       try
       {
-         return Integer.toString((Integer) sourceValue, radix);
+         String str = Integer.toString((Integer) sourceValue, radix);
+         if (digits > 0 && str.length() < digits)
+            return StringUtils.repeat('0', digits - str.length()) + str;
+         return str;
       }
       catch (Exception e)
       {

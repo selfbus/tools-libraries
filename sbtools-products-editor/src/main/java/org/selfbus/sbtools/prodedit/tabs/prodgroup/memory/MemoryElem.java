@@ -1,17 +1,27 @@
 package org.selfbus.sbtools.prodedit.tabs.prodgroup.memory;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.swing.Box;
 import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.JViewport;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -20,19 +30,17 @@ import org.selfbus.sbtools.prodedit.ProdEdit;
 import org.selfbus.sbtools.prodedit.internal.I18n;
 import org.selfbus.sbtools.prodedit.model.global.Mask;
 import org.selfbus.sbtools.prodedit.model.global.Project;
-import org.selfbus.sbtools.prodedit.model.prodgroup.ApplicationProgram;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
 import org.selfbus.sbtools.prodedit.model.prodgroup.VirtualDevice;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.AbstractParameterNode;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.CommunicationObject;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.Parameter;
+import org.selfbus.sbtools.prodedit.model.prodgroup.program.ApplicationProgram;
 import org.selfbus.sbtools.prodedit.renderer.ParameterMemoryListCellRenderer;
 import org.selfbus.sbtools.prodedit.tabs.internal.AbstractCategoryElem;
+import org.selfbus.sbtools.prodedit.tabs.internal.ObjectActivatedListener;
 import org.selfbus.sbtools.prodedit.utils.FontUtils;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
+import org.selfbus.sbtools.prodedit.utils.ParamUtils;
 
 /**
  * An element that displays the memory layout of a device.
@@ -41,14 +49,22 @@ public class MemoryElem extends AbstractCategoryElem
 {
    private final ProductGroup group;
    private VirtualDevice device;
+   private Integer selectedAddress;
 
    private final DefaultListModel<AbstractParameterNode> paramListModel = new DefaultListModel<AbstractParameterNode>();
    private final JList<AbstractParameterNode> paramList = new JList<AbstractParameterNode>(paramListModel);
    private final Set<MemoryRange> ranges = new TreeSet<MemoryRange>();
-   private MemoryTableModel tableModel = new MemoryTableModel(0, 512);
-   private JTable table = new JTable(tableModel);
-   private JScrollPane tableScrollPane = new JScrollPane(table);
+   private final MemoryTableModel tableModel = new MemoryTableModel(0, 512);
+   private final JTable table = new JTable(tableModel);
+   private final JScrollPane tableScrollPane = new JScrollPane(table);
+   private final MemoryCellDetailsTableModel cellDetailsModel = new MemoryCellDetailsTableModel();
+   private final JTable cellDetailsTable = new JTable(cellDetailsModel);
+   private final JScrollPane cellDetailsPane = new JScrollPane(cellDetailsTable);
+   private final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+   private final JLabel cellDetailsCaption = new JLabel();
    private Color backgroundColor;
+
+   private ObjectActivatedListener paramActivatedListener;
 
    /**
     * Create an element that displays the memory layout of a device.
@@ -68,25 +84,77 @@ public class MemoryElem extends AbstractCategoryElem
       table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
       table.setCellSelectionEnabled(true);
       table.setDoubleBuffered(false);
-      TableUtils.pack(table, 2);
+      TableUtils.pack(table, 4);
 
-      FormLayout layout = new FormLayout("6dlu,f:p:g,6dlu", "4dlu,p,4dlu,f:p:g,p,4dlu");
-      PanelBuilder builder = new PanelBuilder(layout);
-      CellConstraints cc = new CellConstraints();
-      int row = 2;
+      JPanel memoryPanel = new JPanel(new BorderLayout());
 
-      builder.addLabel(I18n.getMessage("MemoryElem.caption"), cc.rc(row, 2))
-         .setFont(FontUtils.getCaptionFont());
+      JLabel lbl = new JLabel(I18n.getMessage("MemoryElem.caption"));
+      lbl.setFont(FontUtils.getCaptionFont());
+      memoryPanel.add(lbl, BorderLayout.NORTH);
+      memoryPanel.add(tableScrollPane, BorderLayout.CENTER);
 
-      row += 2;
-      builder.add(tableScrollPane, cc.rc(row, 2));
+      detailsPanel = new JPanel(new BorderLayout());
+      detailsPanel.add(splitPane, BorderLayout.CENTER);
 
-      builder.add(Box.createVerticalGlue(), cc.rc(++row, 2));
+      JPanel cellDetailsPanel = new JPanel(new BorderLayout());
+      cellDetailsPanel.add(cellDetailsCaption, BorderLayout.NORTH);
+      cellDetailsPanel.add(cellDetailsPane, BorderLayout.CENTER);
+      cellDetailsCaption.setFont(FontUtils.getCaptionFont());
 
-      detailsPanel = builder.build();
+      cellDetailsTable.setBorder(null);
+      cellDetailsTable.setTableHeader(null);
+      cellDetailsTable.setShowGrid(false);
+      cellDetailsTable.setOpaque(false);;
+      cellDetailsTable.setIntercellSpacing(new Dimension(0, 0));
+      cellDetailsTable.setAutoResizeMode(JTable.AUTO_RESIZE_NEXT_COLUMN);
+//      cellDetailsTable.setBackground(cellDetailsPanel.getBackground());
+//      cellDetailsPane.getViewport().setOpaque(false);
+
+      splitPane.setLeftComponent(memoryPanel);
+      splitPane.setRightComponent(cellDetailsPanel);
+      splitPane.setContinuousLayout(true);
+
+      detailsPanel.addComponentListener(new ComponentAdapter()
+      {
+         private boolean init = true;
+
+         public void componentResized(ComponentEvent e)
+         {
+            if (init)
+            {
+               init = false;
+               splitPane.setDividerLocation(0.7);
+            }
+         }
+      });
+
       backgroundColor = table.getBackground();
 
       updateContents();
+
+      cellDetailsTable.addMouseListener(new MouseAdapter()
+      {
+         @Override
+         public void mouseClicked(MouseEvent e)
+         {
+            if (e.getClickCount() == 2 && selectedAddress != null)
+            {
+               Object obj = cellDetailsModel.getValueAt(cellDetailsTable.getSelectedRow()); 
+               if (obj instanceof AbstractParameterNode)
+                  paramActivatedListener.objectActivated(obj);
+            }
+         }
+      });
+
+      paramList.addMouseListener(new MouseAdapter()
+      {
+         @Override
+         public void mouseClicked(MouseEvent e)
+         {
+            if (e.getClickCount() == 2)
+               paramActivatedListener.objectActivated(paramList.getSelectedValue());
+         }
+      });
 
       paramList.addListSelectionListener(new ListSelectionListener()
       {
@@ -94,8 +162,11 @@ public class MemoryElem extends AbstractCategoryElem
          public void valueChanged(ListSelectionEvent e)
          {
             AbstractParameterNode node = paramList.getSelectedValue();
-            if (node != null)
+            if (node != null && !e.getValueIsAdjusting())
             {
+               selectedAddress = node.getAddress();
+               updateCellDetails();
+
                int row = node.getAddress() >> 4;
                int col = (node.getAddress() & 15) + 1;
 
@@ -104,6 +175,54 @@ public class MemoryElem extends AbstractCategoryElem
             }
          }
       });
+
+      listScrollPane.getViewport().setScrollMode(JViewport.BACKINGSTORE_SCROLL_MODE);
+
+      table.getColumnModel().getSelectionModel().addListSelectionListener(tableSelectionListener);
+      table.getSelectionModel().addListSelectionListener(tableSelectionListener);
+   }
+
+   /**
+    * A cell of the table was clicked.
+    */
+   private final ListSelectionListener tableSelectionListener = new ListSelectionListener()
+   {
+      @Override
+      public void valueChanged(ListSelectionEvent e)
+      {
+         if (e.getValueIsAdjusting())
+            return;
+
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            @Override
+            public void run()
+            {
+               int row = table.getSelectionModel().getMinSelectionIndex();
+               int col = table.getColumnModel().getSelectionModel().getMinSelectionIndex() - 1;
+               Integer addr = null;
+
+               if (row >= 0 && col >= 0)
+                  addr = (row << 4) + col;
+
+               if (addr != selectedAddress)
+               {
+                  selectedAddress = addr;
+                  updateCellDetails();
+               }
+            }
+         });
+      }
+   };
+
+   /**
+    * Set the listener that is called when a parameter or com-object is double clicked.
+    * 
+    * @param listener - the listener to set
+    */
+   public void setParamActivatedListener(ObjectActivatedListener listener)
+   {
+      this.paramActivatedListener = listener;
    }
 
    /**
@@ -127,6 +246,31 @@ public class MemoryElem extends AbstractCategoryElem
    }
 
    /**
+    * Update the cell details view.
+    */
+   protected void updateCellDetails()
+   {
+      cellDetailsModel.clear();
+      if (selectedAddress == null)
+      {
+         cellDetailsCaption.setText("");
+         return;
+      }
+      
+      MemoryCell cell = tableModel.getValueAt(selectedAddress);
+
+      cellDetailsCaption.setText(I18n.formatMessage("MemoryElem.cellDetailsCaption",
+         String.format("0x%0$04x", selectedAddress)));
+
+      for (Object obj : cell.getObjects())
+         cellDetailsModel.add(obj);
+
+      TableUtils.pack(cellDetailsTable, MemoryCellDetailsTableModel.ICON_COL, 4, true);
+      TableUtils.pack(cellDetailsTable, MemoryCellDetailsTableModel.ID_COL, 4, true);
+      TableUtils.pack(cellDetailsTable, 4);
+   }
+
+   /**
     * Update the contents.
     */
    protected void updateContents()
@@ -134,12 +278,12 @@ public class MemoryElem extends AbstractCategoryElem
       ranges.clear();
       tableModel.clear();
       paramListModel.removeAllElements();
+      selectedAddress = null;
 
       Project project = ProdEdit.getInstance().getProjectService().getProject();
+
       if (project == null || device == null)
-      {
          return;
-      }
 
       ApplicationProgram program = group.getProgram(device);
       Mask mask = project.getMask(program.getMaskVersion());
@@ -168,6 +312,7 @@ public class MemoryElem extends AbstractCategoryElem
       addParameterRanges();
 
       sortParamList();
+      updateCellDetails();
    }
 
    /**
@@ -226,18 +371,16 @@ public class MemoryElem extends AbstractCategoryElem
             continue;
 
          MemoryRange range = null;
-         String label = null;
          int size = 1;
+         String key;
 
          if (node instanceof Parameter)
          {
             Parameter param = (Parameter) node;
 
-            label = param.getDescription().getDefaultText()
-               + ", #" + param.getNumber()+ " ID:" + param.getId();
-
             range = paramRange;
             size = (param.getSize() + 7) >> 3;
+            key = createKey(node.getId(), param.getBitOffset(), param.getSize());
 
             paramListModel.addElement(node);
          }
@@ -245,15 +388,13 @@ public class MemoryElem extends AbstractCategoryElem
          {
             CommunicationObject comObj = (CommunicationObject) node;
 
-            label = comObj.getName().getDefaultText()
-               + ", " + comObj.getType()+ ", #" + comObj.getNumber()
-               + " ID:" + comObj.getId();
-
             range = comObjRange;
-            size = (comObj.getType().getBitLength() + 7) >> 3;
+            size = (comObj.getType().getBitSize() + 7) >> 3;
+            key = createKey(node.getId(), 0, comObj.getType().getBitSize());
 
             paramListModel.addElement(node);
          }
+         else key = node.toString();
 
          if (range != null)
          {
@@ -261,13 +402,7 @@ public class MemoryElem extends AbstractCategoryElem
             {
                MemoryCell cell = tableModel.getValueAt(addr + i);
                cell.setRange(range);
-
-               String cellLabel = cell.getLabel();
-               if (cellLabel == null)
-                  cellLabel = label;
-               else cellLabel += "<br>" + label;
-
-               cell.setLabel(cellLabel);
+               cell.addObject(node, key);
             }
          }
       }
@@ -295,9 +430,28 @@ public class MemoryElem extends AbstractCategoryElem
             MemoryCell cell = tableModel.getValueAt(start + j);
 
             if (cell.getRange() == null)
+            {
                cell.setRange(range);
+               cell.addObject(range, createKey(range.getStart(), -1, range.getSize()));
+            }
          }
       }
+   }
+
+   /**
+    * Create a key for {@link MemoryCell#addObject}
+    * 
+    * @param id - the ID
+    * @param offs - the bit offset
+    * @param size - the size
+    * @return The key.
+    */
+   protected String createKey(int id, int offs, int size)
+   {
+      if (size > 7 && offs == 0)
+         offs = 8;
+         
+      return String.format("%1$d-%2$04d-%3$06x", offs, size, id);
    }
 
    /**

@@ -22,29 +22,52 @@ public final class TableUtils
     */
    public static void pack(JTable table, int margin)
    {
-      final TableColumnModel colModel = table.getColumnModel();
-
-      for (int colIdx = colModel.getColumnCount() - 1; colIdx >= 0; --colIdx)
+      for (int columnIndex = table.getColumnModel().getColumnCount() - 1; columnIndex >= 0; --columnIndex)
       {
-         final TableColumn col = colModel.getColumn(colIdx);
-         int width = 0;
+         pack(table, columnIndex, margin, false);
+      }
+   }
 
-         TableCellRenderer renderer = col.getHeaderRenderer();
-         if (renderer == null)
+   /**
+    * Pack a column of the table such that the column is just as wide as its contents
+    * requires.
+    * 
+    * @param table - the table to pack.
+    * @param columnIndex - the index of the column to pack
+    * @param margin - the extra space to add to both sides of every column.
+    * @param fixed - if true, the minimum and maximum size of the column is set also
+    */
+   public static void pack(JTable table, int columnIndex, int margin, boolean fixed)
+   {
+      final TableColumn col = table.getColumnModel().getColumn(columnIndex);
+      int width = 0;
+
+      TableCellRenderer renderer = col.getHeaderRenderer();
+      if (renderer == null)
+      {
+         if (table.getTableHeader() != null)
             renderer = table.getTableHeader().getDefaultRenderer();
+         else renderer = table.getDefaultRenderer(table.getColumnClass(columnIndex));
+      }
 
-         Component comp = renderer.getTableCellRendererComponent(table, col.getHeaderValue(), false, false, 0, 0);
-         width = comp.getPreferredSize().width;
+      Component comp = renderer.getTableCellRendererComponent(table, col.getHeaderValue(), false, false, 0, 0);
+      width = comp.getPreferredSize().width;
 
-         // Get maximum width of column data
-         for (int r = 0; r < table.getRowCount(); r++)
-         {
-            renderer = table.getCellRenderer(r, colIdx);
-            comp = renderer.getTableCellRendererComponent(table, table.getValueAt(r, colIdx), false, false, r, colIdx);
-            width = Math.max(width, comp.getPreferredSize().width);
-         }
+      // Get maximum width of column data
+      for (int r = 0; r < table.getRowCount(); r++)
+      {
+         renderer = table.getCellRenderer(r, columnIndex);
+         comp = renderer.getTableCellRendererComponent(table, table.getValueAt(r, columnIndex), false, false, r, columnIndex);
+         width = Math.max(width, comp.getPreferredSize().width);
+      }
 
-         col.setPreferredWidth(width + (margin << 1));
+      width += margin << 1;
+      col.setPreferredWidth(width);
+
+      if (fixed)
+      {
+         col.setMinWidth(width);
+         col.setMaxWidth(width);
       }
    }
 

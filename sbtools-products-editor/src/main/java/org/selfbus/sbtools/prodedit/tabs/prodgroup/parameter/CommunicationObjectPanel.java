@@ -32,8 +32,8 @@ import org.selfbus.sbtools.prodedit.binding.ListValidationHandler;
 import org.selfbus.sbtools.prodedit.internal.I18n;
 import org.selfbus.sbtools.prodedit.model.common.MultiLingualText;
 import org.selfbus.sbtools.prodedit.model.enums.ObjectType;
-import org.selfbus.sbtools.prodedit.model.prodgroup.ApplicationProgram;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.CommunicationObject;
+import org.selfbus.sbtools.prodedit.model.prodgroup.program.ApplicationProgram;
 import org.selfbus.sbtools.prodedit.utils.FontUtils;
 import org.selfbus.sbtools.prodedit.utils.MultiLingualTextUtil;
 
@@ -62,7 +62,7 @@ public class CommunicationObjectPanel extends JPanel implements CloseableCompone
    protected CommunicationObject comObject;
 
    private final IntegerValueConverter intValueConverter = new IntegerValueConverter();
-   private final IntegerValueConverter hexIntValueConverter = new IntegerValueConverter(16);
+   private final IntegerValueConverter hexAddrIntValueConverter = new IntegerValueConverter(16, 4);
    private final IdValueConverter idValueConverter = new IdValueConverter();
    
    private final PresentationModel<CommunicationObject> detailsModel = new PresentationModel<CommunicationObject>();
@@ -97,7 +97,7 @@ public class CommunicationObjectPanel extends JPanel implements CloseableCompone
    private final ValueModel numberValue = new ConverterValueModel(detailsModel.getModel("number"), intValueConverter);
    private final JTextComponent numberValueField = BasicComponentFactory.createTextField(numberValue);
 
-   private final ValueModel addressValue = new ConverterValueModel(detailsModel.getModel("address"), hexIntValueConverter);
+   private final ValueModel addressValue = new ConverterValueModel(detailsModel.getModel("address"), hexAddrIntValueConverter);
    private final JTextComponent addressValueField = BasicComponentFactory.createTextField(addressValue);
    
    private final ValueModel commEnabledValue = detailsModel.getModel("commEnabled");

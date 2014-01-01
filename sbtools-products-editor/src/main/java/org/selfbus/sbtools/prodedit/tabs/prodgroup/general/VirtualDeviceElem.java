@@ -20,10 +20,10 @@ import org.selfbus.sbtools.prodedit.binding.ListValidationHandler;
 import org.selfbus.sbtools.prodedit.internal.I18n;
 import org.selfbus.sbtools.prodedit.model.global.FunctionalEntity;
 import org.selfbus.sbtools.prodedit.model.global.Project;
-import org.selfbus.sbtools.prodedit.model.prodgroup.ApplicationProgram;
 import org.selfbus.sbtools.prodedit.model.prodgroup.CatalogEntry;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
 import org.selfbus.sbtools.prodedit.model.prodgroup.VirtualDevice;
+import org.selfbus.sbtools.prodedit.model.prodgroup.program.ApplicationProgram;
 import org.selfbus.sbtools.prodedit.tabs.internal.CategoryElem;
 import org.selfbus.sbtools.prodedit.utils.FontUtils;
 

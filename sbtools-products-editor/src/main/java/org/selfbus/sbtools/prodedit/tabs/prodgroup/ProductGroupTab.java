@@ -24,9 +24,11 @@ import org.selfbus.sbtools.prodedit.model.ProjectListener;
 import org.selfbus.sbtools.prodedit.model.global.Project;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
 import org.selfbus.sbtools.prodedit.model.prodgroup.VirtualDevice;
+import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.AbstractParameterNode;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterType;
 import org.selfbus.sbtools.prodedit.tabs.internal.AbstractCloseableAccordionDetailsTab;
 import org.selfbus.sbtools.prodedit.tabs.internal.MixedCategoryElem;
+import org.selfbus.sbtools.prodedit.tabs.internal.ObjectActivatedListener;
 import org.selfbus.sbtools.prodedit.tabs.prodgroup.general.ApplicationProgramElem;
 import org.selfbus.sbtools.prodedit.tabs.prodgroup.general.VirtualDeviceElem;
 import org.selfbus.sbtools.prodedit.tabs.prodgroup.memory.MemoryElem;
@@ -107,6 +109,8 @@ public class ProductGroupTab extends AbstractCloseableAccordionDetailsTab
          }
       });
 
+      memoryElem.setParamActivatedListener(objectActivatedListener);
+
       updateContents();
 
       SwingUtilities.invokeLater(new Runnable()
@@ -120,6 +124,27 @@ public class ProductGroupTab extends AbstractCloseableAccordionDetailsTab
       });
    }
 
+   /**
+    * A listener for object activation.
+    */
+   private final ObjectActivatedListener objectActivatedListener = new ObjectActivatedListener()
+   {
+      @Override
+      public void objectActivated(Object o)
+      {
+         if (o instanceof AbstractParameterNode)
+         {
+            setVisibleCategory(parametersElem);
+            parametersElem.setSelected((AbstractParameterNode) o);
+         }
+//         else if (o instanceof ParameterType)
+//         {
+//            setVisibleCategory(parameterTypesElem);
+//            parameterTypesElem.setSelected((ParameterType) o);
+//         }
+      }
+   };
+   
    /**
     * Setup the top tool bar.
     */

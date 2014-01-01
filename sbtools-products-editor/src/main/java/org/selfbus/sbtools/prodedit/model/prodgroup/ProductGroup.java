@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang3.Validate;
 import org.selfbus.sbtools.prodedit.internal.I18n;
 import org.selfbus.sbtools.prodedit.model.global.Manufacturer;
+import org.selfbus.sbtools.prodedit.model.prodgroup.program.ApplicationProgram;
 import org.selfbus.sbtools.prodedit.utils.IdentifiableUtils;
 
 import com.jgoodies.binding.beans.Model;

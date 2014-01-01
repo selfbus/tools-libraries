@@ -1,25 +1,33 @@
-package org.selfbus.sbtools.vdio.model;
+package org.selfbus.sbtools.prodedit.model.prodgroup;
 
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
+import org.selfbus.sbtools.prodedit.model.interfaces.Identifiable;
+import org.selfbus.sbtools.prodedit.utils.IdentifiableUtils;
+
+import com.jgoodies.binding.beans.Model;
+import com.jgoodies.common.collect.ArrayListModel;
+
 /**
- * An S19 block.
+ * A block of data of an application program. In the ETS language it is called a "S19 block".
  */
-@XmlType(name = "S19Block", propOrder = {})
+@XmlType(name = "DataBlock", propOrder = {})
 @XmlAccessorType(XmlAccessType.NONE)
-public class VdS19Block
+public class DataBlock extends Model implements Identifiable
 {
-   @XmlAttribute(name = "block_id", required = true)
+   private static final long serialVersionUID = -5439425520464411238L;
+
+   @XmlAttribute(name = "id", required = true)
    private int id;
 
    @XmlAttribute(name = "block_number", required = true)
    private int number;
-
-   @XmlAttribute(name = "program_id", required = true)
-   private int programId;
 
    @XmlAttribute(name = "block_name", required = true)
    private String name;
@@ -51,15 +59,41 @@ public class VdS19Block
    @XmlAttribute(name = "memory_attributes")
    private Integer memoryAttributes;
 
-   @XmlAttribute(name = "block_data")
-   private byte[] blockData;
+   // @XmlAttribute(name = "data")
+   private byte[] data;
 
-   @XmlAttribute(name = "block_mask")
-   private byte[] blockMask;
+   // @XmlAttribute(name = "mask")
+   private byte[] mask;
+
+   @XmlElementWrapper(name = "paragraphs")
+   @XmlElement(name = "paragraph")
+   private ArrayListModel<DataBlockParagraph> paragraphs = new ArrayListModel<DataBlockParagraph>();
+
+   /**
+    * Create a program data block.
+    */
+   public DataBlock()
+   {
+   }
+
+   /**
+    * Create a data block paragraph. The created data block is added to the data block paragraphs.
+    * 
+    * @return The created data block paragraph.
+    */
+   public DataBlockParagraph createParagraph()
+   {
+      DataBlockParagraph paragraph = new DataBlockParagraph();
+      paragraph.setId(IdentifiableUtils.createUniqueId(paragraphs));
+      paragraphs.add(paragraph);
+
+      return paragraph;
+   }
 
    /**
     * @return the id
     */
+   @Override
    public int getId()
    {
       return id;
@@ -68,6 +102,7 @@ public class VdS19Block
    /**
     * @param id the id to set
     */
+   @Override
    public void setId(int id)
    {
       this.id = id;
@@ -87,22 +122,6 @@ public class VdS19Block
    public void setNumber(int number)
    {
       this.number = number;
-   }
-
-   /**
-    * @return the programId
-    */
-   public int getProgramId()
-   {
-      return programId;
-   }
-
-   /**
-    * @param programId the programId to set
-    */
-   public void setProgramId(int programId)
-   {
-      this.programId = programId;
    }
 
    /**
@@ -266,35 +285,78 @@ public class VdS19Block
    }
 
    /**
-    * @return the blockData
+    * @return the block data
     */
-   public byte[] getBlockData()
+   public byte[] getData()
    {
-      return blockData;
+      return data;
    }
 
    /**
-    * @param blockData the blockData to set
+    * @param data the block data to set
     */
-   public void setBlockData(byte[] blockData)
+   public void setData(byte[] data)
    {
-      this.blockData = blockData;
+      this.data = data;
+   }
+
+   @XmlAttribute(name = "data")
+   String getDataBase64Str()
+   {
+      return DatatypeConverter.printBase64Binary(data).toLowerCase();
+   }
+
+   void setDataBase64Str(String str)
+   {
+      data = DatatypeConverter.parseBase64Binary(str);
    }
 
    /**
-    * @return the blockMask
+    * @return the block mask
     */
-   public byte[] getBlockMask()
+   public byte[] getMask()
    {
-      return blockMask;
+      return mask;
    }
 
    /**
-    * @param blockMask the blockMask to set
+    * @param mask the block mask to set
     */
-   public void setBlockMask(byte[] blockMask)
+   public void setBlockMask(byte[] mask)
    {
-      this.blockMask = blockMask;
+      this.mask = mask;
+   }
+
+   @XmlAttribute(name = "mask")
+   String getMaskStr()
+   {
+      return DatatypeConverter.printBase64Binary(mask).toLowerCase();
+   }
+
+   void setMaskStr(String str)
+   {
+      mask = DatatypeConverter.parseBase64Binary(str);
+   }
+
+   /**
+    * Set the data block paragraphs.
+    *
+    * @param paragraphs - the data block paragraphs.
+    */
+   public void setParagraphs(ArrayListModel<DataBlockParagraph> paragraphs)
+   {
+      this.paragraphs = paragraphs;
+   }
+
+   /**
+    * @return The data block paragraphs.
+    */
+   public ArrayListModel<DataBlockParagraph> getParagraphs()
+   {
+      if (paragraphs == null)
+         paragraphs = new ArrayListModel<DataBlockParagraph>();
+
+      return paragraphs;
    }
 
    /**
@@ -314,9 +376,9 @@ public class VdS19Block
    {
       if (o == this)
          return true;
-      if (!(o instanceof VdS19Block))
+      if (!(o instanceof DataBlock))
          return false;
-      final VdS19Block oo = (VdS19Block) o;
+      final DataBlock oo = (DataBlock) o;
       return id == oo.id;
    }
 

@@ -26,7 +26,6 @@ import org.selfbus.sbtools.prodedit.model.global.FunctionalEntity;
 import org.selfbus.sbtools.prodedit.model.global.Language;
 import org.selfbus.sbtools.prodedit.model.global.Manufacturer;
 import org.selfbus.sbtools.prodedit.model.global.Project;
-import org.selfbus.sbtools.prodedit.model.prodgroup.ApplicationProgram;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
 import org.selfbus.sbtools.prodedit.model.prodgroup.Symbol;
 import org.selfbus.sbtools.prodedit.model.prodgroup.VirtualDevice;
@@ -36,6 +35,7 @@ import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.CommunicationObjec
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.Parameter;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterType;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterValue;
+import org.selfbus.sbtools.prodedit.model.prodgroup.program.ApplicationProgram;
 import org.selfbus.sbtools.vdio.ProductsWriter;
 import org.selfbus.sbtools.vdio.VdioException;
 import org.selfbus.sbtools.vdio.model.VD;

@@ -9,12 +9,13 @@ import javax.swing.tree.TreeCellRenderer;
 
 import org.selfbus.sbtools.common.gui.misc.ImageCache;
 import org.selfbus.sbtools.prodedit.model.enums.ParameterAtomicType;
-import org.selfbus.sbtools.prodedit.model.prodgroup.ApplicationProgram;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.CommunicationObject;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.Parameter;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterCategory;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterRoot;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterType;
+import org.selfbus.sbtools.prodedit.model.prodgroup.program.ApplicationProgram;
+import org.selfbus.sbtools.prodedit.utils.ParamUtils;
 
 public class ParameterTreeCellRenderer implements TreeCellRenderer
 {
@@ -81,8 +82,7 @@ public class ParameterTreeCellRenderer implements TreeCellRenderer
          if (label == null || label.isEmpty())
             label = param.getName();
 
-         label = label.replaceAll("\\\\n", " / ").replaceAll("\\\\r", "").replaceAll("^ / ", "");
-         label += "  [" + param.getId() + ']';
+         label = ParamUtils.fixText(label) + "  [" + param.getId() + ']';
       }
       else if (value instanceof CommunicationObject)
       {

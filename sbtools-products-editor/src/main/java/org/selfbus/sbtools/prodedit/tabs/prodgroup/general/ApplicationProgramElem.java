@@ -5,16 +5,18 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import javax.swing.text.JTextComponent;
 
 import org.selfbus.sbtools.prodedit.ProdEdit;
 import org.selfbus.sbtools.prodedit.binding.IdValueConverter;
+import org.selfbus.sbtools.prodedit.binding.IntegerValueConverter;
 import org.selfbus.sbtools.prodedit.binding.ListValidationHandler;
 import org.selfbus.sbtools.prodedit.internal.I18n;
 import org.selfbus.sbtools.prodedit.model.global.Project;
-import org.selfbus.sbtools.prodedit.model.prodgroup.ApplicationProgram;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
 import org.selfbus.sbtools.prodedit.model.prodgroup.VirtualDevice;
+import org.selfbus.sbtools.prodedit.model.prodgroup.program.ApplicationProgram;
 import org.selfbus.sbtools.prodedit.tabs.internal.CategoryElem;
 import org.selfbus.sbtools.prodedit.utils.FontUtils;
 
@@ -36,6 +38,9 @@ public class ApplicationProgramElem implements CategoryElem
 {
    protected final ProductGroup group;
 
+   private final IntegerValueConverter hexIntValueConverter = new IntegerValueConverter(16);
+   private final IdValueConverter idValueConverter = new IdValueConverter();
+
    private final PresentationModel<ApplicationProgram> detailsModel = new PresentationModel<ApplicationProgram>();
    private final Validator<ApplicationProgram> validator = new DetailsFormValidator();
    private final ListValidationHandler<ApplicationProgram> validationHandler = new ListValidationHandler<ApplicationProgram>(detailsModel, validator);
@@ -43,11 +48,17 @@ public class ApplicationProgramElem implements CategoryElem
    private final JPanel detailsPanel;
    private final JToolBar toolBar = new JToolBar();
 
-   private final ValueModel idValue = new ConverterValueModel(detailsModel.getModel("id"), new IdValueConverter());
+   private final ValueModel idValue = new ConverterValueModel(detailsModel.getModel("id"), idValueConverter);
    private final JLabel idField = BasicComponentFactory.createLabel(idValue);
 
    private final ValueModel nameValue = detailsModel.getModel("name");
    private final JTextComponent nameField = BasicComponentFactory.createTextField(nameValue, false);
+
+   private final ValueModel versionValue = detailsModel.getModel("version");
+   private final JTextComponent versionValueField = BasicComponentFactory.createTextField(versionValue);
+
+   private final ValueModel deviceType = new ConverterValueModel(detailsModel.getModel("deviceType"), hexIntValueConverter);
+   private final JTextComponent deviceTypeField = BasicComponentFactory.createTextField(deviceType);
 
    /**
     * Create a {@link VirtualDevice virtual device} display element.
@@ -58,25 +69,38 @@ public class ApplicationProgramElem implements CategoryElem
    {
       this.group = group;
 
-      FormLayout layout = new FormLayout("6dlu,l:p,4dlu,f:p:g,6dlu", 
-         "8dlu,p,8dlu,p,4dlu,p,p,4dlu,p,4dlu,p,4dlu,p,4dlu,p,4dlu,p,4dlu,p,4dlu,f:p:g,p,4dlu");
+      FormLayout layout = new FormLayout("6dlu, l:p, 4dlu, f:p:g, 6dlu", 
+         "8dlu, p, 6dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, " +
+         "4dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, 4dlu, p, " +
+         "4dlu, " +
+         "f:p:g, p, 4dlu");
+
       PanelBuilder builder = new PanelBuilder(layout);
       CellConstraints cc = new CellConstraints();
-      int row = 2;
 
+      int row = 2;
       builder.addLabel(I18n.getMessage("ApplicationProgramElem.caption"), cc.rcw(row, 2, 3))
          .setFont(FontUtils.getCaptionFont());
+      idField.setHorizontalAlignment(SwingConstants.RIGHT);
+      idField.setOpaque(false);
+      builder.add(idField, cc.rc(row, 4));
 
-      row += 2;
+      row = 4;
       builder.addLabel(I18n.getMessage("ApplicationProgramElem.name"), cc.rc(row, 2));
       builder.add(nameField, cc.rc(row, 4));
 
-      row += 2;
-      builder.addLabel(I18n.getMessage("ApplicationProgramElem.id"), cc.rc(row, 2));
-      builder.add(idField, cc.rc(row, 4));
+      row = 6;
+      builder.addLabel(I18n.getMessage("ApplicationProgramElem.version"), cc.rc(row, 2));
+      builder.add(versionValueField, cc.rc(row, 4));
 
-      builder.add(Box.createVerticalGlue(), cc.rcw(++row, 2, 3));
-      
+      row = 8;
+      builder.addLabel(I18n.getMessage("ApplicationProgramElem.deviceType"), cc.rc(row, 2));
+      builder.add(deviceTypeField, cc.rc(row, 4));
+
+      row = 21;
+      builder.add(Box.createVerticalGlue(), cc.rcw(row, 2, 3));
+
+      row = 23;
       JComponent reportPane = ValidationResultViewFactory.createReportList(validationHandler.getValidationResultModel());
       builder.add(reportPane, cc.rcw(++row, 2, 3));
 

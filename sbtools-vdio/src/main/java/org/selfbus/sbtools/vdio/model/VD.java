@@ -149,6 +149,14 @@ public class VD
    @XmlElement(name = "device_parameter")
    public List<VdDeviceParameter> deviceParameters;
 
+   @XmlElementWrapper(name = "s19_block")
+   @XmlElement(name = "s19_block")
+   public List<VdS19Block> s19Block;
+
+   @XmlElementWrapper(name = "s19_block_paragraph")
+   @XmlElement(name = "s19_block_paragraph")
+   public List<VdS19BlockParagraph> s19BlockParagraph;
+
    private File file;
 
    /**
