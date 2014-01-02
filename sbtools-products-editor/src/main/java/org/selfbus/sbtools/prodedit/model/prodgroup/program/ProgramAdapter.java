@@ -43,9 +43,9 @@ public interface ProgramAdapter
    public ArrayListModel<CommsEntry> getCommsTab();
 
    /**
-    * @return The pointer to the RAM flags table of the communication objects.
+    * @return The address of the communication objects' RAM flags table.
     */
-   public int getRamFlagTabPtr();
+   public int getRamFlagTabAddr();
 
    /**
     * Set the pointer to the RAM flags table of the communication objects. Call {@link #apply()}
@@ -53,7 +53,7 @@ public interface ProgramAdapter
     * 
     * @param ptr - the pointer to set
     */
-   public void setRamFlagTabPtr(int ptr);
+   public void setRamFlagTabAddr(int ptr);
 
    /**
     * @return The association table that connects group addresses and communication objects.

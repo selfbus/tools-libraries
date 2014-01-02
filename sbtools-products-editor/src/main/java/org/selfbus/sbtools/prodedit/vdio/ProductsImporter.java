@@ -905,5 +905,7 @@ public class ProductsImporter extends AbstractProductsExpImp
          paragraph.setDataLong(p.getDataLong());
          paragraph.setDataBinary(p.getDataBinary());
       }
+
+      program.sortDataBlocks();
    }
 }

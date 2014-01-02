@@ -19,9 +19,9 @@ public abstract class AbstractProgramAdapter implements ProgramAdapter
    protected ArrayListModel<AssocEntry> assocTab;
 
    /**
-    * Pointer to the RAM flags table of the communication objects.
+    * The address of the communication objects' RAM flags table.
     */
-   protected int ramFlagTabPtr;
+   protected Integer ramFlagTabAddr;
 
    /**
     * Create an adapter that encapsulates accessing an application program and mask for different
@@ -89,21 +89,21 @@ public abstract class AbstractProgramAdapter implements ProgramAdapter
    protected abstract byte[] getAssocTabData();
 
    @Override
-   public synchronized int getRamFlagTabPtr()
+   public synchronized int getRamFlagTabAddr()
    {
-      if (ramFlagTabPtr < 0)
+      if (commsTab == null)
          getCommsTab();
 
-      return ramFlagTabPtr;
+      return ramFlagTabAddr;
    }
 
    @Override
-   public synchronized void setRamFlagTabPtr(int ptr)
+   public void setRamFlagTabAddr(int addr)
    {
-      if (ramFlagTabPtr < 0)
+      if (ramFlagTabAddr < 0)
          getCommsTab(); // loading the comms-tab overwrites the ramFlagTabPtr
 
-      this.ramFlagTabPtr = ptr;
+      this.ramFlagTabAddr = addr;
    }
 
    @Override
@@ -133,7 +133,7 @@ public abstract class AbstractProgramAdapter implements ProgramAdapter
          commsTab = new ArrayListModel<CommsEntry>(256);
          byte[] data = getCommsTabData();
 
-         ramFlagTabPtr = data[1];
+         ramFlagTabAddr = data[1] & 255;
 
          for (int idx = 2; idx < data.length - 2; idx += 3)
          {
@@ -173,9 +173,9 @@ public abstract class AbstractProgramAdapter implements ProgramAdapter
    @Override
    public synchronized void update()
    {
+      ramFlagTabAddr = null;
       addressTab = null;
       commsTab = null;
       assocTab = null;
-      ramFlagTabPtr = -1;
    }
 }

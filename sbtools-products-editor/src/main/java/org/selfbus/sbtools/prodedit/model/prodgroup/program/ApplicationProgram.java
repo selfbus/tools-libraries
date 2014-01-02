@@ -651,6 +651,30 @@ public class ApplicationProgram extends Model implements Identifiable, Symbolize
    }
 
    /**
+    * Sort the data block by {@link DataBlock#getNumber() block number}.
+    */
+   public void sortDataBlocks()
+   {
+      if (dataBlocks == null)
+         return;
+
+      DataBlock[] arr = new DataBlock[dataBlocks.size()];
+      dataBlocks.toArray(arr);
+      
+      Arrays.sort(arr, new Comparator<DataBlock>()
+      {
+         @Override
+         public int compare(DataBlock a, DataBlock b)
+         {
+            return b.getNumber() - a.getNumber();
+         }
+      });
+
+      dataBlocks.clear();
+      Collections.addAll(dataBlocks, arr);
+   }
+   
+   /**
     * Set the program description.
     * 
     * @param description - the program description to set.

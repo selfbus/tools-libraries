@@ -36,6 +36,9 @@ import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.AbstractParameterN
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.CommunicationObject;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.Parameter;
 import org.selfbus.sbtools.prodedit.model.prodgroup.program.ApplicationProgram;
+import org.selfbus.sbtools.prodedit.model.prodgroup.program.DataBlock;
+import org.selfbus.sbtools.prodedit.model.prodgroup.program.ProgramAdapter;
+import org.selfbus.sbtools.prodedit.model.prodgroup.program.ProgramAdapterFactory;
 import org.selfbus.sbtools.prodedit.renderer.ParameterMemoryListCellRenderer;
 import org.selfbus.sbtools.prodedit.tabs.internal.AbstractCategoryElem;
 import org.selfbus.sbtools.prodedit.tabs.internal.ObjectActivatedListener;
@@ -242,6 +245,7 @@ public class MemoryElem extends AbstractCategoryElem
    {
       this.device = device;
       updateContents();
+      tableModel.unsetModified();
    }
 
    /**
@@ -286,6 +290,7 @@ public class MemoryElem extends AbstractCategoryElem
 
       ApplicationProgram program = group.getProgram(device);
       Mask mask = project.getMask(program.getMaskVersion());
+      ProgramAdapter adapter = ProgramAdapterFactory.getProgramAdapter(program, mask);
 
       int maxAddr = Math.max(mask.getUserRamEnd(), mask.getUserEepromEnd());
       tableModel.setSize((maxAddr + 15) & ~15);
@@ -293,10 +298,10 @@ public class MemoryElem extends AbstractCategoryElem
       int start;
 
       start = mask.getUserRamStart();
-      createRange(start, mask.getUserRamEnd() - start, I18n.getMessage("MemoryElem.userRam"));
+      createRange(start, mask.getUserRamEnd() - start + 1, I18n.getMessage("MemoryElem.userRam"));
 
       start = mask.getUserEepromStart();
-      createRange(start, mask.getUserEepromEnd() - start, I18n.getMessage("MemoryElem.userEeprom"));
+      createRange(start, mask.getUserEepromEnd() - start + 1, I18n.getMessage("MemoryElem.userEeprom"));
 
       start = program.getAssocTabAddr();
       createRange(start, program.getAssocTabSize(), I18n.getMessage("MemoryElem.assocTab"));
@@ -307,11 +312,48 @@ public class MemoryElem extends AbstractCategoryElem
       start = mask.getAddressTabAddr();
       createRange(start, program.getAddrTabSize(), I18n.getMessage("MemoryElem.addrTab"));
 
+      start = adapter.getRamFlagTabAddr();
+      createRange(start, adapter.getCommsTab().size() >> 1, I18n.getMessage("MemoryElem.ramFlagsTab"));
+
       updateMemoryCellRanges();
+      setMemoryCellValues(program, mask);
       addParameterRanges();
 
       sortParamList();
       updateCellDetails();
+   }
+
+   /**
+    * Set the memory cell values.
+    */
+   protected void setMemoryCellValues(ApplicationProgram program, Mask mask)
+   {
+      setMemoryCellValues(mask.getUserEepromStart(), mask.getData()); 
+      setMemoryCellValues(mask.getUserEepromStart(), program.getEepromData()); 
+
+      for (DataBlock block : program.getDataBlocks())
+      {
+         setMemoryCellValues(block.getSegmentAddr(), block.getData());
+      }
+   }
+
+   /**
+    * Set the memory cell values.
+    * 
+    * @param addr - the start address of the data
+    * @param data - the data bytes
+    */
+   protected void setMemoryCellValues(Integer addr, byte[] data)
+   {
+      if (addr == null || data == null)
+         return;
+
+      int count = data.length;
+      if (addr + count >= tableModel.getStartAddr() + tableModel.getSize())
+         count = tableModel.getSize() - (addr - tableModel.getStartAddr());
+
+      for (int idx = 0; idx < count; ++idx)
+         tableModel.getValueAt(addr + idx).setValue(data[idx] & 255);
    }
 
    /**
@@ -463,25 +505,30 @@ public class MemoryElem extends AbstractCategoryElem
     */
    public MemoryRange createRange(int start, int size, String name)
    {
-      final int idx = ranges.size();
+      int idx = ranges.size();
 
-      int r = (idx & 1) | ((idx & 8) >> 2) | (idx & 64) >> 4;
-      int g = ((idx & 2) >> 1) | ((idx & 16) >> 3) | (idx & 128) >> 5;
-      int b = ((idx & 4) >> 2) | ((idx & 32) >> 4) | (idx & 256) >> 6;
+      // avoid light grey
+      if (idx >= 7)
+         ++idx;
 
-      r = (int) (backgroundColor.getRed() * 0.8f) + (r << 6) - 32;
+      int r = (idx & 1) | ((idx & 8) >> 2) | ((idx & 64) >> 4);
+      int g = ((idx & 2) >> 1) | ((idx & 16) >> 3) | ((idx & 128) >> 5);
+      int b = ((idx & 4) >> 2) | ((idx & 32) >> 4) | ((idx & 256) >> 6);
+      int offs = -36;
+
+      r = (int) (backgroundColor.getRed() * 0.8f) + (r << 6) + offs;
       if (r > 255)
          r -= 255;
       else if (r < 0)
          r = 0;
 
-      g = (int) (backgroundColor.getGreen() * 0.8f) + (g << 6) - 32;
+      g = (int) (backgroundColor.getGreen() * 0.8f) + (g << 6) + offs;
       if (g > 255)
          g = 255;
       else if (g < 0)
          g = 0;
 
-      b = (int) (backgroundColor.getBlue() * 0.8f) + (b << 6) - 32;
+      b = (int) (backgroundColor.getBlue() * 0.8f) + (b << 6) + offs;
       if (b > 255)
          b = 255;
       else if (r < 0)
