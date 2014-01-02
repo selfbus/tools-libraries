@@ -3,7 +3,7 @@ setlocal
 
 cd libs
 set CLASSPATH=%CLASSPATH%;.
-java -jar sbtools-products-editor-0.2-SNAPSHOT.jar org.selfbus.sbtools.prodedit.ProdTool
+java -jar sbtools-products-editor-0.2-SNAPSHOT.jar org.selfbus.sbtools.prodedit.ProdEdit
 
 if %ERRORLEVEL% neq 0 (
    echo.
