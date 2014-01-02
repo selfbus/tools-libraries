@@ -79,12 +79,10 @@
   </dependencies>
  </dependencyManagement>
  <distributionManagement>
-  <repository>
-   <uniqueVersion>false</uniqueVersion>
-   <id>stefant-webspace</id>
-   <name>Stefan's Webspace</name>
-   <url>ftp://stefan.members.xpirio.at/htdocs/fts</url>
-  </repository>
+  <repository>            
+   <id>dropbox</id>                        
+   <url>file://${user.home}/Dropbox/Public/mvn-repository</url>                      
+  </repository>           
  </distributionManagement>
  <dependencies>
   <dependency>
