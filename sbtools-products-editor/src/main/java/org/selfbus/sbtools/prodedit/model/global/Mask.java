@@ -34,29 +34,29 @@ public class Mask
    @XmlAttribute(name = "user_eeprom_end", required = true)
    private int userEepromEnd;
 
-   @XmlAttribute(name = "run_error_address", required = true)
-   private int runErrorAddress;
+   @XmlAttribute(name = "run_error_addr", required = true)
+   private int runErrorAddr;
 
-   @XmlAttribute(name = "address_tab_address", required = true)
-   private int addressTabAddress;
+   @XmlAttribute(name = "address_tab_addr", required = true)
+   private int addressTabAddr;
 
-   @XmlAttribute(name = "assoctabptr_address", required = true)
-   private int assocTabPtrAddress;
+   @XmlAttribute(name = "assoctabptr_addr", required = true)
+   private int assocTabPtrAddr;
 
-   @XmlAttribute(name = "commstabptr_address", required = true)
-   private int commsTabPtrAddress;
+   @XmlAttribute(name = "commstabptr_addr", required = true)
+   private int commsTabPtrAddr;
 
-   @XmlAttribute(name = "manufacturer_data_address", required = true)
-   private int manufacturerDataAddress;
+   @XmlAttribute(name = "manufacturer_data_addr", required = true)
+   private int manufacturerDataAddr;
 
    @XmlAttribute(name = "manufacturer_data_size", required = true)
    private int manufacturerDataSize;
 
-   @XmlAttribute(name = "manufacturer_id_address", required = true)
-   private int manufacturerIdAddress;
+   @XmlAttribute(name = "manufacturer_id_addr", required = true)
+   private int manufacturerIdAddr;
 
-   @XmlAttribute(name = "routecnt_address", required = true)
-   private int routeCountAddress;
+   @XmlAttribute(name = "routecnt_addr", required = true)
+   private int routeCountAddr;
 
    // @XmlAttribute(name = "data")
    private byte[] data;
@@ -73,11 +73,11 @@ public class Mask
    @XmlAttribute(name = "pei_program_lcs")
    private Integer peiProgramLCS;
 
-   @XmlAttribute(name = "load_control_address")
-   private Integer loadControlAddress;
+   @XmlAttribute(name = "load_control_addr")
+   private Integer loadControlAddr;
 
-   @XmlAttribute(name = "run_control_address")
-   private Integer runControlAddress;
+   @XmlAttribute(name = "run_control_addr")
+   private Integer runControlAddr;
 
    @XmlAttribute(name = "external_memory_start")
    private Integer externalMemoryStart;
@@ -127,19 +127,19 @@ public class Mask
       userRamEnd = nullsafeToInteger(props.getProperty("user_ram_end"));
       userEepromStart = nullsafeToInteger(props.getProperty("user_eeprom_start"));
       userEepromEnd = nullsafeToInteger(props.getProperty("user_eeprom_end"));
-      runErrorAddress = nullsafeToInteger(props.getProperty("run_error_address"));
-      addressTabAddress = nullsafeToInteger(props.getProperty("address_tab_address"));
-      assocTabPtrAddress = nullsafeToInteger(props.getProperty("assoctabptr_address"));
-      commsTabPtrAddress = nullsafeToInteger(props.getProperty("commstabptr_address"));
-      manufacturerDataAddress = nullsafeToInteger(props.getProperty("manufacturer_data_address"));
+      runErrorAddr = nullsafeToInteger(props.getProperty("run_error_address"));
+      addressTabAddr = nullsafeToInteger(props.getProperty("address_tab_address"));
+      assocTabPtrAddr = nullsafeToInteger(props.getProperty("assoctabptr_address"));
+      commsTabPtrAddr = nullsafeToInteger(props.getProperty("commstabptr_address"));
+      manufacturerDataAddr = nullsafeToInteger(props.getProperty("manufacturer_data_address"));
       manufacturerDataSize = nullsafeToInteger(props.getProperty("manufacturer_data_size"));
-      manufacturerIdAddress = nullsafeToInteger(props.getProperty("manufacturer_id_address"));
-      routeCountAddress = nullsafeToInteger(props.getProperty("routecnt_address"));
+      manufacturerIdAddr = nullsafeToInteger(props.getProperty("manufacturer_id_address"));
+      routeCountAddr = nullsafeToInteger(props.getProperty("routecnt_address"));
       addressTabLCS = nullsafeToInteger(props.getProperty("address_tab_lcs"));
       applicationProgramLCS = nullsafeToInteger(props.getProperty("application_program_lcs"));
       peiProgramLCS = nullsafeToInteger(props.getProperty("pei_program_lcs"));
-      loadControlAddress = nullsafeToInteger(props.getProperty("load_control_address"));
-      runControlAddress = nullsafeToInteger(props.getProperty("run_control_address"));
+      loadControlAddr = nullsafeToInteger(props.getProperty("load_control_address"));
+      runControlAddr = nullsafeToInteger(props.getProperty("run_control_address"));
       externalMemoryStart = nullsafeToInteger(props.getProperty("external_memory_start"));
       externalMemoryEnd = nullsafeToInteger(props.getProperty("external_memory_end"));
       applicationProgramRCS = nullsafeToInteger(props.getProperty("application_program_rcs"));
@@ -266,81 +266,81 @@ public class Mask
    /**
     * @return the runErrorAddress
     */
-   public int getRunErrorAddress()
+   public int getRunErrorAddr()
    {
-      return runErrorAddress;
+      return runErrorAddr;
    }
 
    /**
     * @param runErrorAddress the runErrorAddress to set
     */
-   public void setRunErrorAddress(int runErrorAddress)
+   public void setRunErrorAddr(int runErrorAddress)
    {
-      this.runErrorAddress = runErrorAddress;
+      this.runErrorAddr = runErrorAddress;
    }
 
    /**
     * @return the addressTabAddress
     */
-   public int getAddressTabAddress()
+   public int getAddressTabAddr()
    {
-      return addressTabAddress;
+      return addressTabAddr;
    }
 
    /**
-    * @param addressTabAddress the addressTabAddress to set
+    * @param addressTabAddr the addressTabAddress to set
     */
-   public void setAddressTabAddress(int addressTabAddress)
+   public void setAddressTabAddr(int addressTabAddr)
    {
-      this.addressTabAddress = addressTabAddress;
+      this.addressTabAddr = addressTabAddr;
    }
 
    /**
     * @return the assocTabPtrAddress
     */
-   public int getAssocTabPtrAddress()
+   public int getAssocTabPtrAddr()
    {
-      return assocTabPtrAddress;
+      return assocTabPtrAddr;
    }
 
    /**
-    * @param assocTabPtrAddress the assocTabPtrAddress to set
+    * @param assocTabPtrAddr the assocTabPtrAddress to set
     */
-   public void setAssocTabPtrAddress(int assocTabPtrAddress)
+   public void setAssocTabPtrAddr(int assocTabPtrAddr)
    {
-      this.assocTabPtrAddress = assocTabPtrAddress;
+      this.assocTabPtrAddr = assocTabPtrAddr;
    }
 
    /**
     * @return the commsTabPtrAddress
     */
-   public int getCommsTabPtrAddress()
+   public int getCommsTabPtrAddr()
    {
-      return commsTabPtrAddress;
+      return commsTabPtrAddr;
    }
 
    /**
-    * @param commsTabPtrAddress the commsTabPtrAddress to set
+    * @param commsTabPtrAddr the commsTabPtrAddress to set
     */
-   public void setCommsTabPtrAddress(int commsTabPtrAddress)
+   public void setCommsTabPtrAddr(int commsTabPtrAddr)
    {
-      this.commsTabPtrAddress = commsTabPtrAddress;
+      this.commsTabPtrAddr = commsTabPtrAddr;
    }
 
    /**
     * @return the manufacturerDataAddress
     */
-   public int getManufacturerDataAddress()
+   public int getManufacturerDataAddr()
    {
-      return manufacturerDataAddress;
+      return manufacturerDataAddr;
    }
 
    /**
-    * @param manufacturerDataAddress the manufacturerDataAddress to set
+    * @param manufacturerDataAddr the manufacturerDataAddress to set
     */
-   public void setManufacturerDataAddress(int manufacturerDataAddress)
+   public void setManufacturerDataAddr(int manufacturerDataAddr)
    {
-      this.manufacturerDataAddress = manufacturerDataAddress;
+      this.manufacturerDataAddr = manufacturerDataAddr;
    }
 
    /**
@@ -362,33 +362,33 @@ public class Mask
    /**
     * @return the manufacturerIdAddress
     */
-   public int getManufacturerIdAddress()
+   public int getManufacturerIdAddr()
    {
-      return manufacturerIdAddress;
+      return manufacturerIdAddr;
    }
 
    /**
-    * @param manufacturerIdAddress the manufacturerIdAddress to set
+    * @param manufacturerIdAddr the manufacturerIdAddress to set
     */
-   public void setManufacturerIdAddress(int manufacturerIdAddress)
+   public void setManufacturerIdAddr(int manufacturerIdAddr)
    {
-      this.manufacturerIdAddress = manufacturerIdAddress;
+      this.manufacturerIdAddr = manufacturerIdAddr;
    }
 
    /**
     * @return the routeCountAddress
     */
-   public int getRouteCountAddress()
+   public int getRouteCountAddr()
    {
-      return routeCountAddress;
+      return routeCountAddr;
    }
 
    /**
-    * @param routeCountAddress the routeCountAddress to set
+    * @param routeCountAddr the routeCountAddress to set
     */
-   public void setRouteCountAddress(int routeCountAddress)
+   public void setRouteCountAddr(int routeCountAddr)
    {
-      this.routeCountAddress = routeCountAddress;
+      this.routeCountAddr = routeCountAddr;
    }
 
    /**
@@ -485,33 +485,33 @@ public class Mask
    /**
     * @return the loadControlAddress
     */
-   public Integer getLoadControlAddress()
+   public Integer getLoadControlAddr()
    {
-      return loadControlAddress;
+      return loadControlAddr;
    }
 
    /**
-    * @param loadControlAddress the loadControlAddress to set
+    * @param loadControlAddr the loadControlAddress to set
     */
-   public void setLoadControlAddress(Integer loadControlAddress)
+   public void setLoadControlAddr(Integer loadControlAddr)
    {
-      this.loadControlAddress = loadControlAddress;
+      this.loadControlAddr = loadControlAddr;
    }
 
    /**
     * @return the runControlAddress
     */
-   public Integer getRunControlAddress()
+   public Integer getRunControlAddr()
    {
-      return runControlAddress;
+      return runControlAddr;
    }
 
    /**
-    * @param runControlAddress the runControlAddress to set
+    * @param runControlAddr the runControlAddress to set
     */
-   public void setRunControlAddress(Integer runControlAddress)
+   public void setRunControlAddress(Integer runControlAddr)
    {
-      this.runControlAddress = runControlAddress;
+      this.runControlAddr = runControlAddr;
    }
 
    /**
@@ -631,7 +631,7 @@ public class Mask
    /**
     * @return The BCU type ID
     */
-   public int getBcuTypeId()
+   public Integer getBcuTypeId()
    {
       return bcuTypeId;
    }
@@ -641,7 +641,7 @@ public class Mask
     *
     * @param bcuTypeId - the BCU type ID to set
     */
-   public void setBcuType(int bcuTypeId)
+   public void setBcuType(Integer bcuTypeId)
    {
       this.bcuTypeId = bcuTypeId;
    }

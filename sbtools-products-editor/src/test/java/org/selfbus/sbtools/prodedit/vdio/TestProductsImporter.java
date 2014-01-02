@@ -38,7 +38,7 @@ public class TestProductsImporter
       assertNotNull(project.getManufacturer(61));
    }
 
-   //@Test
+   @Test
    public void readBcu2() throws FileNotFoundException, VdioException
    {
       ProductsImporter importer = new ProductsImporter(new ProjectService());

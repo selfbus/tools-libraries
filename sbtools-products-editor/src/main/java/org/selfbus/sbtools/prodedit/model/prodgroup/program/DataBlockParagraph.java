@@ -1,4 +1,4 @@
-package org.selfbus.sbtools.prodedit.model.prodgroup;
+package org.selfbus.sbtools.prodedit.model.prodgroup.program;
 
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.bind.annotation.XmlAccessType;

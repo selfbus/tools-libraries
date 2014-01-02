@@ -18,6 +18,6 @@ public class TestMask
       Mask mask = new Mask(0x20, props);
       
       assertEquals(0x20, mask.getVersion());
-      assertEquals(278, mask.getAddressTabAddress());
+      assertEquals(278, mask.getAddressTabAddr());
    }
 }

@@ -19,7 +19,6 @@ import org.selfbus.sbtools.prodedit.model.common.MultiLingualText;
 import org.selfbus.sbtools.prodedit.model.enums.ParameterAtomicType;
 import org.selfbus.sbtools.prodedit.model.interfaces.Identifiable;
 import org.selfbus.sbtools.prodedit.model.interfaces.Symbolized;
-import org.selfbus.sbtools.prodedit.model.prodgroup.DataBlock;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.AbstractParameterContainer;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.AbstractParameterNode;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.CommunicationObject;

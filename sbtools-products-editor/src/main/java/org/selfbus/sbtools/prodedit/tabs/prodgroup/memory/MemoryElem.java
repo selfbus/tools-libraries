@@ -40,7 +40,6 @@ import org.selfbus.sbtools.prodedit.renderer.ParameterMemoryListCellRenderer;
 import org.selfbus.sbtools.prodedit.tabs.internal.AbstractCategoryElem;
 import org.selfbus.sbtools.prodedit.tabs.internal.ObjectActivatedListener;
 import org.selfbus.sbtools.prodedit.utils.FontUtils;
-import org.selfbus.sbtools.prodedit.utils.ParamUtils;
 
 /**
  * An element that displays the memory layout of a device.
@@ -305,7 +304,7 @@ public class MemoryElem extends AbstractCategoryElem
       start = program.getCommsTabAddr();
       createRange(start, program.getCommsTabSize(), I18n.getMessage("MemoryElem.commsTab"));
 
-      start = program.getEepromData()[mask.getAddressTabAddress() - mask.getUserEepromStart()] + mask.getUserEepromStart();
+      start = mask.getAddressTabAddr();
       createRange(start, program.getAddrTabSize(), I18n.getMessage("MemoryElem.addrTab"));
 
       updateMemoryCellRanges();

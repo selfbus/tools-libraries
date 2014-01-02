@@ -59,7 +59,7 @@ public class VdMask
    @XmlAttribute(name = "manufacturer_id_protected", required = true)
    private int manufacturerIdProtected;
 
-   private byte[] maskEepromData;
+   private byte[] data;
 
    @XmlAttribute(name = "mask_version_name")
    private String maskVersionName;
@@ -366,30 +366,32 @@ public class VdMask
    }
 
    /**
-    * @return the maskEepromData
+    * @return the mask EEPROM data
     */
-   public byte[] getEepromData()
+   public byte[] getData()
    {
-      return maskEepromData;
+      return data;
    }
 
    /**
-    * @param maskEepromData the maskEepromData to set
+    * Set the mask EEPROM data.
+    *
+    * @param data the data to set
     */
-   public void setEepromData(byte[] maskEepromData)
+   public void setData(byte[] data)
    {
-      this.maskEepromData = maskEepromData;
+      this.data = data;
    }
 
    @XmlAttribute(name = "mask_eeprom_data")
-   String getMaskEepromDataStr()
+   String getDataStr()
    {
-      return DatatypeConverter.printHexBinary(maskEepromData).toLowerCase();
+      return DatatypeConverter.printHexBinary(data).toLowerCase();
    }
 
-   void setMaskEepromDataStr(String str)
+   void setDataStr(String str)
    {
-      maskEepromData = DatatypeConverter.parseHexBinary(str);
+      data = DatatypeConverter.parseHexBinary(str);
    }
 
    /**
@@ -621,7 +623,7 @@ public class VdMask
    /**
     * @return The BCU type ID
     */
-   public int getBcuTypeId()
+   public Integer getBcuTypeId()
    {
       return bcuTypeId;
    }
@@ -631,7 +633,7 @@ public class VdMask
     *
     * @param bcuTypeId - the BCU type ID to set
     */
-   public void setBcuType(int bcuTypeId)
+   public void setBcuType(Integer bcuTypeId)
    {
       this.bcuTypeId = bcuTypeId;
    }

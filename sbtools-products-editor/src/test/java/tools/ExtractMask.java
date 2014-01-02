@@ -94,8 +94,8 @@ public class ExtractMask
       putProp(props, "routecnt_address", m.getRouteCountAddress());
       putProp(props, "manufacturer_id_protected", m.isManufacturerIdProtected());
       putProp(props, "mask_version_name", m.getMaskVersionName());
-      putProp(props, "mask_eeprom_data", m.getEepromData() == null ? "" : DatatypeConverter.printHexBinary(m.getEepromData()));
-      putProp(props, "mask_data_length", m.getEepromData() == null ? 0 : m.getEepromData().length);
+      putProp(props, "mask_eeprom_data", m.getData() == null ? "" : DatatypeConverter.printHexBinary(m.getData()));
+      putProp(props, "mask_data_length", m.getData() == null ? 0 : m.getData().length);
       putProp(props, "address_tab_lcs", m.getAddressTabLCS());
       putProp(props, "assoc_tab_lcs", m.getAssocTabLCS());
       putProp(props, "application_program_lcs", m.getApplicationProgramLCS());

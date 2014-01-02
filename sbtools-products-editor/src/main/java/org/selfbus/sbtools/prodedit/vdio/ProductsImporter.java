@@ -21,9 +21,8 @@ import org.selfbus.sbtools.prodedit.model.enums.ParameterAtomicType;
 import org.selfbus.sbtools.prodedit.model.global.FunctionalEntity;
 import org.selfbus.sbtools.prodedit.model.global.Language;
 import org.selfbus.sbtools.prodedit.model.global.Manufacturer;
+import org.selfbus.sbtools.prodedit.model.global.Mask;
 import org.selfbus.sbtools.prodedit.model.global.Project;
-import org.selfbus.sbtools.prodedit.model.prodgroup.DataBlock;
-import org.selfbus.sbtools.prodedit.model.prodgroup.DataBlockParagraph;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
 import org.selfbus.sbtools.prodedit.model.prodgroup.Symbol;
 import org.selfbus.sbtools.prodedit.model.prodgroup.VirtualDevice;
@@ -35,6 +34,11 @@ import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterCategory;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterType;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterValue;
 import org.selfbus.sbtools.prodedit.model.prodgroup.program.ApplicationProgram;
+import org.selfbus.sbtools.prodedit.model.prodgroup.program.CommsEntry;
+import org.selfbus.sbtools.prodedit.model.prodgroup.program.DataBlock;
+import org.selfbus.sbtools.prodedit.model.prodgroup.program.DataBlockParagraph;
+import org.selfbus.sbtools.prodedit.model.prodgroup.program.ProgramAdapter;
+import org.selfbus.sbtools.prodedit.model.prodgroup.program.ProgramAdapterFactory;
 import org.selfbus.sbtools.vdio.ProductsReader;
 import org.selfbus.sbtools.vdio.VdioException;
 import org.selfbus.sbtools.vdio.model.VD;
@@ -81,8 +85,11 @@ public class ProductsImporter extends AbstractProductsExpImp
    // Application programs map, one per group
    private final Map<ProductGroup, Map<Integer, ApplicationProgram>> groupPrograms = new HashMap<ProductGroup, Map<Integer, ApplicationProgram>>();
 
+   // Map external mask ID to mask
+   private final Map<Integer, Mask> masks = new HashMap<Integer, Mask>();
+
    // Map application program to mask.
-   private final Map<ApplicationProgram, VdMask> programMasks = new HashMap<ApplicationProgram, VdMask>();
+   private final Map<ApplicationProgram, Mask> programMasks = new HashMap<ApplicationProgram, Mask>();
 
    // Map parameter types from external ID to internal parameter type.
    private final Map<Integer, ParameterType> paramTypes = new HashMap<Integer, ParameterType>();
@@ -186,6 +193,7 @@ public class ProductsImporter extends AbstractProductsExpImp
       paramTypes.clear();
       symbolIds.clear();
       programMasks.clear();
+      masks.clear();
 
       project = new Project();
       project.setProjectService(projectService);
@@ -387,6 +395,55 @@ public class ProductsImporter extends AbstractProductsExpImp
          importVirtualDevice(d);
       }
    }
+
+   /**
+    * Get the mask for an application program. The mask is imported
+    * if required.
+    * 
+    * @param vdMaskId - the VD mask-ID of the mask to get
+    * @return The mask.
+    */
+   protected Mask getMask(int vdMaskId)
+   {
+      Mask mask = masks.get(vdMaskId);
+      if (mask == null)
+      {
+         VdMask m = vd.findMask(vdMaskId);
+         mask = new Mask();
+         mask.setAddressTabAddr(m.getAddressTabAddress());
+         mask.setAddressTabLCS(m.getAddressTabLCS());
+         mask.setApplicationProgramLCS(m.getApplicationProgramLCS());
+         mask.setApplicationProgramRCS(m.getApplicationProgramRCS());
+         mask.setAssocTabLCS(m.getAssocTabLCS());
+         mask.setAssocTabPtrAddr(m.getAssocTabPtrAddress());
+         mask.setBcuType(m.getBcuTypeId());
+         mask.setCommsTabPtrAddr(m.getCommsTabPtrAddress());
+         mask.setData(m.getData());
+         mask.setExternalMemoryEnd(m.getExternalMemoryEnd());
+         mask.setExternalMemoryStart(m.getExternalMemoryStart());
+         mask.setLoadControlAddr(m.getLoadControlAddress());
+         mask.setManufacturerDataAddr(m.getManufacturerDataAddress());
+         mask.setManufacturerDataSize(m.getManufacturerDataSize());
+         mask.setManufacturerIdAddr(m.getManufacturerIdAddress());
+         mask.setMediumTypeNumber(m.getMediumTypeNumber());
+         mask.setMediumTypeNumber2(m.getMediumTypeNumber2());
+         mask.setPeiProgramLCS(m.getPeiProgramLCS());
+         mask.setPeiProgramRCS(m.getPeiProgramRCS());
+         mask.setPortADdr(m.getPortADdr());
+         mask.setRouteCountAddr(m.getRouteCountAddress());
+         mask.setRunControlAddress(m.getRunControlAddress());
+         mask.setRunErrorAddr(m.getRunErrorAddress());
+         mask.setUserEepromEnd(m.getUserEepromEnd());
+         mask.setUserEepromStart(m.getUserEepromStart());
+         mask.setUserRamEnd(m.getUserRamEnd());
+         mask.setUserRamStart(m.getUserRamStart());
+         mask.setVersion(m.getVersion());
+
+         masks.put(vdMaskId, mask);
+      }
+
+      return mask;
+   }
    
    /**
     * Import a virtual device to the current product group.
@@ -405,7 +462,7 @@ public class ProductsImporter extends AbstractProductsExpImp
          program = group.createProgram(p.getName());
          programs.put(d.getProgramId(), program);
 
-         VdMask mask = vd.findMask(p.getMaskId());
+         Mask mask = getMask(p.getMaskId());
          programMasks.put(program, mask);
 
          program.setMaskVersion(mask.getVersion());
@@ -421,10 +478,10 @@ public class ProductsImporter extends AbstractProductsExpImp
          program.setSymbolId(getSymbolId(p.getSymbolId()));
 
          importProgramDescription(program, vdProgramId);
+         importDataBlocks(program, vdProgramId);
          importParameterTypes(program, vdProgramId);
          importParameters(program, vdProgramId);
          importComObjects(program, vdProgramId);
-         importDataBlocks(program, vdProgramId);
       }
 
       VirtualDevice device = group.createDevice(program);
@@ -713,39 +770,39 @@ public class ProductsImporter extends AbstractProductsExpImp
       return null;
    }
 
-   /**
-    * Get the address of a com-object.
-    * 
-    * @param objno - the number of the com-object.
-    * @param program - the program that owns the com-object.
-    * @param mask - the mask
-    *
-    * @return The address of the com-object.
-    */
-   protected int getComObjectAddress(int objno, ApplicationProgram program, VdMask mask)
-   {
-      byte[] eeprom = program.getEepromData();
-      if (eeprom == null)
-      {
-         eeprom = mask.getEepromData();
-      }
-
-      int commsTabPtr = program.getCommsTabAddr() - 256;
-
-      int numObjs = eeprom[commsTabPtr] & 255;
-      if (objno >= numObjs)
-      {
-         LOGGER.error("Invalid com-object #{} (have {} objects)", objno, numObjs);
-         return 0;
-      }
-      int comObjPtr = commsTabPtr + 2 + objno * 3;
-
-      int dataPtr = eeprom[comObjPtr] & 255;
-      if ((eeprom[comObjPtr + 1] & 0x20) != 0)
-         dataPtr += 0x100;
-
-      return dataPtr;
-   }
+//   /**
+//    * Get the address of a com-object.
+//    * 
+//    * @param objno - the number of the com-object.
+//    * @param program - the program that owns the com-object.
+//    * @param mask - the mask
+//    *
+//    * @return The address of the com-object.
+//    */
+//   protected int getComObjectAddress(int objno, ApplicationProgram program, VdMask mask)
+//   {
+//      byte[] eeprom = program.getEepromData();
+//      if (eeprom == null)
+//      {
+//         eeprom = mask.getData();
+//      }
+//
+//      int commsTabPtr = program.getCommsTabAddr() - 256;
+//
+//      int numObjs = eeprom[commsTabPtr] & 255;
+//      if (objno >= numObjs)
+//      {
+//         LOGGER.error("Invalid com-object #{} (have {} objects)", objno, numObjs);
+//         return 0;
+//      }
+//      int comObjPtr = commsTabPtr + 2 + objno * 3;
+//
+//      int dataPtr = eeprom[comObjPtr] & 255;
+//      if ((eeprom[comObjPtr + 1] & 0x20) != 0)
+//         dataPtr += 0x100;
+//
+//      return dataPtr;
+//   }
 
    /**
     * Import the communication objects of an application program.
@@ -755,7 +812,9 @@ public class ProductsImporter extends AbstractProductsExpImp
     */
    protected void importComObjects(ApplicationProgram program, int vdProgramId)
    {
-      VdMask mask = programMasks.get(program);
+      Mask mask = programMasks.get(program);
+      ProgramAdapter programAdapter = ProgramAdapterFactory.getProgramAdapter(program, mask);
+      ArrayListModel<CommsEntry> commsTab = programAdapter.getCommsTab();
 
       for (VdCommunicationObject o : sortedComObjects())
       {
@@ -771,6 +830,16 @@ public class ProductsImporter extends AbstractProductsExpImp
             parentId = parent.getId();
          }
 
+         CommsEntry commsEntry;
+         if (o.getNumber() < commsTab.size())
+            commsEntry = commsTab.get(o.getNumber());
+         else
+         {
+            LOGGER.error("Com-object #{0} of program {1} does not exist in the program's comms table",
+               o.getNumber(), program.getName());
+            commsEntry = new CommsEntry();
+         }
+
          CommunicationObject comObject = program.createCommunicationObject(parent);
          comObject.setName(getText(o.getId(), TextColumn.COM_OBJECT_NAME, o.getName()));
          comObject.setFunction(getText(o.getId(), TextColumn.COM_OBJECT_FUNCTION, o.getFunction()));
@@ -778,7 +847,7 @@ public class ProductsImporter extends AbstractProductsExpImp
          comObject.setType(ObjectType.valueOf(o.getTypeId()));
          comObject.setNumber(o.getNumber());
          comObject.setOrder(o.getOrder());
-         comObject.setAddress(getComObjectAddress(o.getNumber(), program, mask));
+         comObject.setAddress(commsEntry.valuePtr);
          comObject.setParentId(parentId);
          comObject.setParentValue(o.getParentParameterValue());
          comObject.setCommEnabled(o.isCommEnabled());
@@ -814,7 +883,7 @@ public class ProductsImporter extends AbstractProductsExpImp
          block.setControlCode(b.getControlCode());
          block.setSegmentType(b.getSegmentType());
          block.setSegmentId(b.getSegmentId());
-         block.setSegmentAddress(b.getSegmentAddress());
+         block.setSegmentAddr(b.getSegmentAddress());
          block.setSegmentLength(b.getSegmentLength());
          block.setAccessAttributes(b.getAccessAttributes());
          block.setMemoryType(b.getMemoryType());

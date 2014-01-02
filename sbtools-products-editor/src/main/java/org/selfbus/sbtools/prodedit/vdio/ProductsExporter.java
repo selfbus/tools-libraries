@@ -469,7 +469,7 @@ public class ProductsExporter extends AbstractProductsExpImp
       m.setRouteCountAddress(getIntValue(mask, "routecnt_address"));
       m.setManufacturerIdProtected("true".equalsIgnoreCase(mask.getProperty("manufacturer_id_protected")));
       m.setMaskVersionName(mask.getProperty("mask_version_name"));
-      m.setEepromData(DatatypeConverter.parseHexBinary(mask.getProperty("mask_eeprom_data")));
+      m.setData(DatatypeConverter.parseHexBinary(mask.getProperty("mask_eeprom_data")));
       //getIntValue(mask, "mask_data_length");
       m.setAddressTabLCS(getIntValue(mask, "address_tab_lcs"));
       m.setAssocTabLCS(getIntValue(mask, "assoc_tab_lcs"));

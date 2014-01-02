@@ -41,6 +41,8 @@ public final class ParamUtils
     */
    public static String fixText(String text)
    {
+      if (text == null)
+         return "";
       return text.replaceAll("\\\\n", " / ").replaceAll("\\\\r", "").replaceAll("^ / ", "");
    }
 

@@ -1,4 +1,4 @@
-package org.selfbus.sbtools.prodedit.model.prodgroup;
+package org.selfbus.sbtools.prodedit.model.prodgroup.program;
 
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -207,7 +207,7 @@ public class DataBlock extends Model implements Identifiable
    /**
     * @return the segmentAddress
     */
-   public Integer getSegmentAddress()
+   public Integer getSegmentAddr()
    {
       return segmentAddress;
    }
@@ -215,7 +215,7 @@ public class DataBlock extends Model implements Identifiable
    /**
     * @param segmentAddress the segmentAddress to set
     */
-   public void setSegmentAddress(Integer segmentAddress)
+   public void setSegmentAddr(Integer segmentAddress)
    {
       this.segmentAddress = segmentAddress;
    }
