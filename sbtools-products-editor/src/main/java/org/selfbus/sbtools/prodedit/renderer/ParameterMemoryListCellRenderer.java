@@ -9,6 +9,7 @@ import javax.swing.ListCellRenderer;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.AbstractParameterNode;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.CommunicationObject;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.Parameter;
+import org.selfbus.sbtools.prodedit.utils.ParamUtils;
 
 /**
  * A list cell renderer proxy for {@link Parameter}s and {@link ComObject}s that uses
@@ -46,7 +47,7 @@ public class ParameterMemoryListCellRenderer implements ListCellRenderer<Abstrac
 
          label = String.format("$%1$04X P: %3$s [#%2$d ID:%4$d]",
             new Object[] { param.getAddress(), param.getNumber(),
-                           param.getDescription().getDefaultText(),
+                           ParamUtils.getLabel(param),
                            param.getId() });
       }
       else if (value instanceof CommunicationObject)
@@ -55,7 +56,7 @@ public class ParameterMemoryListCellRenderer implements ListCellRenderer<Abstrac
 
          label = String.format("$%1$04X C: %3$s [#%2$d ID:%4$d]",
             new Object[] { comObj.getAddress(), comObj.getNumber(),
-                           comObj.getName().getDefaultText(),
+                           ParamUtils.getLabel(comObj),
                            comObj.getId() });
       }
       else label = "";

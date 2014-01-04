@@ -326,6 +326,7 @@
   <xs:attribute name="object_priority" type="xs:int" />
   <xs:attribute name="object_updateenabled" type="xs:int" default="0" />
   <xs:attribute name="object_unique_number" type="xs:int" />
+  <xs:attribute name="object_readoninitenabled" type="xs:int" default="0" />
  </xs:complexType>
 
  <xs:complexType name="TextAttribute">
@@ -425,6 +426,9 @@
   <xs:attribute name="memory_attributes" type="xs:integer" />
   <xs:attribute name="block_data" type="xs:hexBinary" />
   <xs:attribute name="block_mask" type="xs:hexBinary" />
+  <xs:attribute name="record" type="xs:hexBinary" />
+  <xs:attribute name="merge_id" type="xs:integer" />
+  <xs:attribute name="proc_mask" type="xs:int" />
  </xs:complexType>
 
  <xs:complexType name="S19BlockParagraph">
@@ -464,6 +468,7 @@
   <xs:attribute name="eib_data_subtype_code" type="xs:integer" />
   <xs:attribute name="name" type="xs:string" />
   <xs:attribute name="description" type="xs:string" />
+  <xs:attribute name="object_readoninit" type="xs:integer" />
  </xs:complexType>
 
  <xs:complexType name="DeviceParameter">

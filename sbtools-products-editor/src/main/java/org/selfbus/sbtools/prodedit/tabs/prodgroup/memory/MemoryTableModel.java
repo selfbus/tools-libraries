@@ -121,8 +121,7 @@ public class MemoryTableModel implements TableModel
    public Object getValueAt(int rowIndex, int columnIndex)
    {
       if (columnIndex == 0)
-         return String.format("%1$04X", new Object[] { startAddr + (rowIndex << 4) });
-//         return String.format("%1$4X", new Object[] { startAddr + (rowIndex << 4) });
+         return String.format("$%1$04X", new Object[] { startAddr + (rowIndex << 4) });
 
       int idx = (rowIndex << 4) + columnIndex - 1;
       MemoryCell cell = data.get(idx);

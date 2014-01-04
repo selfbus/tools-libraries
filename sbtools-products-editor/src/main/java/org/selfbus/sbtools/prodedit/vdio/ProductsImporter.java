@@ -826,7 +826,7 @@ public class ProductsImporter extends AbstractProductsExpImp
          if (parentId != null)
          {
             parent = params.get(parentId);
-            Validate.notNull(parent, "Parent parameter #{0} for com-object #{1} not found", parentId, o.getId());
+            Validate.notNull(parent, "Parent parameter #%1 for com-object #%2 not found", parentId, o.getId());
             parentId = parent.getId();
          }
 
@@ -835,7 +835,7 @@ public class ProductsImporter extends AbstractProductsExpImp
             commsEntry = commsTab.get(o.getNumber());
          else
          {
-            LOGGER.error("Com-object #{0} of program {1} does not exist in the program's comms table",
+            LOGGER.error("Com-object #{} of program {} does not exist in the program's comms table",
                o.getNumber(), program.getName());
             commsEntry = new CommsEntry();
          }

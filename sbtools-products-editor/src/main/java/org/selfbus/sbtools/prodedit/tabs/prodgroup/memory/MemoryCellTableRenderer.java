@@ -16,7 +16,7 @@ import org.selfbus.sbtools.prodedit.internal.I18n;
  * A {@link DefaultTableCellRenderer table cell renderer} that is suited to
  * render {@link MemoryCell memory cells} of a {@link MemoryCellTableModel}.
  */
-public class MemoryCellRenderer extends DefaultTableCellRenderer
+public class MemoryCellTableRenderer extends DefaultTableCellRenderer
 {
    private static final long serialVersionUID = -8985604131449863602L;
    private final String unknownToolTip = I18n.getMessage("DeviceMemoryTableModel.Unknown");
@@ -26,7 +26,7 @@ public class MemoryCellRenderer extends DefaultTableCellRenderer
    /**
     * Create a {@link MemoryCell memory cell} table renderer.
     */
-   public MemoryCellRenderer()
+   public MemoryCellTableRenderer()
    {
       setHorizontalAlignment(SwingConstants.CENTER);
    }

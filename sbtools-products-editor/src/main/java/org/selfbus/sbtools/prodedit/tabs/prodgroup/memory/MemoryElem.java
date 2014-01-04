@@ -82,7 +82,7 @@ public class MemoryElem extends AbstractCategoryElem
       paramList.setCellRenderer(paramListCellRenderer);
       listScrollPane = new JScrollPane(paramList);
 
-      table.setDefaultRenderer(MemoryCell.class, new MemoryCellRenderer());
+      table.setDefaultRenderer(MemoryCell.class, new MemoryCellTableRenderer());
       table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
       table.setCellSelectionEnabled(true);
       table.setDoubleBuffered(false);
@@ -263,7 +263,7 @@ public class MemoryElem extends AbstractCategoryElem
       MemoryCell cell = tableModel.getValueAt(selectedAddress);
 
       cellDetailsCaption.setText(I18n.formatMessage("MemoryElem.cellDetailsCaption",
-         String.format("0x%0$04x", selectedAddress)));
+         String.format("$%0$04x", selectedAddress)));
 
       for (Object obj : cell.getObjects())
          cellDetailsModel.add(obj);

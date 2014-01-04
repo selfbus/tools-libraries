@@ -43,7 +43,9 @@ public final class ParamUtils
    {
       if (text == null)
          return "";
-      return text.replaceAll("\\\\n", " / ").replaceAll("\\\\r", "").replaceAll("^ / ", "");
+
+      return text.replaceAll("\\\\n", " / ").replaceAll("\\\\r", "").replaceAll("^ / ", "")
+         .replaceFirst("^  *", "");
    }
 
    /**
@@ -57,7 +59,12 @@ public final class ParamUtils
       if (node instanceof Parameter)
       {
          Parameter param = (Parameter) node;
-         return ParamUtils.fixText(param.getDescription().getDefaultText());
+
+         String lbl = param.getDescription().getDefaultText();
+         if (Strings.isEmpty(lbl))
+            lbl = param.getName();
+
+         return ParamUtils.fixText(lbl);
       }
       else if (node instanceof CommunicationObject)
       {
