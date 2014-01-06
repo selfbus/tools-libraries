@@ -5,19 +5,26 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileFilter;
 
+import org.selfbus.sbtools.common.Config;
 import org.selfbus.sbtools.common.gui.actions.BasicAction;
+import org.selfbus.sbtools.common.gui.components.Dialogs;
 import org.selfbus.sbtools.common.gui.misc.ImageCache;
 import org.selfbus.sbtools.prodedit.ProdEdit;
 import org.selfbus.sbtools.prodedit.actions.RemoveSelectionInListAction;
+import org.selfbus.sbtools.prodedit.filter.HeaderFileFilter;
 import org.selfbus.sbtools.prodedit.internal.I18n;
 import org.selfbus.sbtools.prodedit.model.AbstractProjectListener;
 import org.selfbus.sbtools.prodedit.model.ProjectListener;
@@ -34,6 +41,7 @@ import org.selfbus.sbtools.prodedit.tabs.prodgroup.general.VirtualDeviceElem;
 import org.selfbus.sbtools.prodedit.tabs.prodgroup.memory.MemoryElem;
 import org.selfbus.sbtools.prodedit.tabs.prodgroup.parameter.ParametersElem;
 import org.selfbus.sbtools.prodedit.utils.FontUtils;
+import org.selfbus.sbtools.prodedit.utils.HeaderFileGenerator;
 
 import com.jgoodies.binding.adapter.BasicComponentFactory;
 import com.jgoodies.binding.list.SelectionInList;
@@ -52,7 +60,7 @@ public class ProductGroupTab extends AbstractCloseableAccordionDetailsTab
    @SuppressWarnings("unchecked")
    private final JComboBox<VirtualDevice> currentDeviceCombo = BasicComponentFactory.createComboBox(selectionInList);
 
-   private JButton addDeviceButton, duplicateDeviceButton, removeDeviceButton;
+   private JButton addDeviceButton, duplicateDeviceButton, removeDeviceButton, generateHeaderFileButton;
 
    private final VirtualDeviceElem virtualDeviceElem;
    private final ApplicationProgramElem applicationProgramElem;
@@ -172,6 +180,12 @@ public class ProductGroupTab extends AbstractCloseableAccordionDetailsTab
       removeDeviceButton = new JButton(new RemoveSelectionInListAction(selectionInList, I18n.getMessage("ProductGroupTab.removeDeviceTip"), ImageCache.getIcon("icons/editdelete")));
       removeDeviceButton.setText(null);
       toolBar.add(removeDeviceButton);
+
+      toolBar.addSeparator();
+
+      generateHeaderFileButton = new JButton(generateHeaderFileAction);
+      generateHeaderFileButton.setText(null);
+      toolBar.add(generateHeaderFileButton);
    }
 
    /**
@@ -234,6 +248,49 @@ public class ProductGroupTab extends AbstractCloseableAccordionDetailsTab
          {
             VirtualDevice device = group.createDevice();
             selectionInList.setSelection(device);
+         }
+      }
+   };
+
+   /**
+    * Action: Generates a C/C++ header file from the virtual device.
+    */
+   private final BasicAction generateHeaderFileAction = new BasicAction("generateHeaderFile", I18n.getMessage("ProductGroupTab.generateHeaderFileTip"), ImageCache.getIcon("icons/filesaveas"))
+   {
+      private static final long serialVersionUID = 1;
+
+      @Override
+      public void actionEvent(ActionEvent event)
+      {
+         final Config cfg = Config.getInstance();
+         String last = cfg.getStringValue("generateHeaderFile.last");
+
+         final JFileChooser dlg = new JFileChooser();
+         dlg.setCurrentDirectory(new File(last).getParentFile());
+         dlg.setSelectedFile(new File(last));
+         final FileFilter fileFilter = new HeaderFileFilter();
+         dlg.addChoosableFileFilter(fileFilter);
+         dlg.addChoosableFileFilter(dlg.getAcceptAllFileFilter());
+         dlg.setFileFilter(fileFilter);
+         dlg.setDialogTitle(I18n.getMessage("ProductGroupTab.generateHeaderFileTitle"));
+
+         if (dlg.showOpenDialog(ProdEdit.getInstance().getMainFrame()) != JFileChooser.APPROVE_OPTION)
+            return;
+
+         File file = dlg.getSelectedFile();
+         if (file == null) return;
+
+         cfg.put("generateHeaderFile.last", file.getAbsolutePath());
+
+         HeaderFileGenerator generator = new HeaderFileGenerator();
+         try
+         {
+            generator.write(group, selectionInList.getSelection(), file);
+            ProdEdit.getInstance().setStatusMessage(I18n.formatMessage("ProductGroupTab.generateHeaderFileDone", file.getName()));
+         }
+         catch (IOException e)
+         {
+            Dialogs.showExceptionDialog(e, I18n.getMessage("ProductGroupTab.generateHeaderFailed"));
          }
       }
    };

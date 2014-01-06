@@ -23,6 +23,7 @@ import org.selfbus.sbtools.prodedit.internal.I18n;
 import org.selfbus.sbtools.prodedit.model.Namespaces;
 import org.selfbus.sbtools.prodedit.model.ProjectService;
 import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
+import org.selfbus.sbtools.prodedit.model.prodgroup.program.ApplicationProgram;
 import org.selfbus.sbtools.prodedit.utils.ClassPathPropertiesLoader;
 import org.selfbus.sbtools.vdio.VdioException;
 
@@ -282,6 +283,18 @@ public class Project
       }
 
       return null;
+   }
+
+   /**
+    * Get a specific mask. Throws a runtime exception if the mask is not found.
+    * 
+    * @param program - the program to get the mask for.
+    * 
+    * @return The mask.
+    */
+   public Mask getMask(ApplicationProgram program)
+   {
+      return getMask(program.getMaskVersion());
    }
 
    /**
