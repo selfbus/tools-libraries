@@ -3,7 +3,7 @@ setlocal
 
 cd libs
 set CLASSPATH=%CLASSPATH%;.
-java -jar MAIN_JAR
+java -jar sbtools-devtool-0.2-SNAPSHOT.jar
 
 if %ERRORLEVEL% neq 0 (
    echo.
