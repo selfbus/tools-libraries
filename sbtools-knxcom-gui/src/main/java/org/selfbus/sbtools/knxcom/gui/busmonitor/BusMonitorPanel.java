@@ -2,6 +2,7 @@ package org.selfbus.sbtools.knxcom.gui.busmonitor;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.File;
@@ -75,6 +76,7 @@ public class BusMonitorPanel extends JPanel
    private final String configPrefix = getClass().getSimpleName() + ".";
 
    private int sequence;
+   private boolean autoScroll = true;
 
    /**
     * Create a bus monitor panel.
@@ -177,8 +179,14 @@ public class BusMonitorPanel extends JPanel
 
                   model.addElement(new BusMonitorItem(id, when, frame));
 
-                  int idx = model.getSize() - 1;
-                  list.scrollRectToVisible(list.getCellBounds(idx, idx));
+                  if (autoScroll)
+                  {
+                     int idx = model.getSize() - 1;
+                     Rectangle rect = list.getCellBounds(idx, idx);
+
+                     if (rect != null)
+                        list.scrollRectToVisible(rect);
+                  }
 
                   if (needUpdate)
                      updateButtons();
@@ -240,6 +248,10 @@ public class BusMonitorPanel extends JPanel
    public void loadBusTrace(File file) throws IOException
    {
       final BufferedReader in = new BufferedReader(new FileReader(file));
+
+      boolean oldAutoScroll = autoScroll;
+      autoScroll = false;
+
       try
       {
          final SimpleDateFormat dateFormatter = new SimpleDateFormat("HH:mm:ss.SSS");
@@ -280,6 +292,7 @@ public class BusMonitorPanel extends JPanel
       finally
       {
          in.close();
+         autoScroll = oldAutoScroll;
       }
    }
 
