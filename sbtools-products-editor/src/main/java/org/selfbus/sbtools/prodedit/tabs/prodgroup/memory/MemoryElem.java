@@ -531,7 +531,7 @@ public class MemoryElem extends AbstractCategoryElem
       b = (int) (backgroundColor.getBlue() * 0.8f) + (b << 6) + offs;
       if (b > 255)
          b = 255;
-      else if (r < 0)
+      else if (b < 0)
          b = 0;
 
       final MemoryRange range = new MemoryRange(start, size, name, new Color(r, g, b));

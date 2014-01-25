@@ -437,7 +437,7 @@ public final class Sniffer extends SingleFrameApplication
       {
          config.save(configFileName);
       }
-      catch (IOException e)
+      catch (Exception e)
       {
          Dialogs.showErrorDialog(I18n.formatMessage("Error.write", configFileName));
       }

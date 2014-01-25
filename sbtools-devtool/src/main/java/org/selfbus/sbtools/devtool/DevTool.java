@@ -32,9 +32,7 @@ import org.selfbus.sbtools.devtool.internal.I18n;
 import org.selfbus.sbtools.devtool.project.ProjectListener;
 import org.selfbus.sbtools.devtool.project.ProjectService;
 import org.selfbus.sbtools.devtool.project.model.Project;
-import org.selfbus.sbtools.devtool.tabs.busmonitor.BusMonitor;
-import org.selfbus.sbtools.devtool.tabs.groups.GroupsPanel;
-import org.selfbus.sbtools.devtool.tabs.test.TestsPanel;
+import org.selfbus.sbtools.devtool.tabs.BusMonitor;
 import org.selfbus.sbtools.knxcom.BusInterfaceFactory;
 
 /**
@@ -275,8 +273,8 @@ public class DevTool extends SingleFrameApplication
          mainFrame.add(tabbedPane);
 
          showPanel(BusMonitor.class);
-         showPanel(GroupsPanel.class);
-         showPanel(TestsPanel.class);
+//         showPanel(GroupsPanel.class);
+//         showPanel(TestsPanel.class);
          tabbedPane.setSelectedIndex(0);
 
          show(mainView);

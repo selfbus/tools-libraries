@@ -1,4 +1,4 @@
-package org.selfbus.sbtools.devtool.tabs.busmonitor;
+package org.selfbus.sbtools.knxcom.gui.busmonitor;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -24,7 +24,7 @@ import org.selfbus.sbtools.common.address.PhysicalAddress;
 import org.selfbus.sbtools.common.gui.components.AddressField;
 import org.selfbus.sbtools.common.gui.components.Dialog;
 import org.selfbus.sbtools.common.gui.utils.SwingUtils;
-import org.selfbus.sbtools.devtool.internal.I18n;
+import org.selfbus.sbtools.knxcom.gui.internal.I18n;
 import org.selfbus.sbtools.knxcom.telegram.Transport;
 
 /**

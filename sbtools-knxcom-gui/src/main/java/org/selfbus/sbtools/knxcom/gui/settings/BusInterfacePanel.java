@@ -1,4 +1,4 @@
-package org.selfbus.knxcom.gui.settings;
+package org.selfbus.sbtools.knxcom.gui.settings;
 
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -12,9 +12,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
-import org.selfbus.knxcom.gui.internal.I18n;
 import org.selfbus.sbtools.common.Config;
 import org.selfbus.sbtools.knxcom.BusInterfaceFactory;
+import org.selfbus.sbtools.knxcom.gui.internal.I18n;
 import org.selfbus.sbtools.knxcom.types.KNXConnectionType;
 
 /**

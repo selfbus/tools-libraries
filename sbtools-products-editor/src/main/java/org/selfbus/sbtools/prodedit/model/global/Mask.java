@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * The mask describes the interface of a device, where the specific addresses
- * are located (like RAM, EEPROM, address table), and such.
+ * are located (like RAM, EEPROM, address table).
  */
 @XmlType(name = "Mask", propOrder = {})
 @XmlAccessorType(XmlAccessType.NONE)

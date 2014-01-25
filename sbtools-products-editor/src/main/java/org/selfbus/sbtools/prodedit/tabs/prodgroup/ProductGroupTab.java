@@ -1,6 +1,7 @@
 package org.selfbus.sbtools.prodedit.tabs.prodgroup;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
@@ -14,9 +15,11 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 import org.selfbus.sbtools.common.Config;
 import org.selfbus.sbtools.common.gui.actions.BasicAction;
@@ -33,6 +36,7 @@ import org.selfbus.sbtools.prodedit.model.prodgroup.ProductGroup;
 import org.selfbus.sbtools.prodedit.model.prodgroup.VirtualDevice;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.AbstractParameterNode;
 import org.selfbus.sbtools.prodedit.model.prodgroup.parameter.ParameterType;
+import org.selfbus.sbtools.prodedit.model.prodgroup.program.ApplicationProgram;
 import org.selfbus.sbtools.prodedit.tabs.internal.AbstractCloseableAccordionDetailsTab;
 import org.selfbus.sbtools.prodedit.tabs.internal.MixedCategoryElem;
 import org.selfbus.sbtools.prodedit.tabs.internal.ObjectActivatedListener;
@@ -58,7 +62,7 @@ public class ProductGroupTab extends AbstractCloseableAccordionDetailsTab
 
    private SelectionInList<VirtualDevice> selectionInList = new SelectionInList<VirtualDevice>(new LinkedList<VirtualDevice>());
    @SuppressWarnings("unchecked")
-   private final JComboBox<VirtualDevice> currentDeviceCombo = BasicComponentFactory.createComboBox(selectionInList);
+   private final JComboBox<VirtualDevice> currentDeviceCombo = BasicComponentFactory.createComboBox(selectionInList, new VirtualDeviceListCellRenderer()); 
 
    private JButton addDeviceButton, duplicateDeviceButton, removeDeviceButton, generateHeaderFileButton;
 
@@ -67,7 +71,6 @@ public class ProductGroupTab extends AbstractCloseableAccordionDetailsTab
    private final ParameterTypesElem parameterTypesElem;
    private final ParametersElem parametersElem;
    private final MemoryElem memoryElem;
-
 
    /**
     * Create a tab panel for editing a {@link ProductGroup}.
@@ -131,6 +134,31 @@ public class ProductGroupTab extends AbstractCloseableAccordionDetailsTab
          }
       });
    }
+
+   /**
+    * A renderer for the list cells in the virtual-device selection combo box.
+    */
+   class VirtualDeviceListCellRenderer extends BasicComboBoxRenderer
+   {
+      private static final long serialVersionUID = 7640233499086879012L;
+
+      @Override
+      public Component getListCellRendererComponent(@SuppressWarnings("rawtypes") JList list,
+         Object value, int index, boolean isSelected, boolean cellHasFocus)
+      {
+         if (value instanceof VirtualDevice)
+         {
+            VirtualDevice dev = (VirtualDevice) value;
+            value = dev.getName();
+
+            ApplicationProgram program = group.getProgram(dev.getProgramId());
+            if (program != null)
+               value += ": " + program.getName();
+         }
+
+         return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+      }
+   };
 
    /**
     * A listener for object activation.

@@ -543,6 +543,7 @@
   <xs:attribute name="compression" type="xs:string" />
   <xs:attribute name="data" type="xs:hexBinary" />
   <xs:attribute name="lastused" type="xs:string" />
+  <xs:attribute name="installonimport" type="xs:boolean" />
  </xs:complexType>
 
  <xs:complexType name="VD">

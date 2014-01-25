@@ -2,8 +2,8 @@ package org.selfbus.sbtools.devtool.dialogs.settings;
 
 import java.awt.BorderLayout;
 
-import org.selfbus.knxcom.gui.settings.BusInterfacePanel;
 import org.selfbus.sbtools.devtool.internal.I18n;
+import org.selfbus.sbtools.knxcom.gui.settings.BusInterfacePanel;
 
 /**
  * Settings page for the bus-interface settings.

@@ -1,4 +1,4 @@
-package org.selfbus.knxcom.gui.settings;
+package org.selfbus.sbtools.knxcom.gui.settings;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -11,8 +11,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import org.selfbus.knxcom.gui.internal.I18n;
 import org.selfbus.sbtools.common.Config;
+import org.selfbus.sbtools.knxcom.gui.internal.I18n;
 import org.selfbus.sbtools.knxcom.link.netip.KNXnetLink;
 
 /**

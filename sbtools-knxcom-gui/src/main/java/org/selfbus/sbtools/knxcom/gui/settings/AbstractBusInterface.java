@@ -1,11 +1,11 @@
-package org.selfbus.knxcom.gui.settings;
+package org.selfbus.sbtools.knxcom.gui.settings;
 
 import java.awt.Cursor;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.selfbus.knxcom.gui.internal.I18n;
+import org.selfbus.sbtools.knxcom.gui.internal.I18n;
 import org.selfbus.sbtools.knxcom.link.Link;
 import org.selfbus.sbtools.knxcom.types.LinkMode;
 

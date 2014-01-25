@@ -265,43 +265,36 @@ public class Config
     * Save the configuration to the same file that it was loaded from or saved
     * last time.
     *
-    * @throws SecurityException if a security manager exists and its
-    *            <code>checkWrite</code> method denies write access to the file.
-    * @throws IOException if writing the configuration list to the specified
-    *            output stream throws an <tt>IOException</tt>.
     * @throws NullPointerException if the file name is not set.
+    * @throws RuntimeException if writing the configuration to the specified file fails.
     */
-   public void save() throws IOException
+   public void save()
    {
       Validate.notNull(fileName);
-      save(fileName);
+      try
+      {
+         save(fileName);
+      }
+      catch (IOException e)
+      {
+         throw new RuntimeException(e);
+      }
    }
    
    /**
     * Save the configuration to the file fileName.
     * 
     * @param fileName - the name of the file to save to.
-    *
-    * @throws SecurityException if a security manager exists and its
-    *            <code>checkWrite</code> method denies write access to the file.
-    * @throws IOException if writing the configuration list to the specified
-    *            output stream throws an <tt>IOException</tt>.
+    * @throws IOException if writing the configuration to the specified file fails.
     */
    public void save(String fileName) throws IOException
    {
-      FileOutputStream out = null;
-      try
-      {
-         LOGGER.debug("Saving config {}", fileName);
-         out = new FileOutputStream(fileName);
-         save(out);
+      LOGGER.debug("Saving config {}", fileName);
 
-         this.fileName = fileName;
-      }
-      finally
+      try (FileOutputStream out = new FileOutputStream(fileName))
       {
-         if (out != null)
-            out.close();
+         save(out);
+         this.fileName = fileName;
       }
    }
 

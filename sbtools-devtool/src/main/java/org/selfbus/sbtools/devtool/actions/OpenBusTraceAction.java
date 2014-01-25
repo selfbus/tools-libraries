@@ -14,7 +14,7 @@ import org.selfbus.sbtools.common.gui.misc.ImageCache;
 import org.selfbus.sbtools.devtool.DevTool;
 import org.selfbus.sbtools.devtool.internal.I18n;
 import org.selfbus.sbtools.devtool.tabs.BusTraceViewer;
-import org.selfbus.sbtools.devtool.tabs.busmonitor.TrxFileFilter;
+import org.selfbus.sbtools.knxcom.gui.busmonitor.BusTraceFileFilter;
 
 /**
  * Ask the user for a bus trace file and open a {@link BusTraceViewer bus trace
@@ -49,7 +49,7 @@ public final class OpenBusTraceAction extends BasicAction
 
          final JFileChooser dlg = new JFileChooser();
          dlg.setSelectedFile(new File(lastDir));
-         final FileFilter fileFilter = new TrxFileFilter();
+         final FileFilter fileFilter = new BusTraceFileFilter();
          dlg.addChoosableFileFilter(fileFilter);
          dlg.addChoosableFileFilter(dlg.getAcceptAllFileFilter());
          dlg.setFileFilter(fileFilter);
@@ -64,7 +64,7 @@ public final class OpenBusTraceAction extends BasicAction
          cfg.put("busTrace.lastDir", file.getAbsolutePath());
 
          BusTraceViewer viewer = (BusTraceViewer) app.showPanel(BusTraceViewer.class);
-         viewer.open(file);
+         viewer.loadBusTrace(file);
       }
       catch (Exception e)
       {

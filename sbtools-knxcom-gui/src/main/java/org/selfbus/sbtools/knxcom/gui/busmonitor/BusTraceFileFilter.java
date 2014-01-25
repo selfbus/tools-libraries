@@ -1,4 +1,4 @@
-package org.selfbus.sbtools.devtool.tabs.busmonitor;
+package org.selfbus.sbtools.knxcom.gui.busmonitor;
 
 import java.io.File;
 
@@ -6,12 +6,12 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 import org.selfbus.sbtools.common.gui.utils.FileUtils;
-import org.selfbus.sbtools.devtool.internal.I18n;
+import org.selfbus.sbtools.knxcom.gui.internal.I18n;
 
 /**
  * A {@link JFileChooser} file-filter for *.trx files.
  */
-public final class TrxFileFilter extends FileFilter
+public final class BusTraceFileFilter extends FileFilter
 {
    @Override
    public boolean accept(File file)
@@ -25,6 +25,6 @@ public final class TrxFileFilter extends FileFilter
    @Override
    public String getDescription()
    {
-      return I18n.getMessage("TrxFileFilter.description");
+      return I18n.getMessage("BusTraceFileFilter.description");
    }
 }

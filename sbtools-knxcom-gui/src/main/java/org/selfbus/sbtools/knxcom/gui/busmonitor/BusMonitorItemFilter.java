@@ -1,4 +1,4 @@
-package org.selfbus.sbtools.devtool.tabs.busmonitor;
+package org.selfbus.sbtools.knxcom.gui.busmonitor;
 
 import org.selfbus.sbtools.common.gui.models.Filter;
 

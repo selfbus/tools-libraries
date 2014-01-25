@@ -1,4 +1,4 @@
-package org.selfbus.sbtools.devtool.tabs.busmonitor;
+package org.selfbus.sbtools.knxcom.gui.busmonitor;
 
 import java.util.Calendar;
 import java.util.Date;
