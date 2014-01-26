@@ -7,10 +7,8 @@ import java.io.IOException;
 /**
  * Abstract class for property-value read/write/response.
  */
-public abstract class AbstractPropertyValue extends AbstractApplication
+public abstract class AbstractPropertyValue extends AbstractPropertyApplication
 {
-   protected int objectId;
-   protected int propertyId;
    protected int startIndex;
    protected int count;
 
@@ -161,8 +159,7 @@ public abstract class AbstractPropertyValue extends AbstractApplication
       final StringBuffer sb = new StringBuffer();
 
       sb.append(super.toString())
-        .append(": obj ").append(objectId)
-        .append(" pid ").append(propertyId)
+        .append(getPropertyIdLabel())
         .append(" start ").append(startIndex)
         .append(" count ").append(count);
 

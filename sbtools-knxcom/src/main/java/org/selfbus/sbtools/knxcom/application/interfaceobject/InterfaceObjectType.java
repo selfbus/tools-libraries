@@ -1,26 +1,92 @@
 package org.selfbus.sbtools.knxcom.application.interfaceobject;
 
+
 /**
- * Types of KNX / BCU interface objects.
+ * Type of an interface object.
  */
 public enum InterfaceObjectType
 {
    /**
-    * Group address table.
+    * Device object.
     */
-   AddressTableObject(1),
+   DEVICE,
 
-   
-
-   ;
-
-   final int id;
-   
-   /*
-    * Internal constructor
+   /**
+    * Address table object.
     */
-   private InterfaceObjectType(int id)
+   ADDR_TABLE,
+
+   /**
+    * Association table object.
+    */
+   ASSOC_TABLE,
+
+   /**
+    * Application program object.
+    */
+   APPLICATION,
+
+   /**
+    * Interface program object.
+    */
+   INTERFACE_PROGRAM,
+
+   /**
+    * KNX-object association table object.
+    */
+   KNX_OBJECT_ASSOC_TABLE,
+
+   /**
+    * Router object.
+    */
+   ROUTER,
+
+   /**
+    * LTE address routing table object.
+    */
+   LTE_ADDR_ROUTING_TABLE,
+
+   /**
+    * cEMI server object.
+    */
+   CEMI_SERVER,
+
+   /**
+    * Group object table object.
+    */
+   GROUP_OBJECT_TABLE,
+
+   /**
+    * Polling master.
+    */
+   POLLING_MASTER,
+
+   /**
+    * KNXnet/IP parameter object.
+    */
+   KNXNET_PARAMS,
+
+   /**
+    * Reserved.
+    */
+   RESERVED,
+
+   /**
+    * File server object.
+    */
+   FILE_SERVER;
+
+   /**
+    * Get an interface object type by number.
+    */
+   public static InterfaceObjectType valueOf(int ordinal)
    {
-      this.id = id;
+      for (InterfaceObjectType t : values())
+      {
+         if (t.ordinal() == ordinal)
+            return t;
+      }
+
+      return null;
    }
 }

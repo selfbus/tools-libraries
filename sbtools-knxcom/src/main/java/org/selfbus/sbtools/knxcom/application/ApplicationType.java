@@ -322,17 +322,17 @@ public enum ApplicationType
     * Response to the {@link #PropertyDescription_Read} request.
     * <p>
     * Data bytes: object index, property id, property index, property type,
-    * 4bits reserved, 12 bits max number of elems, 4bits read-level access,
+    * 4bits reserved, 12 bits max number of elements, 4bits read-level access,
     * 4bits write-level access.
     */
-   PropertyDescription_Response(0x3d9, 10, 7, 7),
+   PropertyDescription_Response(0x3d9, 10, 7, 7, null, PropertyDescriptionResponse.class),
 
    /**
     * Read the description of the property of an interface object.
     * <p>
     * 3 data bytes: object index, property id, property index.
     */
-   PropertyDescription_Read(0x3d8, 10, 3, 3, PropertyDescription_Response),
+   PropertyDescription_Read(0x3d8, 10, 3, 3, PropertyDescription_Response, PropertyDescriptionRead.class),
 
    /**
     * The response to the {@link #NetworkParameter_Read} request.

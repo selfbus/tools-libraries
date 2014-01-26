@@ -5,12 +5,8 @@ package org.selfbus.sbtools.knxcom.application.interfaceobject;
  *
  * @see in KNX 3/5/1 Resources
  */
-public enum PropertyIdentifier
+public enum PropertyId
 {
-   /*
-    *   Device Descriptor Type 2 Properties 
-    */
-
    /**
     * Object type.
     * Data type: unsigned int.
@@ -36,7 +32,7 @@ public enum PropertyIdentifier
    RunStateControl(6),
 
    /**
-    * Table reference.
+    * Table reference: address table, association table, communication objects table, ...
     * Data type: unsigned int.
     */
    TableReference(7),
@@ -114,12 +110,23 @@ public enum PropertyIdentifier
    ManufacturerData(19),
 
    /**
+    * Enable.
+    */
+   Enable(20),
+
+   /**
     * Descriptive information about a device.
     */
    Description(21),
 
    /**
-    * Table.
+    * A file.
+    */
+   File(22),
+
+   /**
+    * A table.
+    *
     * Data type: interface object dependent.
     */
    Table(23),
@@ -131,7 +138,7 @@ public enum PropertyIdentifier
    Version(25),
 
    /**
-    * Memory control block.
+    * Memory control block table.
     * Data type: 8 bytes.
     */
    McbTable(27),
@@ -163,12 +170,32 @@ public enum PropertyIdentifier
 
    ;
 
-   final int id;
+   /**
+    * The ID of the property identifier.
+    */
+   public final int id;
+
+   /**
+    * Get a property identifier by number.
+    *
+    * @param id - the number of the ID to find.
+    * @return The property identifier, or null if not found.
+    */
+   public static PropertyId valueOf(int id)
+   {
+      for (PropertyId prop : values())
+      {
+         if (prop.id == id)
+            return prop;
+      }
+
+      return null;
+   }
    
    /*
     * Internal constructor
     */
-   private PropertyIdentifier(int id)
+   private PropertyId(int id)
    {
       this.id = id;
    }

@@ -153,7 +153,17 @@ public class BusMonitorPanel extends JPanel
     */
    protected void addFrame(final EmiFrame frame)
    {
-      addFrame(frame, new Date());
+      SwingUtilities.invokeLater(new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            synchronized (model)
+            {
+               addFrame(frame, new Date());
+            }
+         }
+      });
    }
 
    /**
@@ -168,31 +178,21 @@ public class BusMonitorPanel extends JPanel
 
       try
       {
-         SwingUtilities.invokeLater(new Runnable()
+         final boolean needUpdate = model.isEmpty();
+
+         model.addElement(new BusMonitorItem(id, when, frame));
+
+         if (autoScroll)
          {
-            @Override
-            public void run()
-            {
-               synchronized (model)
-               {
-                  final boolean needUpdate = model.isEmpty();
+            int idx = model.getSize() - 1;
+            Rectangle rect = list.getCellBounds(idx, idx);
 
-                  model.addElement(new BusMonitorItem(id, when, frame));
+            if (rect != null)
+               list.scrollRectToVisible(rect);
+         }
 
-                  if (autoScroll)
-                  {
-                     int idx = model.getSize() - 1;
-                     Rectangle rect = list.getCellBounds(idx, idx);
-
-                     if (rect != null)
-                        list.scrollRectToVisible(rect);
-                  }
-
-                  if (needUpdate)
-                     updateButtons();
-               }
-            }
-         });
+         if (needUpdate)
+            updateButtons();
       }
       catch (Exception e)
       {
@@ -261,7 +261,7 @@ public class BusMonitorPanel extends JPanel
          {
             model.clear();
             addrMappers.clear();
-   
+ 
             sequence = 0;
             for (int lineNo = 1;; ++lineNo)
             {
@@ -285,9 +285,9 @@ public class BusMonitorPanel extends JPanel
    
                addFrame(createFrame(line.substring(pos + 1)), when);
             }
-   
-            filteredModel.update();
          }
+
+         filteredModel.update();
       }
       finally
       {
