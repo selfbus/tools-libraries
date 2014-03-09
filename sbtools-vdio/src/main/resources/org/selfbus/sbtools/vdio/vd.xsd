@@ -1,0 +1,873 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+ <xs:element name="virtual_device" type="VD" />
+
+ <xs:complexType name="Manufacturer">
+  <xs:attribute name="manufacturer_name" type="xs:string" />
+  <xs:attribute name="manufacturer_id" type="xs:int" />
+ </xs:complexType>
+
+ <xs:complexType name="FunctionalEntity">
+  <xs:attribute name="functional_entity_id" type="xs:int" />
+  <xs:attribute name="manufacturer_id" type="xs:int" />
+  <xs:attribute name="functional_entity_name" type="xs:string" />
+  <xs:attribute name="functional_entity_numb" type="xs:string" />
+  <xs:attribute name="functional_entity_description" type="xs:string" />
+  <xs:attribute name="fun_functional_entity_id" type="xs:integer" />
+  <xs:attribute name="help_file_name" type="xs:string" />
+  <xs:attribute name="context_id" type="xs:integer" />
+  <xs:attribute name="displayinsimpleets" type="xs:int" />
+ </xs:complexType>
+
+ <xs:complexType name="BcuType">
+  <xs:attribute name="bcu_type_number" type="xs:int" />
+  <xs:attribute name="bcu_type_name" type="xs:string" />
+  <xs:attribute name="bcu_type_cpu" type="xs:string" />
+ </xs:complexType>
+
+ <xs:complexType name="Symbol">
+  <xs:attribute name="symbol_id" type="xs:int" />
+  <xs:attribute name="symbol_filename" type="xs:string" />
+  <xs:attribute name="symbol_name" type="xs:string" />
+  <xs:attribute name="symbol_data" type="xs:hexBinary" />
+  <xs:attribute name="icondata" type="xs:hexBinary" />
+ </xs:complexType>
+
+ <xs:complexType name="HwProduct">
+  <xs:attribute name="product_id" type="xs:int" />
+  <xs:attribute name="manufacturer_id" type="xs:int" />
+  <xs:attribute name="symbol_id" type="xs:integer" />
+  <xs:attribute name="product_name" type="xs:string" />
+  <xs:attribute name="product_version_number" type="xs:int" default="0" />
+  <xs:attribute name="component_type" type="xs:integer" />
+  <xs:attribute name="component_attributes" type="xs:integer" />
+  <xs:attribute name="bus_current" type="xs:integer" />
+  <xs:attribute name="product_serial_number" type="xs:string" />
+  <xs:attribute name="component_type_number" type="xs:integer" />
+  <xs:attribute name="product_picture" type="xs:string" />
+  <xs:attribute name="bcu_type_number" type="xs:int" default="0" />
+  <xs:attribute name="product_handling" type="xs:integer" />
+  <xs:attribute name="product_dll" type="xs:string" />
+  <xs:attribute name="original_manufacturer_id" type="xs:integer" />
+ </xs:complexType>
+
+ <xs:complexType name="CatalogEntry">
+  <xs:attribute name="catalog_entry_id" type="xs:int" />
+  <xs:attribute name="product_id" type="xs:int" />
+  <xs:attribute name="manufacturer_id" type="xs:int" />
+  <xs:attribute name="symbol_id" type="xs:int" default="0" />
+  <xs:attribute name="order_number" type="xs:string" />
+  <xs:attribute name="entry_name" type="xs:string" />
+  <xs:attribute name="entry_colour" type="xs:string" />
+  <xs:attribute name="entry_width_in_modules" type="xs:double" default="0" />
+  <xs:attribute name="entry_width_in_millimeters" type="xs:double" default="0" />
+  <xs:attribute name="price" type="xs:double" default="0" />
+  <xs:attribute name="currency" type="xs:string" />
+  <xs:attribute name="quantity_unit" type="xs:string" />
+  <xs:attribute name="material_price" type="xs:double" default="0" />
+  <xs:attribute name="mounting_hours" type="xs:int" default="0" />
+  <xs:attribute name="mounting_minutes" type="xs:int" default="0" />
+  <xs:attribute name="mounting_seconds" type="xs:int" default="0" />
+  <xs:attribute name="din_flag" type="xs:int" default="0" />
+  <xs:attribute name="series" type="xs:string" />
+  <xs:attribute name="catalog_name" type="xs:string" />
+  <xs:attribute name="page_number" type="xs:int" default="0" />
+  <xs:attribute name="entry_picture" type="xs:string" />
+  <xs:attribute name="designation_type" type="xs:string" />
+  <xs:attribute name="designation_function" type="xs:string" />
+  <xs:attribute name="help_file_name" type="xs:string" />
+  <xs:attribute name="context_id" type="xs:int" default="0" />
+  <xs:attribute name="ram_size" type="xs:int" default="0" />
+  <xs:attribute name="registration_number" type="xs:int" default="0" />
+  <xs:attribute name="registration_year" type="xs:string" />
+  <xs:attribute name="entry_status_code" type="xs:string" />
+  <xs:attribute name="registration_ts" type="xs:string" />
+  <xs:attribute name="registration_date" type="xs:string" />
+  <xs:attribute name="registration_comment" type="xs:string" />
+ </xs:complexType>
+
+ <xs:complexType name="MediumType">
+  <xs:attribute name="medium_type_number" type="xs:int" />
+  <xs:attribute name="medium_type_name" type="xs:string" />
+  <xs:attribute name="medium_type_short_name" type="xs:string" />
+  <xs:attribute name="standard_system_id_level" type="xs:string" />
+  <xs:attribute name="system_id_length" type="xs:integer" />
+  <xs:attribute name="dcy_f_individual" type="xs:double" />
+  <xs:attribute name="dcy_g_individual" type="xs:double" />
+  <xs:attribute name="dcy_f_group" type="xs:double" />
+  <xs:attribute name="dcy_g_group" type="xs:double" />
+  <xs:attribute name="duty_cycle_calculation" type="xs:integer" />
+ </xs:complexType>
+
+ <xs:complexType name="Mask">
+  <xs:attribute name="mask_id" type="xs:int" />
+  <xs:attribute name="mask_version" type="xs:int" default="0" />
+  <xs:attribute name="user_ram_start" type="xs:int" default="0" />
+  <xs:attribute name="user_ram_end" type="xs:int" default="0" />
+  <xs:attribute name="user_eeprom_start" type="xs:int" default="0" />
+  <xs:attribute name="user_eeprom_end" type="xs:int" default="0" />
+  <xs:attribute name="run_error_address" type="xs:int" default="0" />
+  <xs:attribute name="address_tab_address" type="xs:int" default="0" />
+  <xs:attribute name="assoctabptr_address" type="xs:int" default="0" />
+  <xs:attribute name="commstabptr_address" type="xs:int" default="0" />
+  <xs:attribute name="manufacturer_data_address" type="xs:int" default="0" />
+  <xs:attribute name="manufacturer_data_size" type="xs:int" default="0" />
+  <xs:attribute name="manufacturer_id_address" type="xs:int" default="0" />
+  <xs:attribute name="routecnt_address" type="xs:int" default="0" />
+  <xs:attribute name="manufacturer_id_protected" type="xs:int" default="0" />
+  <xs:attribute name="mask_version_name" type="xs:string" />
+  <xs:attribute name="mask_eeprom_data" type="xs:hexBinary" />
+  <xs:attribute name="mask_data_length" type="xs:int" />
+  <xs:attribute name="address_tab_lcs" type="xs:integer" />
+  <xs:attribute name="assoc_tab_lcs" type="xs:integer" />
+  <xs:attribute name="application_program_lcs" type="xs:integer" />
+  <xs:attribute name="pei_program_lcs" type="xs:integer" />
+  <xs:attribute name="load_control_address" type="xs:integer" />
+  <xs:attribute name="run_control_address" type="xs:integer" />
+  <xs:attribute name="external_memory_start" type="xs:integer" />
+  <xs:attribute name="external_memory_end" type="xs:integer" />
+  <xs:attribute name="application_program_rcs" type="xs:integer" />
+  <xs:attribute name="pei_program_rcs" type="xs:integer" />
+  <xs:attribute name="port_a_ddr" type="xs:integer" />
+  <xs:attribute name="port_address_protected" type="xs:int" default="0" />
+  <xs:attribute name="medium_type_number" type="xs:integer" />
+  <xs:attribute name="medium_type_number2" type="xs:integer" />
+  <xs:attribute name="bcu_type_number" type="xs:integer" />
+ </xs:complexType>
+
+ <xs:complexType name="Assembler">
+  <xs:attribute name="assembler_id" type="xs:int" />
+  <xs:attribute name="assembler_name" type="xs:string" />
+  <xs:attribute name="assembler_type" type="xs:int" />
+ </xs:complexType>
+
+ <xs:complexType name="ApplicationProgram">
+  <xs:attribute name="program_id" type="xs:int" use="required" />
+  <xs:attribute name="symbol_id" type="xs:integer" />
+  <xs:attribute name="mask_id" type="xs:int" use="required" />
+  <xs:attribute name="program_name" type="xs:string" use="required" />
+  <xs:attribute name="program_version" type="xs:string" />
+  <xs:attribute name="program_version_number" type="xs:integer" />
+  <xs:attribute name="linkable" type="xs:int" default="0" />
+  <xs:attribute name="device_type" type="xs:int" use="required" />
+  <xs:attribute name="pei_type" type="xs:int" default="0" />
+  <xs:attribute name="address_tab_size" type="xs:int" default="0" />
+  <xs:attribute name="assoctab_address" type="xs:int" default="0" />
+  <xs:attribute name="assoctab_size" type="xs:int" default="0" />
+  <xs:attribute name="commstab_address" type="xs:int" default="0" />
+  <xs:attribute name="commstab_size" type="xs:int" default="0" />
+  <xs:attribute name="program_serial_number" type="xs:string" />
+  <xs:attribute name="manufacturer_id" type="xs:int" default="0" />
+  <xs:attribute name="eeprom_data" type="xs:hexBinary" />
+  <xs:attribute name="data_length" type="xs:integer" />
+  <xs:attribute name="s19_file" type="xs:string" />
+  <xs:attribute name="map_file" type="xs:string" />
+  <xs:attribute name="assembler_id" type="xs:integer" />
+  <xs:attribute name="help_file_name" type="xs:string" />
+  <xs:attribute name="context_id" type="xs:integer" />
+  <xs:attribute name="dynamic_management" type="xs:integer" />
+  <xs:attribute name="program_type" type="xs:integer" />
+  <xs:attribute name="ram_size" type="xs:integer" />
+  <xs:attribute name="original_manufacturer_id" type="xs:integer" />
+  <xs:attribute name="api_version" type="xs:integer" />
+  <xs:attribute name="program_style" type="xs:integer" />
+  <xs:attribute name="is_polling_master" type="xs:integer" />
+  <xs:attribute name="number_of_polling_groups" type="xs:integer" />
+ </xs:complexType>
+
+ <xs:complexType name="VirtualDevice">
+  <xs:attribute name="virtual_device_id" type="xs:int" />
+  <xs:attribute name="symbol_id" type="xs:int" default="0" />
+  <xs:attribute name="catalog_entry_id" type="xs:int" />
+  <xs:attribute name="program_id" type="xs:int" default="0" />
+  <xs:attribute name="virtual_device_name" type="xs:string" />
+  <xs:attribute name="virtual_device_description" type="xs:string" />
+  <xs:attribute name="functional_entity_id" type="xs:int" default="0" />
+  <xs:attribute name="product_type_id" type="xs:int" default="0" />
+  <xs:attribute name="help_file_name" type="xs:string" />
+  <xs:attribute name="context_id" type="xs:int" default="0" />
+  <xs:attribute name="pei_program_id" type="xs:int" default="0" />
+  <xs:attribute name="virtual_device_number" type="xs:int" default="0" />
+  <xs:attribute name="medium_types" type="xs:string" />
+ </xs:complexType>
+
+ <xs:complexType name="MaskEntry">
+  <xs:attribute name="mask_entry_id" type="xs:int" />
+  <xs:attribute name="mask_id" type="xs:int" default="0" />
+  <xs:attribute name="mask_entry_name" type="xs:string" />
+  <xs:attribute name="mask_entry_address" type="xs:int" default="0" />
+ </xs:complexType>
+
+ <xs:complexType name="DeviceInfo">
+  <xs:attribute name="device_info_id" type="xs:int" />
+  <xs:attribute name="mask_id" type="xs:int" default="0" />
+  <xs:attribute name="dev_device_info_id" type="xs:int" default="0" />
+  <xs:attribute name="device_info_name" type="xs:string" />
+  <xs:attribute name="functional_number" type="xs:int" default="0" />
+  <xs:attribute name="device_info_type" type="xs:int" default="0" />
+  <xs:attribute name="bit_position" type="xs:int" default="0" />
+  <xs:attribute name="device_info_visible" type="xs:int" default="0" />
+ </xs:complexType>
+
+ <xs:complexType name="EteLanguage">
+  <xs:attribute name="language_id" type="xs:int" />
+  <xs:attribute name="language_name" type="xs:string" />
+  <xs:attribute name="database_language" type="xs:int" default="0" />
+ </xs:complexType>
+
+ <xs:complexType name="DeviceInfoValue">
+  <xs:attribute name="device_info_value_id" type="xs:int" />
+  <xs:attribute name="device_info_id" type="xs:int" default="0" />
+  <xs:attribute name="bitmap_id" type="xs:int" default="0" />
+  <xs:attribute name="minimum_value" type="xs:int" default="0" />
+  <xs:attribute name="maximum_value" type="xs:int" default="0" />
+  <xs:attribute name="displayed_value" type="xs:string" />
+ </xs:complexType>
+
+ <xs:complexType name="ParameterAtomicType">
+  <xs:attribute name="atomic_type_number" type="xs:int" />
+  <xs:attribute name="atomic_type_name" type="xs:string" />
+  <xs:attribute name="dispattr" type="xs:string" />
+ </xs:complexType>
+
+ <xs:complexType name="ParameterType">
+  <xs:attribute name="parameter_type_id" type="xs:int" />
+  <xs:attribute name="atomic_type_number" type="xs:int" default="0" />
+  <xs:attribute name="program_id" type="xs:int" default="0" />
+  <xs:attribute name="parameter_type_name" type="xs:string" />
+  <xs:attribute name="parameter_minimum_value" type="xs:int" default="0" />
+  <xs:attribute name="parameter_maximum_value" type="xs:int" default="0" />
+  <xs:attribute name="parameter_type_description" type="xs:string" />
+  <xs:attribute name="parameter_type_low_access" type="xs:int" default="0" />
+  <xs:attribute name="parameter_type_high_access" type="xs:int" default="0" />
+  <xs:attribute name="parameter_type_size" type="xs:int" default="0" />
+  <xs:attribute name="parameter_minimum_double_value" type="xs:double" />
+  <xs:attribute name="parameter_maximum_double_value" type="xs:double" />
+ </xs:complexType>
+
+ <xs:complexType name="ParameterListOfValues">
+  <xs:attribute name="parameter_type_id" type="xs:int" />
+  <xs:attribute name="real_value" type="xs:int" default="0" />
+  <xs:attribute name="displayed_value" type="xs:string" />
+  <xs:attribute name="display_order" type="xs:int" default="0" />
+  <xs:attribute name="parameter_value_id" type="xs:int" />
+  <xs:attribute name="binary_value" type="xs:hexBinary" />
+  <xs:attribute name="binary_value_length" type="xs:int" default="0" />
+  <xs:attribute name="double_value" type="xs:double" />
+ </xs:complexType>
+
+ <xs:complexType name="ParameterCalculation">
+  <xs:attribute name="id" type="xs:int" />
+  <xs:attribute name="programid" type="xs:int" />
+  <xs:attribute name="number" type="xs:int" />
+  <xs:attribute name="name" type="xs:string" />
+  <xs:attribute name="language" type="xs:string" />
+  <xs:attribute name="lrtransformation" type="xs:hexBinary" />
+  <xs:attribute name="rltransformation" type="xs:hexBinary" />
+ </xs:complexType>
+
+ <xs:complexType name="Parameter">
+  <xs:attribute name="program_id" type="xs:int" />
+  <xs:attribute name="parameter_type_id" type="xs:int" default="0" />
+  <xs:attribute name="parameter_number" type="xs:int" default="0" />
+  <xs:attribute name="parameter_name" type="xs:string" />
+  <xs:attribute name="parameter_low_access" type="xs:int" default="0" />
+  <xs:attribute name="parameter_high_access" type="xs:int" default="0" />
+  <xs:attribute name="parent_parm_value" type="xs:int" />
+  <xs:attribute name="parameter_size" type="xs:int" default="0" />
+  <xs:attribute name="parameter_function" type="xs:string" />
+  <xs:attribute name="parameter_display_order" type="xs:int" />
+  <xs:attribute name="parameter_address" type="xs:int" />
+  <xs:attribute name="parameter_bitoffset" type="xs:int" />
+  <xs:attribute name="parameter_description" type="xs:string" />
+  <xs:attribute name="parameter_id" type="xs:int" />
+  <xs:attribute name="par_parameter_id" type="xs:int" />
+  <xs:attribute name="parameter_label" type="xs:string" />
+  <xs:attribute name="parameter_default_long" type="xs:int" />
+  <xs:attribute name="parameter_default_string" type="xs:string" />
+  <xs:attribute name="context_id" type="xs:int" />
+  <xs:attribute name="parameter_default_double" type="xs:double" />
+  <xs:attribute name="patch_always" type="xs:integer" />
+  <xs:attribute name="address_space" type="xs:integer" />
+  <xs:attribute name="eib_object_ref" type="xs:integer" />
+  <xs:attribute name="eib_property_id" type="xs:integer" />
+  <xs:attribute name="calculationid" type="xs:integer" />
+  <xs:attribute name="calculationset" type="xs:string" />
+  <xs:attribute name="aliasname" type="xs:string" />
+ </xs:complexType>
+
+ <xs:complexType name="ObjectType">
+  <xs:attribute name="object_type_code" type="xs:int" />
+  <xs:attribute name="object_type_name" type="xs:string" />
+  <xs:attribute name="length_in_bit" type="xs:integer" />
+ </xs:complexType>
+
+ <xs:complexType name="ObjectPriority">
+  <xs:attribute name="object_priority_code" type="xs:int" />
+  <xs:attribute name="object_priority_name" type="xs:string" />
+ </xs:complexType>
+
+ <xs:complexType name="CommunicationObject">
+  <xs:attribute name="program_id" type="xs:int" />
+  <xs:attribute name="object_name" type="xs:string" />
+  <xs:attribute name="object_function" type="xs:string" />
+  <xs:attribute name="object_readenabled" type="xs:int" default="0" />
+  <xs:attribute name="object_writeenabled" type="xs:int" default="0" />
+  <xs:attribute name="object_commenabled" type="xs:int" default="0" />
+  <xs:attribute name="object_transenabled" type="xs:int" default="0" />
+  <xs:attribute name="object_display_order" type="xs:int" default="0" />
+  <xs:attribute name="parent_parameter_value" type="xs:int" />
+  <xs:attribute name="object_id" type="xs:int" />
+  <xs:attribute name="parameter_id" type="xs:int" default="0" />
+  <xs:attribute name="object_number" type="xs:int" default="0" />
+  <xs:attribute name="object_description" type="xs:string" />
+  <xs:attribute name="object_type" type="xs:int" />
+  <xs:attribute name="object_priority" type="xs:int" />
+  <xs:attribute name="object_updateenabled" type="xs:int" default="0" />
+  <xs:attribute name="object_unique_number" type="xs:int" />
+  <xs:attribute name="object_readoninitenabled" type="xs:int" default="0" />
+ </xs:complexType>
+
+ <xs:complexType name="TextAttribute">
+  <xs:attribute name="text_attribute_id" type="xs:int" />
+  <xs:attribute name="language_id" type="xs:int" />
+  <xs:attribute name="column_id" type="xs:int" />
+  <xs:attribute name="entity_id" type="xs:int" />
+  <xs:attribute name="text_attribute_text" type="xs:string" />
+ </xs:complexType>
+
+ <xs:complexType name="ProductDescription">
+  <xs:attribute name="product_description_id" type="xs:int" />
+  <xs:attribute name="catalog_entry_id" type="xs:int" />
+  <xs:attribute name="product_description_text" type="xs:string" />
+  <xs:attribute name="display_order" type="xs:int" default="0" />
+  <xs:attribute name="language_id" type="xs:int" default="0" />
+ </xs:complexType>
+
+ <xs:complexType name="HelpFile">
+  <xs:attribute name="help_file_id" type="xs:int" />
+  <xs:attribute name="language_id" type="xs:int" />
+  <xs:attribute name="entity_id" type="xs:int" />
+  <xs:attribute name="help_file_name" type="xs:string" />
+ </xs:complexType>
+
+ <xs:complexType name="SpecificationText">
+  <xs:attribute name="spec_text_id" type="xs:int" />
+  <xs:attribute name="manufacturer_id" type="xs:int" />
+  <xs:attribute name="spec_text_name" type="xs:string" />
+  <xs:attribute name="spec_text_numb" type="xs:string" />
+  <xs:attribute name="spec_text_filename" type="xs:string" />
+ </xs:complexType>
+
+ <xs:complexType name="TextToCatEnt">
+  <xs:attribute name="text_to_catent_id" type="xs:int" />
+  <xs:attribute name="catalog_entry_id" type="xs:int" />
+  <xs:attribute name="spec_text_id" type="xs:int" />
+ </xs:complexType>
+
+ <xs:complexType name="ProductToProgram">
+  <xs:attribute name="prod2prog_id" type="xs:int" />
+  <xs:attribute name="product_id" type="xs:int" default="0" />
+  <xs:attribute name="program_id" type="xs:int" default="0" />
+  <xs:attribute name="prod2prog_status" type="xs:string" />
+  <xs:attribute name="pei_program_id" type="xs:int" default="0" />
+  <xs:attribute name="prod2prog_status_code" type="xs:int" default="0" />
+  <xs:attribute name="registration_number" type="xs:int" default="0" />
+  <xs:attribute name="registration_year" type="xs:int" default="0" />
+  <xs:attribute name="original_registration_number" type="xs:int" default="0" />
+  <xs:attribute name="original_registration_year" type="xs:int" default="0" />
+  <xs:attribute name="expiration_date" type="xs:string" />
+  <xs:attribute name="registration_ts" type="xs:string" />
+  <xs:attribute name="registration_date" type="xs:string" />
+  <xs:attribute name="registration_comment" type="xs:string" />
+  <xs:attribute name="registration_medium_type" type="xs:string" />
+  <xs:attribute name="dcy_f_individual" type="xs:double" />
+  <xs:attribute name="dcy_g_individual" type="xs:double" />
+  <xs:attribute name="dcy_f_group" type="xs:double" />
+  <xs:attribute name="dcy_g_group" type="xs:double" />
+  <xs:attribute name="signature" type="xs:string" />
+ </xs:complexType>
+
+ <xs:complexType name="ChannelList">
+  <xs:attribute name="channel_list_id" type="xs:int" />
+  <xs:attribute name="medium_type_number" type="xs:int" />
+  <xs:attribute name="channel_list_name" type="xs:string" />
+ </xs:complexType>
+
+ <xs:complexType name="ProductToProgramToMT">
+  <xs:attribute name="prod2prog2mt_id" type="xs:int" />
+  <xs:attribute name="prod2prog_id" type="xs:int" />
+  <xs:attribute name="medium_type_number" type="xs:int" />
+  <xs:attribute name="channel_list_id" type="xs:integer" />
+ </xs:complexType>
+
+ <xs:complexType name="ProgramDescription">
+  <xs:attribute name="program_description_id" type="xs:int" />
+  <xs:attribute name="program_id" type="xs:int" default="0" />
+  <xs:attribute name="text" type="xs:string" />
+  <xs:attribute name="display_order" type="xs:int" default="0" />
+  <xs:attribute name="language_id" type="xs:int" default="0" />
+ </xs:complexType>
+
+ <xs:complexType name="S19Block">
+  <xs:attribute name="block_id" type="xs:int" />
+  <xs:attribute name="block_number" type="xs:int" />
+  <xs:attribute name="program_id" type="xs:int" />
+  <xs:attribute name="block_name" type="xs:string" />
+  <xs:attribute name="block_type" type="xs:integer" />
+  <xs:attribute name="control_code" type="xs:integer" />
+  <xs:attribute name="segment_type" type="xs:integer" />
+  <xs:attribute name="segment_id" type="xs:integer" />
+  <xs:attribute name="segment_address" type="xs:integer" />
+  <xs:attribute name="segment_length" type="xs:integer" />
+  <xs:attribute name="access_attributes" type="xs:integer" />
+  <xs:attribute name="memory_type" type="xs:integer" />
+  <xs:attribute name="memory_attributes" type="xs:integer" />
+  <xs:attribute name="block_data" type="xs:hexBinary" />
+  <xs:attribute name="block_mask" type="xs:hexBinary" />
+  <xs:attribute name="record" type="xs:hexBinary" />
+  <xs:attribute name="merge_id" type="xs:integer" />
+  <xs:attribute name="proc_mask" type="xs:int" />
+ </xs:complexType>
+
+ <xs:complexType name="S19BlockParagraph">
+  <xs:attribute name="s19_block_paragraph_id" type="xs:int" />
+  <xs:attribute name="block_id" type="xs:int" />
+  <xs:attribute name="pt_column_id" type="xs:integer" />
+  <xs:attribute name="data_long" type="xs:integer" />
+  <xs:attribute name="data_binary" type="xs:hexBinary" />
+ </xs:complexType>
+
+ <xs:complexType name="AddressFixup">
+  <xs:attribute name="fixup_id" type="xs:int" />
+  <xs:attribute name="program_id" type="xs:int" />
+  <xs:attribute name="fixup_type" type="xs:int" />
+  <xs:attribute name="fixup_name" type="xs:string" />
+  <xs:attribute name="fixup_address" type="xs:integer" />
+ </xs:complexType>
+
+ <xs:complexType name="DeviceObject">
+  <xs:attribute name="device_id" type="xs:int" default="0" />
+  <xs:attribute name="object_prio" type="xs:int" default="0" />
+  <xs:attribute name="object_read" type="xs:int" default="0" />
+  <xs:attribute name="object_write" type="xs:int" default="0" />
+  <xs:attribute name="object_comm" type="xs:int" default="0" />
+  <xs:attribute name="object_trans" type="xs:int" default="0" />
+  <xs:attribute name="object_subgroups_text" type="xs:string" />
+  <xs:attribute name="device_object_id" type="xs:int" />
+  <xs:attribute name="object_id" type="xs:int" default="0" />
+  <xs:attribute name="device_object_number" type="xs:int" />
+  <xs:attribute name="object_subgroups_text2" type="xs:string" />
+  <xs:attribute name="device_object_visible" type="xs:int" default="0" />
+  <xs:attribute name="device_object_unique_name" type="xs:string" />
+  <xs:attribute name="object_update" type="xs:int" default="0" />
+  <xs:attribute name="device_object_unique_number" type="xs:integer" />
+  <xs:attribute name="device_object_type" type="xs:integer" />
+  <xs:attribute name="eib_data_type_code" type="xs:integer" />
+  <xs:attribute name="eib_data_subtype_code" type="xs:integer" />
+  <xs:attribute name="name" type="xs:string" />
+  <xs:attribute name="description" type="xs:string" />
+  <xs:attribute name="object_readoninit" type="xs:integer" />
+ </xs:complexType>
+
+ <xs:complexType name="DeviceParameter">
+  <xs:attribute name="device_id" type="xs:int" />
+  <xs:attribute name="device_parameter_id" type="xs:int" />
+  <xs:attribute name="parameter_id" type="xs:int" default="0" />
+  <xs:attribute name="device_parameter_number" type="xs:int" default="0" />
+  <xs:attribute name="device_parameter_visible" type="xs:int" default="0" />
+  <xs:attribute name="parameter_value_long" type="xs:int" />
+  <xs:attribute name="parameter_value_string" type="xs:string" />
+  <xs:attribute name="program_type" type="xs:int" />
+  <xs:attribute name="parameter_value_double" type="xs:double" />
+  <xs:attribute name="valueisvalid" type="xs:int" default="1" />
+ </xs:complexType>
+
+ <xs:complexType name="MaskFeature">
+  <xs:attribute name="mask_feature_id" type="xs:int" />
+  <xs:attribute name="mask_feature_name" type="xs:string" />
+ </xs:complexType>
+
+ <xs:complexType name="MaskToMaskFeature">
+  <xs:attribute name="mask_to_mask_feature_id" type="xs:int" />
+  <xs:attribute name="mask_id" type="xs:int" />
+  <xs:attribute name="mask_feature_id" type="xs:int" />
+  <xs:attribute name="mask_feature_value" type="xs:integer" />
+ </xs:complexType>
+
+ <xs:complexType name="ProgramToMaskFeature">
+  <xs:attribute name="program_to_mask_feature_id" type="xs:int" />
+  <xs:attribute name="program_id" type="xs:int" />
+  <xs:attribute name="mask_feature_id" type="xs:int" />
+  <xs:attribute name="mask_feature_value" type="xs:integer" />
+ </xs:complexType>
+
+ <xs:complexType name="MediumChannel">
+  <xs:attribute name="medium_channel_id" type="xs:int" />
+  <xs:attribute name="medium_type_number" type="xs:int" />
+  <xs:attribute name="channel_number" type="xs:int" />
+  <xs:attribute name="max_device_duty_cycle" type="xs:double" />
+ </xs:complexType>
+
+ <xs:complexType name="ProgramPlugin">
+  <xs:attribute name="program_plugin_id" type="xs:int" />
+  <xs:attribute name="program_id" type="xs:int" />
+  <xs:attribute name="plugin_type" type="xs:int" />
+  <xs:attribute name="plugin_clsid" type="xs:string" />
+  <xs:attribute name="plugin_codebase" type="xs:string" />
+ </xs:complexType>
+
+ <xs:complexType name="ApplicationProgramAttributes">
+  <xs:attribute name="id" type="xs:int" />
+  <xs:attribute name="applicationprogramid" type="xs:int" />
+  <xs:attribute name="attributename" type="xs:string" />
+  <xs:attribute name="attributevalue" type="xs:string" />
+ </xs:complexType>
+
+ <xs:complexType name="ApplicationProgramBaggage">
+  <xs:attribute name="id" type="xs:int" />
+  <xs:attribute name="applicationprogramid" type="xs:int" />
+  <xs:attribute name="baggageid" type="xs:int" />
+ </xs:complexType>
+
+ <xs:complexType name="Baggage">
+  <xs:attribute name="id" type="xs:int" />
+  <xs:attribute name="manufacturerid" type="xs:int" />
+  <xs:attribute name="localfiledir" type="xs:string" />
+  <xs:attribute name="localfilename" type="xs:string" />
+  <xs:attribute name="localfileattributes" type="xs:integer" />
+  <xs:attribute name="localfiletime" type="xs:string" />
+  <xs:attribute name="localfileversionhi" type="xs:string" />
+  <xs:attribute name="localfileversionlo" type="xs:string" />
+  <xs:attribute name="compression" type="xs:string" />
+  <xs:attribute name="data" type="xs:hexBinary" />
+  <xs:attribute name="lastused" type="xs:string" />
+  <xs:attribute name="installonimport" type="xs:boolean" />
+ </xs:complexType>
+
+ <xs:complexType name="VD">
+  <xs:all>
+   <xs:element name="manufacturer" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="manufacturer" type="Manufacturer" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="functional_entity" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="functional_entity" type="FunctionalEntity" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="bcu_type" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="bcu_type" type="BcuType" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="symbol" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="symbol" type="Symbol" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="hw_product" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="hw_product" type="HwProduct" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="catalog_entry" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="catalog_entry" type="CatalogEntry" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="medium_type" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="medium_type" type="MediumType" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="mask" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="mask" type="Mask" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="assembler" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="assembler" type="Assembler" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="application_program" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="application_program" type="ApplicationProgram" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="virtual_device" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="virtual_device" type="VirtualDevice" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="mask_entry" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="mask_entry" type="MaskEntry" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="device_info" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="device_info" type="DeviceInfo" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="ete_language" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="ete_language" type="EteLanguage" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="device_info_value" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="device_info_value" type="DeviceInfoValue" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="parameter_atomic_type" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="parameter_atomic_type" type="ParameterAtomicType" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="parameter_type" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="parameter_type" type="ParameterType" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="parameter_list_of_values" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="parameter_list_of_values" type="ParameterListOfValues" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="parametercalculation" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="parametercalculation" type="ParameterCalculation" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="parameter" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="parameter" type="Parameter" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="object_type" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="object_type" type="ObjectType" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="object_priority" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="object_priority" type="ObjectPriority" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="communication_object" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="communication_object" type="CommunicationObject" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="text_attribute" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="text_attribute" type="TextAttribute" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="product_description" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="product_description" type="ProductDescription" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="help_file" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="help_file" type="HelpFile" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="specification_text" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="specification_text" type="SpecificationText" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="text_to_catent" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="text_to_catent" type="TextToCatEnt" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="product_to_program" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="product_to_program" type="ProductToProgram" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="channel_list" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="channel_list" type="ChannelList" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="product_to_program_to_mt" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="product_to_program_to_mt" type="ProductToProgramToMT" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="program_description" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="program_description" type="ProgramDescription" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="s19_block" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="s19_block" type="S19Block" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="s19_block_paragraph" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="s19_block_paragraph" type="S19BlockParagraph" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="address_fixup" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="address_fixup" type="AddressFixup" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="device_object" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="device_object" type="DeviceObject" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="device_parameter" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="device_parameter" type="DeviceParameter" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="mask_feature" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="mask_feature" type="MaskFeature" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="mask_to_mask_feature" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="mask_to_mask_feature" type="MaskToMaskFeature" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="program_to_mask_feature" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="program_to_mask_feature" type="ProgramToMaskFeature" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="medium_channel" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="medium_channel" type="MediumChannel" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="program_plugin" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="program_plugin" type="ProgramPlugin" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="applicationprogramattributes" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="applicationprogramattributes" type="ApplicationProgramAttributes" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="applicationprogrambaggage" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="applicationprogrambaggage" type="ApplicationProgramBaggage" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+   <xs:element name="baggage" minOccurs="0">
+    <xs:complexType>
+     <xs:sequence>
+      <xs:element name="baggage" type="Baggage" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+    </xs:complexType>
+   </xs:element>
+  </xs:all>
+  <xs:attribute name="name" type="xs:string" />
+  <xs:attribute name="comment" type="xs:string" />
+  <xs:attribute name="created" type="xs:string" />
+  <xs:attribute name="version" type="xs:string" />
+ </xs:complexType>
+
+</xs:schema>

@@ -1,0 +1,58 @@
+EX-IM
+N /ETS/ETS_PDB/ets2.vd_
+K Manufacturer tool
+K 
+D 2004-05-07 15:30:11
+V 3.19
+H virtual_device
+-------------------------------------
+T 3 manufacturer
+C1 T3 1 4 N MANUFACTURER_ID
+C2 T3 3 50 Y MANUFACTURER_NAME
+C3 T3 1 4 Y ADDRESS_ID
+R 1 T 3 manufacturer
+1
+Siemens
+
+R 2 T 3 manufacturer
+72
+Theben AG
+
+-------------------------------------
+T 23 ParameterCalculation
+C1 T23 1 4 N ID
+C2 T23 1 4 N ProgramID
+C3 T23 2 2 N Number
+C4 T23 3 50 Y Name
+C5 T23 3 20 Y Language
+C6 T23 4 32767 Y LRTransformation
+C7 T23 4 32767 Y RLTransformation
+-------------------------------------
+T 4 functional_entity
+C1 T4 1 4 N FUNCTIONAL_ENTITY_ID
+C2 T4 1 4 Y MANUFACTURER_ID
+C3 T4 3 50 Y FUNCTIONAL_ENTITY_NAME
+C4 T4 3 20 Y FUNCTIONAL_ENTITY_NUMB
+C5 T4 3 80 Y FUNCTIONAL_ENTITY_DESCRIPTION
+C6 T4 1 4 Y FUN_FUNCTIONAL_ENTITY_ID
+C7 T4 3 255 Y HELP_FILE_NAME
+C8 T4 1 4 Y CONTEXT_ID
+R 1 T 4 functional_entity
+22482
+1
+Phys. Sensoren
+PS
+_phy_sen.vd1
+
+
+
+R 2 T 4 functional_entity
+22536
+1
+Helligkeit und Temperatur
+HT
+AP254.VD1
+22482
+
+
+XXX

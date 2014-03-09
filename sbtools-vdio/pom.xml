@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+ <modelVersion>4.0.0</modelVersion>
+ <parent>
+  <groupId>org.selfbus.sbtools</groupId>
+  <artifactId>parent</artifactId>
+  <version>0.2-SNAPSHOT</version>
+  <relativePath>..</relativePath>
+ </parent>
+ <artifactId>sbtools-vdio</artifactId>
+ <name>sbtools-vdio</name>
+ <description>sbtools VD-file I/O classes</description>
+ <dependencies>
+  <dependency>
+   <groupId>org.selfbus.sbtools</groupId>
+   <artifactId>sbtools-common</artifactId>
+   <version>${project.version}</version>
+  </dependency>
+  <dependency>
+   <groupId>ch.qos.logback</groupId>
+   <artifactId>logback-classic</artifactId>
+   <scope>test</scope>
+  </dependency>
+  <dependency>
+   <groupId>net.lingala.zip4j</groupId>
+   <artifactId>zip4j</artifactId>
+   <version>1.3.1</version>
+  </dependency>
+ </dependencies>
+</project>
