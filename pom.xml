@@ -38,10 +38,6 @@
   <module>sbtools-knxcom</module>
   <module>sbtools-knxcom-gui</module>
   <module>sbtools-vdio</module>
-  <module>sbtools-devtool</module>
-  <module>sbtools-products-editor</module>
-  <module>sbtools-sniffer</module>
-  <module>sbtools-vdviewer</module>
  </modules>
  <dependencyManagement>
   <dependencies>
