@@ -3,7 +3,7 @@
  <parent>
   <groupId>org.selfbus.sbtools</groupId>
   <artifactId>parent</artifactId>
-  <version>0.2</version>
+  <version>0.3-SNAPSHOT</version>
   <relativePath>..</relativePath>
  </parent>
  <artifactId>sbtools-knxcom</artifactId>
@@ -13,7 +13,7 @@
   <dependency>
    <groupId>org.selfbus.sbtools</groupId>
    <artifactId>sbtools-common</artifactId>
-   <version>0.2</version>
+   <version>0.3-SNAPSHOT</version>
   </dependency>
   <dependency>
    <groupId>com.neuronrobotics</groupId>

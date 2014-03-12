@@ -2,7 +2,7 @@
  <modelVersion>4.0.0</modelVersion>
  <groupId>org.selfbus.sbtools</groupId>
  <artifactId>parent</artifactId>
- <version>0.2</version>
+ <version>0.3-SNAPSHOT</version>
  <name>sbtools-parent</name>
  <packaging>pom</packaging>
  <organization>
