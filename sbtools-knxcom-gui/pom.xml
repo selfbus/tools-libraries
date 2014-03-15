@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
  <modelVersion>4.0.0</modelVersion>
  <parent>
-  <groupId>org.selfbus.sbtools</groupId>
-  <artifactId>parent</artifactId>
+  <groupId>org.selfbus.tools-libraries</groupId>
+  <artifactId>root</artifactId>
   <version>0.3-SNAPSHOT</version>
   <relativePath>..</relativePath>
  </parent>
@@ -10,12 +10,12 @@
  <description>GUI components for knxcom.</description>
  <dependencies>
   <dependency>
-   <groupId>org.selfbus.sbtools</groupId>
+   <groupId>org.selfbus.tools-libraries</groupId>
    <artifactId>sbtools-knxcom</artifactId>
    <version>${project.version}</version>
   </dependency>
   <dependency>
-   <groupId>org.selfbus.sbtools</groupId>
+   <groupId>org.selfbus.tools-libraries</groupId>
    <artifactId>sbtools-common-gui</artifactId>
    <version>${project.version}</version>
   </dependency>
