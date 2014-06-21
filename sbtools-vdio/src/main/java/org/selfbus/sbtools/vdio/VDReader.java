@@ -224,7 +224,13 @@ public class VDReader extends AbstractXmlReader
          if (i > 0 && !value.isEmpty())
          {
             String name = tableInfo.fieldNames.get(i - 1);
-            recordAtts.addAttribute("", name, name, tableInfo.fieldTypes.get(i - 1).xsType, value);
+            String xsType = tableInfo.fieldTypes.get(i - 1).xsType;
+
+            // Work around bogous field contents (happens e.g. when importing from VD Builder)
+            if ("xs:hexBinary".equals(xsType) && value.length() == 1)
+               value = "0" + value;
+
+            recordAtts.addAttribute("", name, name, xsType, value);
          }
 
          if (i == numFields)
@@ -236,7 +242,7 @@ public class VDReader extends AbstractXmlReader
 
       String recordName = tableInfo.name.intern();
 
-      if (startLineNo == 9938324)
+      if (startLineNo == 3359)
       {
          LOGGER.debug("debug point");
       }
@@ -256,11 +262,29 @@ public class VDReader extends AbstractXmlReader
       }
       catch (Exception e)
       {
-         LOGGER.warn("Exception near line " + startLineNo , e);
+         LOGGER.warn("Exception while parsing " + recordName + " near line " + startLineNo + ". Parameters: " + attsToString(recordAtts), e);
          throw new SAXException(I18n.formatMessage("VDReader.parseError", Integer.toString(startLineNo)), e);
       }
 
       currentLine = line;
+   }
+
+   /**
+    * Convert the attributes to a human readable string
+    *
+    * @param atts - the attributes
+    * @return A string with the attributes
+    */
+   private String attsToString(VdioAttributes atts)
+   {
+      StringBuilder builder = new StringBuilder();
+      for (int i = 0; i < atts.getLength(); ++i)
+      {
+         if (i > 0)
+            builder.append(", ");
+         builder.append(atts.getType(i)).append(" ").append(atts.getQName(i)).append("=\"").append(atts.getValue(i)).append("\"");
+      }
+      return builder.toString();
    }
 
    /**
