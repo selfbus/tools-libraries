@@ -3,7 +3,7 @@
  <parent>
   <groupId>org.selfbus.tools-libraries</groupId>
   <artifactId>root</artifactId>
-  <version>0.3</version>
+  <version>release-0.3</version>
   <relativePath>..</relativePath>
  </parent>
  <artifactId>sbtools-common</artifactId>
