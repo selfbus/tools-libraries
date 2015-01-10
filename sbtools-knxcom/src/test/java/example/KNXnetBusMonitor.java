@@ -19,8 +19,7 @@ import org.selfbus.sbtools.knxcom.types.LinkMode;
  */
 public class KNXnetBusMonitor implements TelegramListener
 {
-//   private static final String KNX_NET_HOST = "localhost";
-   private static final String KNX_NET_HOST = "omiai";
+   private static final String KNX_NET_HOST = "localhost";
 
    private final BusInterface iface;
 

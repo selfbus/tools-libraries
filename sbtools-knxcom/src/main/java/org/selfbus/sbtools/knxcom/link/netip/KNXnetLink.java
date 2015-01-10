@@ -61,7 +61,7 @@ public final class KNXnetLink extends AbstractListenableLink implements Link
    public static final int defaultPortTCP = 6720;
 
    // Enable to get debug output of the KNXnet/IP communication data
-   private final boolean debugData = true;
+   private final boolean debugData = false;
 
    // Enable to get debug output of the KNXnet/IP communication protocol
    private final boolean debugProto = false;
@@ -87,7 +87,7 @@ public final class KNXnetLink extends AbstractListenableLink implements Link
 
    /**
     * Create a new connection to a KNXnet/IP server listening on a custom port.
-    * 
+    *
     * @param host - the name or IP address of the host that is running the
     *           KNXnet/IP server.
     * @param port - the UDP port of the KNXnet/IP server on the host. Usually
@@ -118,7 +118,7 @@ public final class KNXnetLink extends AbstractListenableLink implements Link
    /**
     * Create a new connection to a KNXnet/IP server listening on the default UDP
     * port (3671).
-    * 
+    *
     * @param host - the name or IP address of the host that is running the
     *           KNXnet/IP server.
     */
@@ -202,11 +202,11 @@ public final class KNXnetLink extends AbstractListenableLink implements Link
     * ID and the data endpoint information is stored and {@link StatusCode#OK}
     * is returned. On failure, the {@link StatusCode status code} of the
     * response is returned.
-    * 
+    *
     * @param mode - the link mode to request
-    * 
+    *
     * @return the {@link StatusCode status} of the the connection response.
-    * 
+    *
     * @throws IOException
     */
    private StatusCode connectRequest(LinkMode mode) throws IOException
@@ -324,9 +324,9 @@ public final class KNXnetLink extends AbstractListenableLink implements Link
    /**
     * Receive a frame. Up to <code>timeout</code> milliseconds is waited for a
     * frame to arrive.
-    * 
+    *
     * @param timeout - wait up to timeout milliseconds, -1 waits infinitely.
-    * 
+    *
     * @return the received KNXnet/IP frame, or null of no frame was received
     *         within the timeout.
     */
@@ -362,7 +362,7 @@ public final class KNXnetLink extends AbstractListenableLink implements Link
 
    /**
     * Send a KNXnet/IP frame to an address.
-    * 
+    *
     * @param address - the address (IP number + port) to send to
     * @param frame - the frame to send
     * @param blocking - enable to wait for an acknowledge
@@ -383,10 +383,10 @@ public final class KNXnetLink extends AbstractListenableLink implements Link
 
    /**
     * Process the received data
-    * 
+    *
     * @param data - the received data.
     * @param len - number of bytes in data that are valid.
-    * 
+    *
     * @throws IOException
     */
    public void processData(final byte[] data, int len) throws IOException
@@ -475,10 +475,10 @@ public final class KNXnetLink extends AbstractListenableLink implements Link
 
    /**
     * Get the raw bytes of the network address of the given address.
-    * 
+    *
     * @param addr - the address to process
     * @param maskLength - the length of the network mask in bits
-    * 
+    *
     * @return The raw bytes of the address
     */
    static byte[] getNetworkAddressOf(InetAddress addr, int maskLength)
@@ -487,7 +487,7 @@ public final class KNXnetLink extends AbstractListenableLink implements Link
 
       int pos = maskLength >> 3;
       int restBits = maskLength & 7;
-         
+
       if (restBits != 0)
       {
          final int mask = new int[] { 0x80, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc, 0xfe } [restBits - 1];
@@ -496,13 +496,13 @@ public final class KNXnetLink extends AbstractListenableLink implements Link
 
       while (pos < raw.length)
          raw[pos++] = 0;
-      
+
       return raw;
    }
-   
+
    /**
     * Select the local IP address for connecting the given remote IP address.
-    * 
+    *
     * @param remoteIP - the IP address of the remote host.
     */
    static InetAddress getLocalIpAddressFor(InetAddress remoteIP)

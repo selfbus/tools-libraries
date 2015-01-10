@@ -288,7 +288,7 @@ public class DataConnectionImpl implements DataConnection, TelegramListener
          {
             break;
          }
-         
+
          final Transport transport = telegram.getTransport();
          if (transport == Transport.ConnectedAck)
             return;
@@ -448,7 +448,7 @@ public class DataConnectionImpl implements DataConnection, TelegramListener
    @Override
    public void telegramReceived(Telegram telegram)
    {
-      LOGGER.debug("++ Recv: " + telegram);
+      LOGGER.debug("- Recv: " + telegram);
 
       if (!telegram.getFrom().equals(addr))
          return;
@@ -465,7 +465,7 @@ public class DataConnectionImpl implements DataConnection, TelegramListener
             deviceDescriptor0 = (DeviceDescriptor0) ddapp.getDescriptor();
       }
 
-      LOGGER.debug("++ Telegram received: " + telegram);
+      LOGGER.debug("- Telegram received: " + telegram);
 
       synchronized (recvQueue)
       {

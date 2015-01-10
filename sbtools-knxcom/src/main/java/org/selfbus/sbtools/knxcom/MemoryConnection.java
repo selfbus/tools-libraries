@@ -124,7 +124,7 @@ public class MemoryConnection implements MemoryConnectionInterface
          if (Arrays.equals(dataBlock, currentBlock))
             continue;
 
-         connection.query(new MemoryWrite(addr, dataBlock));
+         connection.send(new MemoryWrite(addr, dataBlock));
 
          currentBlock = read(addr, blockSize);
          if (!Arrays.equals(dataBlock, currentBlock))
