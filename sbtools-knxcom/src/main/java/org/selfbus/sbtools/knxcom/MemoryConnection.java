@@ -19,7 +19,7 @@ public class MemoryConnection implements MemoryConnectionInterface
 
    /**
     * Create a memory connection.
-    * 
+    *
     * @param connection - the data connection to use.
     * @throws NullPointerException if the connection is null.
     */
@@ -92,10 +92,10 @@ public class MemoryConnection implements MemoryConnectionInterface
 
    /**
     * Read bytes, using the supplied memory-read application object.
-    * 
+    *
     * @param memoryRead - the read application to send.
     * @return The read bytes.
-    * 
+    *
     * @throws TimeoutException if there is no reply from the remote device.
     * @throws IOException if there is a communication error.
     */
@@ -116,11 +116,10 @@ public class MemoryConnection implements MemoryConnectionInterface
 
       for (int addr = address; addr < endAddress; addr += maxBlockSize)
       {
-         int blockSize = endAddress - addr;
-         if (blockSize > maxBlockSize)
-            blockSize = maxBlockSize;
+         int blockSize = Math.min(endAddress - addr, maxBlockSize);
+         int offs = addr - address;
 
-         final byte[] dataBlock = Arrays.copyOfRange(data, addr, addr + blockSize);
+         byte[] dataBlock = Arrays.copyOfRange(data, offs, offs + blockSize);
          byte[] currentBlock = read(addr, blockSize);
          if (Arrays.equals(dataBlock, currentBlock))
             continue;
