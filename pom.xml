@@ -2,7 +2,7 @@
  <modelVersion>4.0.0</modelVersion>
  <groupId>org.selfbus.tools-libraries</groupId>
  <artifactId>tools-libraries</artifactId>
- <version>0.4</version>
+ <version>0.5-SNAPSHOT</version>
  <name>sbtools-tools-libraries</name>
  <packaging>pom</packaging>
  <organization>
