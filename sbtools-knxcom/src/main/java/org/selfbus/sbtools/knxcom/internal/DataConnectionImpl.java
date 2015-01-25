@@ -481,7 +481,7 @@ public class DataConnectionImpl implements DataConnection, TelegramListener
 
             try
             {
-               LOGGER.debug("++ Send: " + ackTelegram.getTransport());
+               LOGGER.debug("- Send: " + ackTelegram.getTransport());
                busInterface.send(ackTelegram);
             }
             catch (IOException e)

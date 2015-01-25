@@ -58,7 +58,7 @@ public class BusInterfaceImpl implements BusInterface
 
    /**
     * Create a bus-interface object.
-    * 
+    *
     * @see {@link #setLink(Link)}
     */
    public BusInterfaceImpl()
@@ -69,7 +69,7 @@ public class BusInterfaceImpl implements BusInterface
    /**
     * Create a bus-interface object that uses the given connection for the bus
     * communication.
-    * 
+    *
     * @param con - the connection to use.
     */
    public BusInterfaceImpl(Link con)
@@ -90,7 +90,7 @@ public class BusInterfaceImpl implements BusInterface
 
    /**
     * Set the link.
-    * 
+    *
     * @param link - the link to set.
     * @throws IOException if the link cannot be opened.
     */
@@ -209,7 +209,7 @@ public class BusInterfaceImpl implements BusInterface
 
    /**
     * Notify all listeners that the given telegram was received.
-    * 
+    *
     * @param telegram - the telegram that was received.
     */
    protected void notifyListenersReceived(final Telegram telegram)
@@ -220,7 +220,7 @@ public class BusInterfaceImpl implements BusInterface
 
    /**
     * Notify all listeners that the given telegram was sent.
-    * 
+    *
     * @param telegram - the telegram that was sent.
     */
    protected void notifyListenersSent(final Telegram telegram)
@@ -288,8 +288,7 @@ public class BusInterfaceImpl implements BusInterface
          waitConTelegram = null;
       }
 
-      LOGGER.error("Sent telegram was not confirmed by the link / BAU within " + waitTimeMS + "ms");
-      throw new IOException("Sent telegram was not confirmed: " + telegram);
+      throw new IOException("Sent telegram was not confirmed by the link / BAU within " + waitTimeMS + "ms");
    }
 
    /**
@@ -370,7 +369,7 @@ public class BusInterfaceImpl implements BusInterface
             }
             else
             {
-               LOGGER.debug("RECEIVED: " + telegram);
+               LOGGER.debug("RECV: " + telegram);
                notifyListenersReceived(telegram);
             }
          }
@@ -427,8 +426,7 @@ public class BusInterfaceImpl implements BusInterface
          {
             final Telegram telegram = ((EmiTelegramFrame) frame).getTelegram();
 
-            if (frame.getType().isConfirmation() && replySemaphore.hasQueuedThreads()
-                  && telegram.isSimilar(waitConTelegram))
+            if (frame.getType().isConfirmation() && telegram.isSimilar(waitConTelegram))
             {
                replySemaphore.release();
             }
