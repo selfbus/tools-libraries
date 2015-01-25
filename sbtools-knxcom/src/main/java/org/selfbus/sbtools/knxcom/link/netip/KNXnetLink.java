@@ -61,10 +61,10 @@ public final class KNXnetLink extends AbstractListenableLink implements Link
    public static final int defaultPortTCP = 6720;
 
    // Enable to get debug output of the KNXnet/IP communication data
-   private final boolean debugData = false;
+   private boolean debugData = false;
 
    // Enable to get debug output of the KNXnet/IP communication protocol
-   private final boolean debugProto = false;
+   private boolean debugProto = false;
 
    private final InetSocketAddress addr;
    private final InetAddress localAddr;
