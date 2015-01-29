@@ -23,8 +23,8 @@ import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.util.Zip4jConstants;
 
 import org.apache.commons.lang3.Validate;
-import org.selfbus.sbtools.vdio.internal.I18n;
 import org.selfbus.sbtools.vdio.internal.AbstractZipPasswordHandler;
+import org.selfbus.sbtools.vdio.internal.I18n;
 import org.selfbus.sbtools.vdio.model.ObjectFactory;
 import org.selfbus.sbtools.vdio.model.VD;
 import org.slf4j.Logger;
@@ -48,7 +48,7 @@ public class ProductsWriter extends AbstractZipPasswordHandler
 
    /**
     * Create a products writer. The parent frame is used for the ZIP password dialog.
-    * 
+    *
     * @param parentFrame - the frame of the window invoking the reader
     */
    public ProductsWriter(JFrame parentFrame)
@@ -60,10 +60,10 @@ public class ProductsWriter extends AbstractZipPasswordHandler
     * Write the {@link VD} to the file. If the file ends with ".vd[0-9]", a ZIP file is created
     * containing the VD. The created ZIP file will be password protected with the ZIP password, if
     * set.
-    * 
+    *
     * @param file - the VD file or ZIP archive to write.
     * @param vd - the VD to write.
-    * 
+    *
     * @throws FileNotFoundException if the file does not exist
     * @throws VdioException in case of parse or read errors
     */
@@ -86,10 +86,10 @@ public class ProductsWriter extends AbstractZipPasswordHandler
 
    /**
     * Write a ZIP file, handle password protection.
-    * 
+    *
     * @param file - the ZIP file to write
     * @param vd - the VD to write.
-    * 
+    *
     * @throws VdioException in case of zip problems
     */
    protected void writeZip(File file, VD vd) throws VdioException
@@ -121,6 +121,7 @@ public class ProductsWriter extends AbstractZipPasswordHandler
          write(new FileOutputStream(vdFile), vd);
 
          ZipParameters zipParams = new ZipParameters();
+         zipParams.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_MAXIMUM);
          if (haveZipPassword())
          {
             zipParams.setEncryptFiles(true);
@@ -144,10 +145,10 @@ public class ProductsWriter extends AbstractZipPasswordHandler
 
    /**
     * Write the VD to the output stream in VD format.
-    * 
+    *
     * @param in - the stream to write to.
     * @param vd - the VD to write.
-    * 
+    *
     * @throws VdioException in case of write errors
     */
    public void write(OutputStream out, VD vd) throws VdioException

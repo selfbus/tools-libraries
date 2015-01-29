@@ -73,12 +73,12 @@ public class VDReader extends AbstractXmlReader
       {
          contentHandler.startDocument();
          parseHeader();
-   
+
          while (!atEnd())
          {
             parseTable();
          }
-   
+
          contentHandler.endElement(null, documentName, documentName);
          contentHandler.endDocument();
       }
@@ -90,12 +90,13 @@ public class VDReader extends AbstractXmlReader
 
    /**
     * Parse the header.
-    * 
+    *
     * @throws SAXParseException
     * @throws IOException
     */
    private void parseHeader() throws SAXException, IOException
    {
+      String version = "";
       documentName = null;
       recordAtts.clear();
 
@@ -116,7 +117,10 @@ public class VDReader extends AbstractXmlReader
          String value = line.substring(2);
 
          if ("V".equals(type))
+         {
+            version = value;
             recordAtts.addAttribute("", "version", "version", "xs:string", value);
+         }
          else if ("D".equals(type))
             recordAtts.addAttribute("", "created", "created", "xs:string", value);
          else if ("N".equals(type))
@@ -128,14 +132,14 @@ public class VDReader extends AbstractXmlReader
       }
 
       Validate.notNull(documentName, "document name is undefined in the file header");
-      LOGGER.debug("Document is \"{}\"", documentName);
+      LOGGER.debug("Document is \"{}\", version {}", documentName, version);
 
       contentHandler.startElement("", documentName, documentName, recordAtts);
    }
 
    /**
     * Parse a table section.
-    * 
+    *
     * @throws SAXParseException
     * @throws IOException
     */
@@ -256,7 +260,7 @@ public class VDReader extends AbstractXmlReader
       {
          readRest();
 
-         String fieldName = recordAtts.getQName(recordAtts.getLastIndex()); 
+         String fieldName = recordAtts.getQName(recordAtts.getLastIndex());
          LOGGER.warn("line " + startLineNo + ": annotation missing in target Java class for table {} field {} (class in package org.selfbus.sbtools.vdio.model)", tableInfo.name, fieldName);
          throw e; //new SAXException(I18n.formatMessage("VDReader.unknownFieldError", Integer.toString(startLineNo), tableInfo.name, fieldName), e);
       }
@@ -307,7 +311,7 @@ public class VDReader extends AbstractXmlReader
 
    /**
     * Read the next line. {@link #currentLine} also contains the read line.
-    * 
+    *
     * @return The next line or null if the line is a separator line or we are at the end of the
     *         file.
     * @throws IOException

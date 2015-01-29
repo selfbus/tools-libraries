@@ -48,7 +48,7 @@ public class ProductsReader extends AbstractZipPasswordHandler
 
    /**
     * Create a products reader. The parent frame is used for the ZIP password dialog.
-    * 
+    *
     * @param parentFrame - the frame of the window invoking the reader
     */
    public ProductsReader(JFrame parentFrame)
@@ -59,10 +59,10 @@ public class ProductsReader extends AbstractZipPasswordHandler
    /**
     * Read the VD file and create a {@link VD} from it. If the file is a ZIP file, the .vd_ file is
     * extracted from it.
-    * 
+    *
     * @param file - the VD file or ZIP archive to read.
     * @return The created VD, or null if the user canceled loading
-    * 
+    *
     * @throws FileNotFoundException if the file does not exist
     * @throws VdioException in case of parse or read errors
     */
@@ -89,10 +89,10 @@ public class ProductsReader extends AbstractZipPasswordHandler
 
    /**
     * Read the ZIP file, handle password protection.
-    * 
+    *
     * @param file - the ZIP file to read
     * @return The created VD, or null if the user canceled loading
-    * 
+    *
     * @throws VdioException in case of unzip problems
     */
    protected VD readZip(File file) throws VdioException
@@ -138,7 +138,7 @@ public class ProductsReader extends AbstractZipPasswordHandler
             VD vd = null;
             for (FileHeader fileHeader : fileHeaders)
             {
-               String name = fileHeader.getFileName().toLowerCase(); 
+               String name = fileHeader.getFileName().toLowerCase();
                if (name.endsWith(".vd_"))
                {
                   LOGGER.debug("ZIP: reading {}", fileHeader.getFileName());
@@ -168,10 +168,10 @@ public class ProductsReader extends AbstractZipPasswordHandler
 
    /**
     * Read the VD from the input stream.
-    * 
+    *
     * @param in - the stream to read from.
     * @return The read project.
-    * 
+    *
     * @throws VdioException in case of parse errors
     */
    public VD read(InputStream in) throws VdioException
