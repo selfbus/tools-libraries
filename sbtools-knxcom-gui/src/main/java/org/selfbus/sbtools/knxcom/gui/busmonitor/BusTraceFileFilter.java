@@ -19,7 +19,7 @@ public final class BusTraceFileFilter extends FileFilter
       if (file.isDirectory()) return true;
 
       final String ext = FileUtils.getExtension(file);
-      return "trx".equalsIgnoreCase(ext);
+      return "trx".equalsIgnoreCase(ext) || "xml".equalsIgnoreCase(ext);
    }
 
    @Override

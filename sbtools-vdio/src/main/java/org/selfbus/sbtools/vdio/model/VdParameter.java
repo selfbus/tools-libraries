@@ -438,6 +438,12 @@ public class VdParameter
    }
 
    /**
+    * The address space of the parameter:
+    *
+    * 0 - tree node with no parameter address
+    * 1 - invisible parameter
+    * 2 - normal parameter
+    *
     * @return the addressSpace
     */
    public Integer getAddressSpace()

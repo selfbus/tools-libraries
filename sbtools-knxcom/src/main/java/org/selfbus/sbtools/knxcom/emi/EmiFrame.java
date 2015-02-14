@@ -17,6 +17,18 @@ public interface EmiFrame
    public EmiFrameType getType();
 
    /**
+    * Set the frame format version. Default: {@link EmiVersion#EMI2}.
+    *
+    * @param version - the frame format version
+    */
+   public void setFrameVersion(EmiVersion version);
+
+   /**
+    * @return The frame format version
+    */
+   public EmiVersion getFrameVersion();
+
+   /**
     * Initialize the object from a {@link DataInput data input stream}. The
     * first byte of the stream is expected to be the first byte of the frame
     * body, excluding the frame type.

@@ -18,7 +18,7 @@ public abstract class EmiTelegramFrame extends AbstractEmiFrame
 
    /**
     * Create a frame object with the given telegram.
-    * 
+    *
     * @param type - the frame type.
     * @param telegram - the telegram.
     */
@@ -30,7 +30,7 @@ public abstract class EmiTelegramFrame extends AbstractEmiFrame
 
    /**
     * Create an empty frame object.
-    * 
+    *
     * @param type - the frame type.
     */
    protected EmiTelegramFrame(EmiFrameType type)
@@ -46,7 +46,7 @@ public abstract class EmiTelegramFrame extends AbstractEmiFrame
    {
       return telegram;
    }
-   
+
    /**
     * @return true if enforcing long telegrams is enabled.
     */
@@ -60,7 +60,7 @@ public abstract class EmiTelegramFrame extends AbstractEmiFrame
     * are always expected to be extended frame format, and telegrams written
     * will always be in extended frame format. Default is to depend on the
     * telegram's frame format bit.
-    * 
+    *
     * @param enable - enforce long telegram format
     */
    public void setForceExtTelegram(boolean enable)
@@ -74,7 +74,7 @@ public abstract class EmiTelegramFrame extends AbstractEmiFrame
    @Override
    public void readData(DataInput in) throws IOException
    {
-      telegram.readData(in, forceExtTelegram);
+      telegram.readData(in, forceExtTelegram || emiVersion == EmiVersion.cEMI);
    }
 
    /**

@@ -23,15 +23,20 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.selfbus.sbtools.common.Config;
 import org.selfbus.sbtools.common.HexString;
 import org.selfbus.sbtools.common.address.PhysicalAddress;
+import org.selfbus.sbtools.common.exception.SbToolsRuntimeException;
 import org.selfbus.sbtools.common.gui.actions.BasicAction;
 import org.selfbus.sbtools.common.gui.components.Dialogs;
 import org.selfbus.sbtools.common.gui.components.ToolBar;
 import org.selfbus.sbtools.common.gui.misc.ImageCache;
 import org.selfbus.sbtools.common.gui.models.FilteredListModel;
+import org.selfbus.sbtools.common.gui.utils.FileUtils;
 import org.selfbus.sbtools.knxcom.application.AbstractMemory;
 import org.selfbus.sbtools.knxcom.application.Application;
 import org.selfbus.sbtools.knxcom.application.DeviceDescriptorResponse;
@@ -46,9 +51,13 @@ import org.selfbus.sbtools.knxcom.emi.EmiFrameFactory;
 import org.selfbus.sbtools.knxcom.emi.EmiTelegramFrame;
 import org.selfbus.sbtools.knxcom.emi.EmiVersion;
 import org.selfbus.sbtools.knxcom.gui.internal.I18n;
+import org.selfbus.sbtools.knxcom.telegram.InvalidDataException;
 import org.selfbus.sbtools.knxcom.telegram.Telegram;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * A panel that displays bus traces.
@@ -148,7 +157,7 @@ public class BusMonitorPanel extends JPanel
 
    /**
     * Add an {@link EmiFrame} to the bus traces.
-    * 
+    *
     * @param frame - The frame that the entry is about.
     */
    protected void addFrame(final EmiFrame frame)
@@ -168,7 +177,7 @@ public class BusMonitorPanel extends JPanel
 
    /**
     * Add an {@link EmiFrame} to the bus traces.
-    * 
+    *
     * @param frame - The frame that the entry is about.
     * @param when - the timestamp when the frame occurred.
     */
@@ -202,15 +211,25 @@ public class BusMonitorPanel extends JPanel
 
    /**
     * Create an {@link EmiFrame} from a bus trace line.
-    * 
+    *
     * @param line - the trace line to convert.
     * @return The frame of the trace line.
     * @throws IOException
     */
-   protected EmiFrame createFrame(final String line) throws IOException
+   public EmiFrame createFrame(final String line) throws IOException
    {
-      final EmiFrame frame = EmiFrameFactory.createFrame(HexString.valueOf(line), EmiVersion.EMI2);
+      EmiFrame frame = EmiFrameFactory.createFrame(HexString.valueOf(line), EmiVersion.EMI2);
+      enrichFrame(frame);
+      return frame;
+   }
 
+   /**
+    * Enrich an {@link EmiFrame} from a bus trace line.
+    *
+    * @param frame - the frame to enrich
+    */
+   protected void enrichFrame(EmiFrame frame)
+   {
       if (frame instanceof EmiTelegramFrame)
       {
          final Telegram telegram = ((EmiTelegramFrame) frame).getTelegram();
@@ -235,17 +254,38 @@ public class BusMonitorPanel extends JPanel
             ((AbstractMemory) app).setAddressMapper(addrMappers.get(telegram.getFrom()));
          }
       }
-
-      return frame;
    }
 
    /**
     * Load the bus trace file and display it's contents.
-    * 
+    *
     * @param file - the file to open
     * @throws IOException if reading the file failed
     */
    public void loadBusTrace(File file) throws IOException
+   {
+      String ext = FileUtils.getExtension(file);
+      if ("trx".equalsIgnoreCase(ext))
+      {
+         loadBusTraceTrx(file);
+      }
+      else if ("xml".equalsIgnoreCase(ext))
+      {
+         loadBusTraceXml(file);
+      }
+      else
+      {
+         throw new IllegalArgumentException("invalid file extension " + ext);
+      }
+   }
+
+   /**
+    * Load the bus trace file in trx format and display it's contents.
+    *
+    * @param file - the file to open
+    * @throws IOException if reading the file failed
+    */
+   public void loadBusTraceTrx(File file) throws IOException
    {
       final BufferedReader in = new BufferedReader(new FileReader(file));
 
@@ -261,18 +301,18 @@ public class BusMonitorPanel extends JPanel
          {
             model.clear();
             addrMappers.clear();
- 
+
             sequence = 0;
             for (int lineNo = 1;; ++lineNo)
             {
                final String line = in.readLine();
                if (line == null)
                   break;
-   
+
                int pos = line.indexOf('\t');
                if (pos < 0)
                   continue;
-               
+
                try
                {
                   when = dateFormatter.parse(line.substring(0, pos));
@@ -282,7 +322,7 @@ public class BusMonitorPanel extends JPanel
                   LOGGER.warn(file + " line " + lineNo + ": parser exception", e);
                   when = null;
                }
-   
+
                addFrame(createFrame(line.substring(pos + 1)), when);
             }
          }
@@ -296,11 +336,85 @@ public class BusMonitorPanel extends JPanel
       }
    }
 
+   class XmlTraceReaderHandler extends DefaultHandler
+   {
+      final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS ");
+      final File file;
+      int sequence = 0;
+      int lineNo = 1;
+
+      public XmlTraceReaderHandler(File file)
+      {
+         this.file = file;
+      }
+
+      @Override
+      public void startElement(String uri, String localName, String qName, Attributes atts)
+      {
+         if ("Telegram".equals(qName))
+         {
+            Date when;
+            try
+            {
+               String whenStr = atts.getValue("Timestamp").replace('T', ' ').replace('Z', ' ');
+               when = dateFormatter.parse(whenStr);
+            }
+            catch (ParseException e)
+            {
+               LOGGER.warn(file + " line " + lineNo + ": parser exception", e);
+               when = null;
+            }
+
+            try
+            {
+               String dataStr = atts.getValue("RawData");
+               EmiFrame frame = EmiFrameFactory.createFrame(HexString.valueOf(dataStr), EmiVersion.cEMI);
+               enrichFrame(frame);
+               addFrame(frame, when);
+            }
+            catch (InvalidDataException e)
+            {
+               LOGGER.warn(file + " line " + lineNo + ": {}: 0x{}", e.getMessage(), Integer.toHexString(e.contents));
+            }
+            catch (Exception e)
+            {
+               LOGGER.warn(file + " line " + lineNo + ": {}", e.getMessage());
+            }
+         }
+      }
+   }
+
+   /**
+    * Load the bus trace file in XML format and display it's contents.
+    *
+    * @param file - the file to open
+    * @throws IOException if reading the file failed
+    */
+   public void loadBusTraceXml(File file) throws IOException
+   {
+      try
+      {
+         SAXParserFactory factory = SAXParserFactory.newInstance();
+         SAXParser parser = factory.newSAXParser();
+         synchronized (model)
+         {
+            model.clear();
+            addrMappers.clear();
+
+            parser.parse(file, new XmlTraceReaderHandler(file));
+         }
+      }
+      catch (SAXException|ParserConfigurationException e)
+      {
+         throw new SbToolsRuntimeException(e);
+      }
+   }
+
    /**
     * Save the entries to a trace file.
-    * 
+    *
     * @param file - the file to save into
-    * 
+    *
     * @throws IOException
     */
    public void saveBusTrace(File file) throws IOException

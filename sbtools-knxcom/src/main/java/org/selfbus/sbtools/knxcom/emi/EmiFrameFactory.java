@@ -16,9 +16,9 @@ public final class EmiFrameFactory
 {
    /**
     * Create an EMI frame object.
-    * 
+    *
     * @param type - the type of the EMI frame to create.
-    * 
+    *
     * @return the created frame, or null if the frame type is valid, but there
     *         exists no frame class for the frame type.
     */
@@ -41,12 +41,12 @@ public final class EmiFrameFactory
     * Create an EMI frame object from the input stream. It is expected that the
     * first byte of the data input stream contains the {@link EmiFrameType EMI
     * frame type}.
-    * 
+    *
     * @param in - the EMI frame is read from this stream.
-    * 
+    *
     * @return the created frame, or null if the frame type is valid, but there
     *         exists no frame class for the frame type.
-    * 
+    *
     * @throws IOException if the frame could not be read from in.
     */
    static public EmiFrame createFrame(final DataInput in, final EmiVersion version) throws IOException
@@ -56,6 +56,15 @@ public final class EmiFrameFactory
 
       if (frame != null)
       {
+         frame.setFrameVersion(version);
+         if (version == EmiVersion.cEMI)
+         {
+            // Skip the additional info
+            int len = in.readUnsignedByte();
+            if (len > 0)
+               in.skipBytes(len);
+         }
+
          frame.readData(in);
       }
       else
@@ -69,12 +78,12 @@ public final class EmiFrameFactory
    /**
     * Create an EMI frame object from the data. It is expected that the data
     * contains a full frame, including the frame header.
-    * 
+    *
     * @param data - the raw data of the EMI frame.
-    * 
+    *
     * @return the created frame (body), or null if the frame type is valid, but
     *         there exists no frame class for the frame type.
-    * 
+    *
     * @throws IOException if the frame could not be read from data.
     */
    static public EmiFrame createFrame(final byte[] data, final EmiVersion version) throws IOException

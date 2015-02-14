@@ -14,30 +14,29 @@ import org.selfbus.sbtools.knxcom.emi.types.EmiFrameType;
  */
 public abstract class AbstractEmiFrame implements EmiFrame
 {
-   private final EmiFrameType type;
+   protected final EmiFrameType type;
+   protected EmiVersion emiVersion;
 
    /**
     * Internal constructor that sets the message type to {@link EmiFrameType#UNKNOWN}.
     */
    protected AbstractEmiFrame()
    {
-      this.type = EmiFrameType.UNKNOWN;
+      this(EmiFrameType.UNKNOWN);
    }
 
    /**
     * Create a new message and set the message type.
     * Internal constructor for subclasses.
-    * 
+    *
     * @param type - the frame type.
     */
    protected AbstractEmiFrame(EmiFrameType type)
    {
       this.type = type;
+      this.emiVersion = EmiVersion.EMI2;
    }
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public final EmiFrameType getType()
    {
@@ -56,21 +55,24 @@ public abstract class AbstractEmiFrame implements EmiFrame
       return enclosingClazz.getSimpleName() + '.' + clazz.getSimpleName();
    }
 
-   /**
-    * {@inheritDoc}
-    */
+   @Override
+   public void setFrameVersion(EmiVersion version)
+   {
+      this.emiVersion = version;
+   }
+
+   @Override
+   public EmiVersion getFrameVersion()
+   {
+      return emiVersion;
+   }
+
    @Override
    public abstract void readData(DataInput in) throws IOException;
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public abstract void writeData(DataOutput out) throws IOException;
 
-   /**
-    * {@inheritDoc}
-    */
    @Override
    final public byte[] toByteArray()
    {

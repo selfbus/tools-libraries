@@ -8,23 +8,37 @@ public final class HexString
 {
    /**
     * Convert a hex string to a byte array. The hex string is expected to have
-    * the format "12 a0 01 00 7c". The hex numbers may be one or two hex digits
-    * in size.
+    * the format "12 a0 01 00 7c" or "12a001007c". The hex numbers may be one
+    * or two hex digits in size.
     *
     * @param str - the string to process
     *
     * @return the byte array
     */
-   public static byte[] valueOf(final String str)
+   public static byte[] valueOf(String str)
    {
-      final String[] values = str.split("  *");
-      final byte[] data = new byte[values.length];
+      byte[] data;
+      str = str.trim();
 
-      if (values.length == 1 && values[0].equals(""))
-         return new byte[0];
+      if (str.length() > 2 && str.indexOf(' ') >= 0)
+      {
+         String[] values = str.split("  *");
+         data = new byte[values.length];
 
-      for (int i = 0; i < values.length; ++i)
-         data[i] = (byte) Integer.parseInt(values[i], 16);
+         if (values.length == 1 && values[0].equals(""))
+            return new byte[0];
+
+         for (int i = 0; i < values.length; ++i)
+            data[i] = (byte) Integer.parseInt(values[i], 16);
+      }
+      else
+      {
+         data = new byte[str.length() >> 1];
+         for (int i = 0, offs = 0; i < data.length; ++i, offs += 2)
+         {
+            data[i] = (byte) Integer.parseInt(str.substring(offs, offs + 2), 16);
+         }
+      }
 
       return data;
    }
