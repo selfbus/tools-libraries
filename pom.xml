@@ -37,6 +37,7 @@
   <module>sbtools-common-gui</module>
   <module>sbtools-knxcom</module>
   <module>sbtools-knxcom-gui</module>
+  <module>sbtools-knxio</module>
   <module>sbtools-vdio</module>
  </modules>
  <dependencyManagement>

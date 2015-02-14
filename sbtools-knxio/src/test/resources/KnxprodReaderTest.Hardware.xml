@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<KNX xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" CreatedBy="knxconv"
+  ToolVersion="4.0.1837.35879" xmlns="http://knx.org/xml/project/11">
+  <ManufacturerData>
+    <Manufacturer RefId="M-0083">
+      <Hardware>
+        <Hardware Id="M-0083_H-USB.200000.2F1-1-O0072" Name="KNX USB Interface" SerialNumber="USB 0000/1"
+          VersionNumber="1" HasIndividualAddress="true" HasApplicationProgram="false" OriginalManufacturer="M-0072">
+          <Products>
+            <Product Id="M-0083_H-USB.200000.2F1-1-O0072_P-KNX.20USB.20Interface" Text="KNX USB Interface"
+              OrderNumber="KNX USB Interface" IsRailMounted="true" DefaultLanguage="de-DE" Hash="aCmBf7yyAeglyq8eBWqoO8Ki+no=">
+              <Baggages>
+                <Baggage RefId="M-0083_BG-inf-ETS.20USB.20Installation.2Emsi" />
+              </Baggages>
+              <RegistrationInfo RegistrationStatus="Registered" RegistrationDate="2009-07-02"
+                RegistrationSignature="" />
+            </Product>
+          </Products>
+          <Hardware2Programs>
+            <Hardware2Program Id="M-0083_H-USB.200000.2F1-1-O0072_HP" MediumTypes="MT-0"
+              Hash="jGasYAMSlP7rn7Dk/Dnd2VshF/8=">
+              <RegistrationInfo RegistrationStatus="Registered" RegistrationNumber="2009/8697"
+                OriginalRegistrationNumber="2009/8658" RegistrationDate="2009-07-02"
+                RegistrationSignature="" />
+            </Hardware2Program>
+          </Hardware2Programs>
+        </Hardware>
+      </Hardware>
+      <Languages>
+        <Language Identifier="de-DE">
+          <TranslationUnit RefId="M-0083_H-USB.200000.2F1-1-O0072_P-KNX.20USB.20Interface">
+            <TranslationElement RefId="M-0083_H-USB.200000.2F1-1-O0072_P-KNX.20USB.20Interface">
+              <Translation AttributeName="Text" Text="USB Interface" />
+            </TranslationElement>
+          </TranslationUnit>
+        </Language>
+      </Languages>
+    </Manufacturer>
+  </ManufacturerData>
+</KNX>

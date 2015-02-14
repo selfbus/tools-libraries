@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<KNX xmlns="http://knx.org/xml/project/11">
+  <MasterData Version="1" Signature="">
+    <DatapointTypes>
+      <DatapointType Id="DPT-1" Number="1" Name="1.xxx" Text="1-bit" SizeInBit="1">
+        <DatapointSubtypes>
+          <DatapointSubtype Id="DPST-1-1" Number="1" Name="DPT_Switch" Text="on/off" Default="true" />
+          <DatapointSubtype Id="DPST-1-2" Number="2" Name="DPT_Bool" Text="boolean" />
+        </DatapointSubtypes>
+      </DatapointType>
+      <DatapointType Id="DPT-4" Number="4" Name="4.xxx" Text="character" SizeInBit="8">
+        <DatapointSubtypes>
+          <DatapointSubtype Id="DPST-4-1" Number="1" Name="DPT_Char_ASCII" Text="character (ASCII)" />
+          <DatapointSubtype Id="DPST-4-2" Number="2" Name="DPT_Char_8859_1" Text="character (ISO 8859-1)" />
+        </DatapointSubtypes>
+      </DatapointType>
+    </DatapointTypes>
+    <MediumTypes>
+      <MediumType Id="MT-0" Number="0" Name="TP" Text="Twisted Pair" DomainAddressLength="0" />
+    </MediumTypes>
+    <MaskVersions>
+      <MaskVersion Id="MV-0001" MaskVersion="1" Name="Dummy" ManagementModel="None" MediumTypeRefId="MT-0" />
+      <MaskVersion Id="MV-0010" MaskVersion="16" Name="1.0" ManagementModel="Bcu1" MediumTypeRefId="MT-0">
+        <MaskEntries>
+          <MaskEntry Id="MV-0010_ME-AllocBuf" Name="AllocBuf" Address="4458" />
+          <MaskEntry Id="MV-0010_ME-PopBuf" Name="PopBuf" Address="4524" />
+        </MaskEntries>
+        <HawkConfigurationData>
+          <Resources>
+            <Resource Name="ManagementStyle" Access="remote local1">
+              <Location AddressSpace="Constant" StartAddress="1" />
+              <ResourceType Length="1" />
+              <AccessRights Read="Runtime" Write="None" />
+            </Resource>
+            <Resource Name="DeviceManufacturerId" Access="remote local1">
+              <Location AddressSpace="StandardMemory" StartAddress="260" />
+              <ResourceType Length="1" />
+              <AccessRights Read="Runtime" Write="Configuration" />
+            </Resource>
+          </Resources>
+          <Procedures>
+            <Procedure ProcedureType="Load" ProcedureSubType="all" Access="remote local1">
+              <LdCtrlConnect />
+              <LdCtrlWriteMem Address="269" Size="1" Verify="true" InlineData="00" />
+              <LdCtrlLoadImageMem Address="278" Size="1" />
+              <LdCtrlRestart />
+            </Procedure>
+            <Procedure ProcedureType="Unload" ProcedureSubType="all" Access="remote local1">
+              <LdCtrlConnect />
+              <LdCtrlWriteMem Address="269" Size="1" Verify="true" InlineData="00" />
+              <LdCtrlDisconnect />
+            </Procedure>
+          </Procedures>
+          <MemorySegments>
+            <MemorySegment MemoryType="EEPROM" Length="256">
+              <Location AddressSpace="StandardMemory" StartAddress="256" />
+              <AccessRights Read="Configuration" Write="Configuration" />
+            </MemorySegment>
+          </MemorySegments>
+        </HawkConfigurationData>
+      </MaskVersion>
+    </MaskVersions>
+    <Manufacturers>
+      <Manufacturer Id="M-0001" KnxManufacturerId="1" Name="Siemens" DefaultLanguage="en" />
+      <Manufacturer Id="M-002C" KnxManufacturerId="44" Name="VIMAR" DefaultLanguage="en">
+        <PublicKeys>
+          <PublicKey Id="M-002C_K-1" Number="1">
+            <RSAKeyValue>
+              <Modulus></Modulus>
+              <Exponent></Exponent>
+            </RSAKeyValue>
+          </PublicKey>
+        </PublicKeys>
+      </Manufacturer>
+    </Manufacturers>
+    <Languages>
+      <Language Identifier="de-DE">
+        <TranslationUnit RefId="DPT-1" Version="1">
+          <TranslationElement RefId="DPT-1">
+            <Translation AttributeName="Text" Text="1-Bit" />
+          </TranslationElement>
+        </TranslationUnit>
+      </Language>
+    </Languages>
+  </MasterData>
+</KNX>
