@@ -9,11 +9,12 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.selfbus.sbtools.knxio.model.Namespaces;
 import org.selfbus.sbtools.knxio.model.common.Identified;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class CatalogSection extends Identified
+public class CatalogSection extends Identified implements CatalogNode
 {
    @XmlAttribute(name = "Name", required = true)
    private String name;
@@ -39,6 +40,7 @@ public class CatalogSection extends Identified
    /**
     * @return The list of catalog sections
     */
+   @Override
    public synchronized List<CatalogSection> getSections()
    {
       if (sections == null)
@@ -46,6 +48,14 @@ public class CatalogSection extends Identified
          sections = new ArrayList<CatalogSection>();
       }
       return sections;
+   }
+
+   /**
+    * @return True if the section has child sections.
+    */
+   public boolean hasSections()
+   {
+      return sections != null && !sections.isEmpty();
    }
 
    /**
@@ -60,9 +70,67 @@ public class CatalogSection extends Identified
       return items;
    }
 
+   /**
+    * @return True if the section has items.
+    */
+   public boolean hasItems()
+   {
+      return items != null && !items.isEmpty();
+   }
+
+   public String getName()
+   {
+      return name;
+   }
+
+   public void setName(String name)
+   {
+      this.name = name;
+   }
+
+   public String getNumber()
+   {
+      return number;
+   }
+
+   public void setNumber(String number)
+   {
+      this.number = number;
+   }
+
+   public String getVisibleDescription()
+   {
+      return visibleDescription;
+   }
+
+   public void setVisibleDescription(String visibleDescription)
+   {
+      this.visibleDescription = visibleDescription;
+   }
+
+   public String getDefaultLanguage()
+   {
+      return defaultLanguage;
+   }
+
+   public void setDefaultLanguage(String defaultLanguage)
+   {
+      this.defaultLanguage = defaultLanguage;
+   }
+
+   public String getNonRegRelevantDataVersion()
+   {
+      return nonRegRelevantDataVersion;
+   }
+
+   public void setNonRegRelevantDataVersion(String nonRegRelevantDataVersion)
+   {
+      this.nonRegRelevantDataVersion = nonRegRelevantDataVersion;
+   }
+
    @Override
    public String toString()
    {
-      return ToStringBuilder.reflectionToString(this);
+      return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
    }
 }

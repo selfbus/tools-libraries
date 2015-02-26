@@ -18,7 +18,7 @@ import org.selfbus.sbtools.knxio.model.manufacturer.program.ApplicationProgram;
 
 @XmlType(propOrder = {})
 @XmlAccessorType(XmlAccessType.NONE)
-public class Manufacturer
+public class ManufacturerData
 {
    @XmlAttribute(name = "RefId")
    private String refId;
@@ -38,11 +38,19 @@ public class Manufacturer
    @XmlElement(name = "Language", namespace = Namespaces.KNX)
    private List<Language> languages;
 
+   /**
+    * @return The reference Id of the manufacturer, e.g. "M-007b".
+    */
    public String getRefId()
    {
       return refId;
    }
 
+   /**
+    * Set the reference Id of the manufacturer.
+    *
+    * @param refId The reference Id, e.g. "M-007b"
+    */
    public void setRefId(String refId)
    {
       this.refId = refId;
@@ -56,6 +64,36 @@ public class Manufacturer
    public void setCatalog(Catalog catalog)
    {
       this.catalog = catalog;
+   }
+
+   public List<Hardware> getHardware()
+   {
+      return hardware;
+   }
+
+   public void setHardware(List<Hardware> hardware)
+   {
+      this.hardware = hardware;
+   }
+
+   public List<ApplicationProgram> getApplicationPrograms()
+   {
+      return applicationPrograms;
+   }
+
+   public void setApplicationPrograms(List<ApplicationProgram> applicationPrograms)
+   {
+      this.applicationPrograms = applicationPrograms;
+   }
+
+   public List<Language> getLanguages()
+   {
+      return languages;
+   }
+
+   public void setLanguages(List<Language> languages)
+   {
+      this.languages = languages;
    }
 
    @Override

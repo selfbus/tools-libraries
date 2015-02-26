@@ -7,17 +7,19 @@ import javax.xml.bind.annotation.XmlIDREF;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.selfbus.sbtools.knxio.model.common.Identified;
 
 /**
  * The reference to a communication object.
  */
 @XmlAccessorType(XmlAccessType.NONE)
-public class ComObjectRef extends Identified
+public class ComObjectRef extends AbstractComObject
 {
    @XmlIDREF
    @XmlAttribute(name = "RefId")
    private ComObject comObject;
+
+   @XmlAttribute(name = "Tag")
+   private String tag;
 
    @Override
    public String toString()

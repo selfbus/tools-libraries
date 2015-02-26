@@ -51,7 +51,7 @@ public class KnxprodReaderTest
 
    // You need to copy a knxprod file to src/test/resources/KnxprodReaderTest.knxprod
    // before you can run this test. Please do not commit an existing knxprod file.
-   //@Test
+   @Test
    public void read() throws ZipException
    {
       KnxprodReader reader = new KnxprodReader();

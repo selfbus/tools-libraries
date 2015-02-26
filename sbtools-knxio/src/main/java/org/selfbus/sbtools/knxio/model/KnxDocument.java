@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.selfbus.sbtools.knxio.model.manufacturer.Manufacturer;
+import org.selfbus.sbtools.knxio.model.manufacturer.ManufacturerData;
 import org.selfbus.sbtools.knxio.model.masterdata.MasterData;
 
 import com.jgoodies.binding.beans.Model;
@@ -38,7 +38,7 @@ public class KnxDocument extends Model
 
    @XmlElementWrapper(name = "ManufacturerData", namespace = Namespaces.KNX)
    @XmlElement(name = "Manufacturer", namespace = Namespaces.KNX)
-   private List<Manufacturer> manufacturers;
+   private List<ManufacturerData> manufacturerDatas;
 
    /**
     * Create a KNX-XML document.
@@ -77,14 +77,14 @@ public class KnxDocument extends Model
       this.masterData = masterData;
    }
 
-   public List<Manufacturer> getManufacturers()
+   public List<ManufacturerData> getManufacturerDatas()
    {
-      return manufacturers;
+      return manufacturerDatas;
    }
 
-   public void setManufacturers(List<Manufacturer> manufacturers)
+   public void setManufacturerDatas(List<ManufacturerData> manufacturerDatas)
    {
-      this.manufacturers = manufacturers;
+      this.manufacturerDatas = manufacturerDatas;
    }
 
    @Override

@@ -100,10 +100,10 @@ public class KnxprodReader
       }
 
       LOGGER.info("Reading {}", catalogFileName);
-      KnxDocument catalogDocument = readXml(zip.getInputStream(catalogFileHeader));
+      KnxDocument catalogDocument = readXml(zip.getInputStream(catalogFileHeader), catalogFileName);
 
       LOGGER.info("Reading {}", hardwareFileName);
-      KnxDocument hardwareDocument = readXml(zip.getInputStream(hardwareFileHeader));
+      KnxDocument hardwareDocument = readXml(zip.getInputStream(hardwareFileHeader), hardwareFileName);
 
       // Process the product files of the manufacturer
       String filePrefix = manufacturerKey + '/' + manufacturerKey + '_';
@@ -114,7 +114,7 @@ public class KnxprodReader
          if (fileHeader.getFileName().startsWith(filePrefix))
          {
             LOGGER.info("Reading {}", fileHeader.getFileName());
-            KnxDocument productsDocument = readXml(zip.getInputStream(fileHeader));
+            KnxDocument productsDocument = readXml(zip.getInputStream(fileHeader), fileHeader.getFileName());
          }
       }
    }
@@ -128,7 +128,21 @@ public class KnxprodReader
     */
    public KnxDocument readXml(InputStream in)
    {
+      return readXml(in, "<stream>");
+   }
+
+   /**
+    * Read an XML document from an input stream, with schema validation.
+    * The schema file is searched on the class path.
+    *
+    * @param in The input stream to read the XML document from
+    * @param name The name of the input stream, for error reporting
+    * @return The root {@link KnxDocument} object of the newly created object tree
+    */
+   public KnxDocument readXml(InputStream in, String name)
+   {
       Validate.notNull(in, "input stream is null");
+      Validate.notNull(name, "name is null");
 
       try
       {
@@ -151,7 +165,7 @@ public class KnxprodReader
       }
       catch (JAXBException|SAXException|ParserConfigurationException e)
       {
-         throw new RuntimeException(e);
+         throw new RuntimeException("failed to read " + name, e);
       }
    }
 }

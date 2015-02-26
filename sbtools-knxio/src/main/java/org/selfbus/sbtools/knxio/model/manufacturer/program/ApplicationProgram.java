@@ -16,6 +16,8 @@ import org.selfbus.sbtools.knxio.model.common.Identified;
 @XmlAccessorType(XmlAccessType.NONE)
 public class ApplicationProgram extends Identified
 {
+   private static final long serialVersionUID = -6965945748733663635L;
+
    @XmlAttribute(name = "Name", required = true)
    private String name;
 
@@ -88,11 +90,245 @@ public class ApplicationProgram extends Identified
    @XmlElement(name = "Dynamic", namespace = Namespaces.KNX)
    private DynamicPart dynamicPart;
 
-//   public void afterUnmarshal(Unmarshaller unmarshaller, Object parent)
-//   {
-//      System.err.println("staticPart: " + staticPart);
-//      System.err.println("dynamicPart: " + dynamicPart);
-//   }
+   public String getName()
+   {
+      return name;
+   }
+
+   public void setName(String name)
+   {
+      this.name = name;
+   }
+
+   public Integer getNumber()
+   {
+      return number;
+   }
+
+   public void setNumber(Integer number)
+   {
+      this.number = number;
+   }
+
+   public Integer getVersion()
+   {
+      return version;
+   }
+
+   public void setVersion(Integer version)
+   {
+      this.version = version;
+   }
+
+   public String getProgramType()
+   {
+      return programType;
+   }
+
+   public void setProgramType(String programType)
+   {
+      this.programType = programType;
+   }
+
+   public String getMaskVersion()
+   {
+      return maskVersion;
+   }
+
+   public void setMaskVersion(String maskVersion)
+   {
+      this.maskVersion = maskVersion;
+   }
+
+   public String getLoadProcedureStyle()
+   {
+      return loadProcedureStyle;
+   }
+
+   public void setLoadProcedureStyle(String loadProcedureStyle)
+   {
+      this.loadProcedureStyle = loadProcedureStyle;
+   }
+
+   public String getPeiType()
+   {
+      return peiType;
+   }
+
+   public void setPeiType(String peiType)
+   {
+      this.peiType = peiType;
+   }
+
+   public String getHelpFile()
+   {
+      return helpFile;
+   }
+
+   public void setHelpFile(String helpFile)
+   {
+      this.helpFile = helpFile;
+   }
+
+   public String getDefaultLanguage()
+   {
+      return defaultLanguage;
+   }
+
+   public void setDefaultLanguage(String defaultLanguage)
+   {
+      this.defaultLanguage = defaultLanguage;
+   }
+
+   public boolean isDynamicTableManagement()
+   {
+      return dynamicTableManagement;
+   }
+
+   public void setDynamicTableManagement(boolean dynamicTableManagement)
+   {
+      this.dynamicTableManagement = dynamicTableManagement;
+   }
+
+   public boolean isLinkable()
+   {
+      return linkable;
+   }
+
+   public void setLinkable(boolean linkable)
+   {
+      this.linkable = linkable;
+   }
+
+   public String getMinEtsVersion()
+   {
+      return minEtsVersion;
+   }
+
+   public void setMinEtsVersion(String minEtsVersion)
+   {
+      this.minEtsVersion = minEtsVersion;
+   }
+
+   public String getOriginalManufacturer()
+   {
+      return originalManufacturer;
+   }
+
+   public void setOriginalManufacturer(String originalManufacturer)
+   {
+      this.originalManufacturer = originalManufacturer;
+   }
+
+   public boolean isPreEts4Style()
+   {
+      return preEts4Style;
+   }
+
+   public void setPreEts4Style(boolean preEts4Style)
+   {
+      this.preEts4Style = preEts4Style;
+   }
+
+   public String getNonRegRelevantDataVersion()
+   {
+      return nonRegRelevantDataVersion;
+   }
+
+   public void setNonRegRelevantDataVersion(String nonRegRelevantDataVersion)
+   {
+      this.nonRegRelevantDataVersion = nonRegRelevantDataVersion;
+   }
+
+   public String getHash()
+   {
+      return hash;
+   }
+
+   public void setHash(String hash)
+   {
+      this.hash = hash;
+   }
+
+   public boolean isConvertedFromPreEts4Data()
+   {
+      return convertedFromPreEts4Data;
+   }
+
+   public void setConvertedFromPreEts4Data(boolean convertedFromPreEts4Data)
+   {
+      this.convertedFromPreEts4Data = convertedFromPreEts4Data;
+   }
+
+   public boolean isBroken()
+   {
+      return broken;
+   }
+
+   public void setBroken(boolean broken)
+   {
+      this.broken = broken;
+   }
+
+   public String getIpConfig()
+   {
+      return ipConfig;
+   }
+
+   public void setIpConfig(String ipConfig)
+   {
+      this.ipConfig = ipConfig;
+   }
+
+   public Integer getAdditionalAddressesCount()
+   {
+      return additionalAddressesCount;
+   }
+
+   public void setAdditionalAddressesCount(Integer additionalAddressesCount)
+   {
+      this.additionalAddressesCount = additionalAddressesCount;
+   }
+
+   public boolean isDownloadInfoIncomplete()
+   {
+      return downloadInfoIncomplete;
+   }
+
+   public void setDownloadInfoIncomplete(boolean downloadInfoIncomplete)
+   {
+      this.downloadInfoIncomplete = downloadInfoIncomplete;
+   }
+
+   public Integer getCreatedFromLegacySchemaVersion()
+   {
+      return createdFromLegacySchemaVersion;
+   }
+
+   public void setCreatedFromLegacySchemaVersion(Integer createdFromLegacySchemaVersion)
+   {
+      this.createdFromLegacySchemaVersion = createdFromLegacySchemaVersion;
+   }
+
+   public StaticPart getStaticPart()
+   {
+      return staticPart;
+   }
+
+   public void setStaticPart(StaticPart staticPart)
+   {
+      this.staticPart = staticPart;
+   }
+
+   public DynamicPart getDynamicPart()
+   {
+      return dynamicPart;
+   }
+
+   public void setDynamicPart(DynamicPart dynamicPart)
+   {
+      this.dynamicPart = dynamicPart;
+   }
 
    @Override
    public String toString()

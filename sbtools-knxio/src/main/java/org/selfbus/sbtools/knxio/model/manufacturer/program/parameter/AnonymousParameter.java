@@ -18,11 +18,16 @@ import org.selfbus.sbtools.knxio.model.common.Identified;
 @XmlAccessorType(XmlAccessType.NONE)
 public class AnonymousParameter extends Identified implements ParameterElement
 {
+   private static final long serialVersionUID = -939516211002012463L;
+
    @XmlAttribute(name = "Name", required = true)
    private String name;
 
    @XmlAttribute(name = "Text")
    private String text;
+
+   @XmlAttribute(name = "SuffixText")
+   private String suffixText;
 
    @XmlIDREF
    @XmlAttribute(name = "ParameterType")
@@ -36,6 +41,76 @@ public class AnonymousParameter extends Identified implements ParameterElement
 
    @XmlAttribute(name = "LegacyPatchAlways")
    private boolean legacyPatchAlways = false;
+
+   public String getName()
+   {
+      return name;
+   }
+
+   public void setName(String name)
+   {
+      this.name = name;
+   }
+
+   public String getText()
+   {
+      return text;
+   }
+
+   public void setText(String text)
+   {
+      this.text = text;
+   }
+
+   public String getSuffixText()
+   {
+      return suffixText;
+   }
+
+   public void setSuffixText(String suffixText)
+   {
+      this.suffixText = suffixText;
+   }
+
+   public ParameterType getParameterType()
+   {
+      return parameterType;
+   }
+
+   public void setParameterType(ParameterType parameterType)
+   {
+      this.parameterType = parameterType;
+   }
+
+   public Access getAccess()
+   {
+      return access;
+   }
+
+   public void setAccess(Access access)
+   {
+      this.access = access;
+   }
+
+   public String getValue()
+   {
+      return value;
+   }
+
+   public void setValue(String value)
+   {
+      this.value = value;
+   }
+
+   public boolean isLegacyPatchAlways()
+   {
+      return legacyPatchAlways;
+   }
+
+   public void setLegacyPatchAlways(boolean legacyPatchAlways)
+   {
+      this.legacyPatchAlways = legacyPatchAlways;
+   }
 
    @Override
    public String toString()

@@ -4,18 +4,20 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import com.jgoodies.binding.beans.Model;
+
 /**
  * Base class for items that have an Id.
  */
-@XmlTransient
 @XmlAccessorType(XmlAccessType.NONE)
-public abstract class Identified
+public abstract class Identified extends Model
 {
+   private static final long serialVersionUID = -6462939117407855180L;
+
    @XmlAttribute(name = "Id", required = true)
    @XmlID
    protected String id;

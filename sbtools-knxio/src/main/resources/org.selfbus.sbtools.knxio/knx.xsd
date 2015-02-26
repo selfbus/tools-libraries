@@ -23,7 +23,7 @@
   <xs:complexType name="Identified" abstract="true">
     <xs:attribute name="Id" type="xs:string" use="required" />
   </xs:complexType>
-  
+
   <xs:complexType name="Reference">
     <xs:attribute name="RefId" type="xs:string" />
   </xs:complexType>
@@ -64,6 +64,7 @@
   <xs:complexType name="LdCtrlLoadImageProp">
     <xs:attribute name="ObjIdx" type="xs:integer" use="required" />
     <xs:attribute name="PropId" type="xs:integer" use="required" />
+    <xs:attribute name="Count" type="xs:integer" />
   </xs:complexType>
 
   <xs:complexType name="LdCtrlWriteProp">
@@ -71,6 +72,7 @@
     <xs:attribute name="ObjIdx" type="xs:integer" />
     <xs:attribute name="PropId" type="xs:integer" use="required" />
     <xs:attribute name="Count" type="xs:integer" />
+    <xs:attribute name="StartElement" type="xs:integer" />
     <xs:attribute name="InlineData" type="xs:hexBinary" />
     <xs:attribute name="Verify" type="xs:boolean" />
   </xs:complexType>
@@ -79,6 +81,7 @@
     <xs:attribute name="ObjIdx" type="xs:integer" use="required" />
     <xs:attribute name="Offset" type="xs:integer" use="required" />
     <xs:attribute name="Size" type="xs:integer" use="required" />
+    <xs:attribute name="AppliesTo" type="xs:string" />
     <xs:attribute name="Verify" type="xs:boolean" />
   </xs:complexType>
 
@@ -87,6 +90,7 @@
     <xs:attribute name="Size" type="xs:integer" use="required" />
     <xs:attribute name="Mode" type="xs:integer" use="required" />
     <xs:attribute name="Fill" type="xs:integer" use="required" />
+    <xs:attribute name="AppliesTo" type="xs:string" />
   </xs:complexType>
 
   <xs:complexType name="LdCtrlMapError">
@@ -477,12 +481,12 @@
   
   <xs:complexType name="InterfaceObject">
     <xs:sequence>
-      <xs:element name="Property" type="Property" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="Property" type="InterfaceObjectProperty" minOccurs="0" maxOccurs="unbounded" />
     </xs:sequence>
     <xs:attribute name="ObjectType" type="xs:integer" use="required" />
   </xs:complexType>
   
-  <xs:complexType name="Property">
+  <xs:complexType name="InterfaceObjectProperty">
     <xs:attribute name="PropertyID" type="xs:integer" use="required" />
     <xs:attribute name="PropertyDataType" type="xs:string" use="required" />
   </xs:complexType>
@@ -569,10 +573,11 @@
       <xs:extension base="Identified">
         <xs:sequence>
           <xs:element name="Static" type="StaticPart" minOccurs="1" maxOccurs="1" />
-          <xs:element name="Dynamic" type="DynamicPart" minOccurs="1" maxOccurs="1" />
+          <xs:element name="Dynamic" type="DynamicPart" minOccurs="0" maxOccurs="1" />
           <xs:element name="RegistrationInfo" type="RegistrationInfo" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
         <xs:attribute name="Name" type="xs:string" use="required" />
+        <xs:attribute name="VisibleDescription" type="xs:string" />
         <xs:attribute name="ApplicationNumber" type="xs:string" />
         <xs:attribute name="ApplicationVersion" type="xs:string" />
         <xs:attribute name="ProgramType" type="xs:string" />
@@ -580,6 +585,7 @@
         <xs:attribute name="LoadProcedureStyle" type="xs:string" />
         <xs:attribute name="PeiType" type="xs:string" />
         <xs:attribute name="HelpFile" type="xs:string" />
+        <xs:attribute name="HelpTopic" type="xs:string" />
         <xs:attribute name="DefaultLanguage" type="xs:string" />
         <xs:attribute name="DynamicTableManagement" type="xs:boolean" />
         <xs:attribute name="Linkable" type="xs:boolean" />
@@ -604,6 +610,7 @@
         <xs:complexType>
           <xs:choice minOccurs="0" maxOccurs="unbounded">
             <xs:element name="AbsoluteSegment" type="AbsoluteSegment" />
+            <xs:element name="RelativeSegment" type="RelativeSegment" />
           </xs:choice>
         </xs:complexType>
       </xs:element>
@@ -645,14 +652,30 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
+      <xs:element name="FixupList" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Fixup" type="Fixup" minOccurs="0" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
       <xs:element name="Extension" type="Extension" minOccurs="0" maxOccurs="1" />
       <xs:element name="Options" type="Options" minOccurs="0" maxOccurs="1" />
     </xs:all>
   </xs:complexType>
 
+  <xs:complexType name="Fixup">
+    <xs:sequence>
+      <xs:element name="Offset" type="xs:integer" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="FunctionRef" type="xs:string" use="required" />
+    <xs:attribute name="CodeSegment" type="xs:string" use="required" />
+  </xs:complexType>
+
   <xs:complexType name="DynamicPart">
     <xs:all>
       <xs:element name="Channel" type="Channel" minOccurs="0" maxOccurs="1" />
+      <xs:element name="ChannelIndependentBlock" type="ChannelIndependentBlock" minOccurs="0" maxOccurs="1" />
     </xs:all>
   </xs:complexType>
 
@@ -666,6 +689,16 @@
         <xs:attribute name="Address" type="xs:integer" use="required" />
         <xs:attribute name="Size" type="xs:integer" use="required" />
         <xs:attribute name="UserMemory" type="xs:integer" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="RelativeSegment">
+    <xs:complexContent>
+      <xs:extension base="Identified">
+        <xs:attribute name="Offset" type="xs:integer" use="required" />
+        <xs:attribute name="Size" type="xs:integer" use="required" />
+        <xs:attribute name="LoadStateMachine" type="xs:integer" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -731,8 +764,9 @@
     <xs:complexContent>
       <xs:extension base="Identified">
         <xs:attribute name="Text" type="xs:string" use="required" />
-        <xs:attribute name="DisplayOrder" type="xs:integer" use="required" />
+        <xs:attribute name="DisplayOrder" type="xs:integer" />
         <xs:attribute name="Value" type="xs:integer" />
+        <xs:attribute name="BinaryValue" type="xs:base64Binary" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -742,6 +776,7 @@
       <xs:extension base="Identified">
         <xs:attribute name="Name" type="xs:string" use="required" />
         <xs:attribute name="Text" type="xs:string" />
+        <xs:attribute name="SuffixText" type="xs:string" />
         <xs:attribute name="ParameterType" type="xs:string" use="required" />
         <xs:attribute name="Access" type="Access" />
         <xs:attribute name="Value" type="xs:string" />
@@ -754,6 +789,7 @@
     <xs:complexContent>
       <xs:extension base="AbstractParameter">
         <xs:sequence>
+          <xs:element name="Property" type="ParameterProperty" minOccurs="0" maxOccurs="1" />
           <xs:element name="Memory" type="MemoryLocation" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
       </xs:extension>
@@ -772,7 +808,8 @@
 
   <xs:complexType name="Union">
     <xs:sequence>
-      <xs:element name="Memory" type="MemoryLocation" minOccurs="1" maxOccurs="1" />
+      <xs:element name="Memory" type="MemoryLocation" minOccurs="0" maxOccurs="1" />
+      <xs:element name="Property" type="ParameterProperty" minOccurs="0" maxOccurs="1" />
       <xs:element name="Parameter" type="UnionParameter" minOccurs="1" maxOccurs="unbounded" />
     </xs:sequence>
     <xs:attribute name="SizeInBit" type="xs:integer" />
@@ -780,6 +817,15 @@
 
   <xs:complexType name="MemoryLocation">
     <xs:attribute name="CodeSegment" type="xs:string" use="required" />
+    <xs:attribute name="Offset" type="xs:integer" use="required" />
+    <xs:attribute name="BitOffset" type="xs:integer" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="ParameterProperty">
+    <xs:attribute name="PropertyId" type="xs:integer" use="required" />
+    <xs:attribute name="Occurrence" type="xs:integer" use="required" />
+    <xs:attribute name="ObjectIndex" type="xs:integer" />
+    <xs:attribute name="ObjectType" type="xs:integer" />
     <xs:attribute name="Offset" type="xs:integer" use="required" />
     <xs:attribute name="BitOffset" type="xs:integer" use="required" />
   </xs:complexType>
@@ -798,11 +844,11 @@
         <xs:sequence>
           <xs:element name="TypeRestriction" type="TypeRestriction" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
-        <xs:attribute name="DisplayOrder" type="xs:integer" use="required" />
-        <xs:attribute name="Name" type="xs:string" />
         <xs:attribute name="RefId" type="xs:string" use="required" />
+        <xs:attribute name="DisplayOrder" type="xs:integer" />
+        <xs:attribute name="Name" type="xs:string" />
         <xs:attribute name="Text" type="xs:string" />
-        <xs:attribute name="Tag" type="xs:integer" use="required" />
+        <xs:attribute name="Tag" type="xs:integer" />
         <xs:attribute name="Value" type="xs:string" />
         <xs:attribute name="Access" type="Access" />
       </xs:extension>
@@ -817,23 +863,39 @@
     <xs:attribute name="Offset" type="xs:integer" />
   </xs:complexType>
 
-  <xs:complexType name="ComObject">
+  <xs:complexType name="AbstractComObject">
     <xs:complexContent>
       <xs:extension base="Identified">
         <xs:attribute name="DatapointType" type="xs:string" />
         <xs:attribute name="FunctionText" type="xs:string" />
-        <xs:attribute name="Name" type="xs:string" />
-        <xs:attribute name="Number" type="xs:integer" />
         <xs:attribute name="ObjectSize" type="xs:string" />
-        <xs:attribute name="Priority" type="ObjectPriority" />
+        <xs:attribute name="Text" type="xs:string" />
+        <xs:attribute name="VisibleDescription" type="xs:string" />
         <xs:attribute name="CommunicationFlag" type="Enablement" />
         <xs:attribute name="ReadFlag" type="Enablement" />
         <xs:attribute name="ReadOnInitFlag" type="Enablement" />
         <xs:attribute name="TransmitFlag" type="Enablement" />
         <xs:attribute name="UpdateFlag" type="Enablement" />
         <xs:attribute name="WriteFlag" type="Enablement" />
-        <xs:attribute name="Text" type="xs:string" />
-        <xs:attribute name="VisibleDescription" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ComObject">
+    <xs:complexContent>
+      <xs:extension base="AbstractComObject">
+        <xs:attribute name="Name" type="xs:string" />
+        <xs:attribute name="Number" type="xs:integer" />
+        <xs:attribute name="Priority" type="ObjectPriority" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ComObjectRef">
+    <xs:complexContent>
+      <xs:extension base="AbstractComObject">
+        <xs:attribute name="RefId" type="xs:string" use="required" />
+        <xs:attribute name="Tag" type="xs:integer" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -854,19 +916,9 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:complexType name="ComObjectRef">
-    <xs:complexContent>
-      <xs:extension base="Identified">
-        <xs:attribute name="DatapointType" type="xs:string" />
-        <xs:attribute name="RefId" type="xs:string" use="required" />
-        <xs:attribute name="Tag" type="xs:integer" use="required" />
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
   <xs:complexType name="MemoryTable">
-    <xs:attribute name="CodeSegment" type="xs:string" use="required" />
-    <xs:attribute name="Offset" type="xs:integer" use="required" />
+    <xs:attribute name="CodeSegment" type="xs:string" />
+    <xs:attribute name="Offset" type="xs:integer" />
     <xs:attribute name="MaxEntries" type="xs:integer" use="required" />
   </xs:complexType>
 
@@ -876,12 +928,19 @@
         <xs:attribute name="CodeSegment" type="xs:string" />
         <xs:attribute name="Offset" type="xs:integer" />
         <xs:attribute name="MaxEntries" type="xs:integer" />
+        <xs:attribute name="MergeId" type="xs:integer" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="Extension">
+    <xs:sequence>
+      <xs:element name="Baggage" type="Reference" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
     <xs:attribute name="RequiresExternalSoftware" type="xs:boolean" />
+    <xs:attribute name="EtsDownloadPlugin" type="xs:string" />
+    <xs:attribute name="EtsUiPlugin" type="xs:string" />
+    <xs:attribute name="EtsDataHandler" type="xs:string" />
   </xs:complexType>
 
   <xs:complexType name="Options">
@@ -909,15 +968,18 @@
     <xs:attribute name="DeviceCompareAllowCompatibleManufacturerId" type="xs:boolean" />
     <xs:attribute name="LineCoupler0912NewProgrammingStyle" type="xs:boolean" />
     <xs:attribute name="TextParameterEncodingSelector" type="xs:string" />
+    <xs:attribute name="Comparable" type="xs:boolean" />
+    <xs:attribute name="Reconstructable" type="xs:boolean" />
   </xs:complexType>
 
   <xs:complexType name="AbstractParameterBlock" abstract="true">
     <xs:complexContent>
       <xs:extension base="Identified">
-        <xs:choice maxOccurs="unbounded">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
           <xs:element name="ComObjectRefRef" type="ComObjectRefRef" />
           <xs:element name="ParameterRefRef" type="ParameterRefRef" />
           <xs:element name="ParameterBlock" type="ParameterBlock" />
+          <xs:element name="ParameterSeparator" type="ParameterSeparator" />
           <xs:element name="choose" type="Choose" />
         </xs:choice>
       </xs:extension>
@@ -925,13 +987,15 @@
   </xs:complexType>
 
   <xs:complexType name="When">
-    <xs:choice maxOccurs="unbounded">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="ComObjectRefRef" type="ComObjectRefRef" />
       <xs:element name="ParameterRefRef" type="ParameterRefRef" />
       <xs:element name="ParameterBlock" type="ParameterBlock" />
+      <xs:element name="ParameterSeparator" type="ParameterSeparator" />
       <xs:element name="choose" type="Choose" />
     </xs:choice>
-    <xs:attribute name="test" type="xs:string" use="required" />
+    <xs:attribute name="test" type="xs:string" />
+    <xs:attribute name="default" type="xs:boolean" />
   </xs:complexType>
 
   <xs:complexType name="ComObjectRefRef">
@@ -940,6 +1004,15 @@
 
   <xs:complexType name="ParameterRefRef">
     <xs:attribute name="RefId" type="xs:string" />
+  </xs:complexType>
+
+  <xs:complexType name="ParameterSeparator">
+    <xs:complexContent>
+      <xs:extension base="Identified">
+        <xs:attribute name="Text" type="xs:string" />
+        <xs:attribute name="Access" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="Channel">
@@ -952,10 +1025,21 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="ChannelIndependentBlock">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="ComObjectRefRef" type="ComObjectRefRef" />
+      <xs:element name="ParameterRefRef" type="ParameterRefRef" />
+      <xs:element name="ParameterBlock" type="ParameterBlock" />
+      <xs:element name="ParameterSeparator" type="ParameterSeparator" />
+      <xs:element name="choose" type="Choose" />
+    </xs:choice>
+  </xs:complexType>
+
   <xs:complexType name="ParameterBlock">
     <xs:complexContent>
       <xs:extension base="AbstractParameterBlock">
         <xs:attribute name="Name" type="xs:string" />
+        <xs:attribute name="Text" type="xs:string" />
         <xs:attribute name="ParamRefId" type="xs:string" />
         <xs:attribute name="Access" type="Access" />
       </xs:extension>
@@ -990,10 +1074,21 @@
         </xs:sequence>
         <xs:attribute name="Name" type="xs:string" use="required" />
         <xs:attribute name="SerialNumber" type="xs:string" />
-        <xs:attribute name="VersionNumber" type="xs:string" />
-        <xs:attribute name="BusCurrent" type="xs:integer" />
+        <xs:attribute name="VersionNumber" type="xs:integer" />
+        <xs:attribute name="NonRegRelevantDataVersion" type="xs:integer" />
+        <xs:attribute name="BusCurrent" type="xs:float" />
+        <xs:attribute name="IsAccessory" type="xs:boolean" />
+        <xs:attribute name="IsPowerSupply" type="xs:boolean" />
+        <xs:attribute name="IsCable" type="xs:boolean" />
+        <xs:attribute name="IsChoke" type="xs:boolean" />
+        <xs:attribute name="IsCoupler" type="xs:boolean" />
+        <xs:attribute name="IsIPEnabled" type="xs:boolean" />
+        <xs:attribute name="NoDownloadWithoutPlugin" type="xs:boolean" />
+        <xs:attribute name="IsPowerLineRepeater" type="xs:boolean" />
+        <xs:attribute name="IsPowerLineSignalFilter" type="xs:boolean" />
         <xs:attribute name="HasIndividualAddress" type="xs:boolean" />
         <xs:attribute name="HasApplicationProgram" type="xs:boolean" />
+        <xs:attribute name="HasApplicationProgram2" type="xs:boolean" />
         <xs:attribute name="OriginalManufacturer" type="xs:string" />
       </xs:extension>
     </xs:complexContent>
@@ -1003,6 +1098,13 @@
     <xs:complexContent>
       <xs:extension base="Identified">
         <xs:sequence>
+          <xs:element name="Attributes" minOccurs="0" maxOccurs="1">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="Attribute" type="Attribute" minOccurs="0" maxOccurs="unbounded" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
           <xs:element name="Baggages" minOccurs="0" maxOccurs="1">
             <xs:complexType>
               <xs:sequence>
@@ -1013,11 +1115,22 @@
           <xs:element name="RegistrationInfo" type="RegistrationInfo" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
         <xs:attribute name="Text" type="xs:string" use="required" />
+        <xs:attribute name="VisibleDescription" type="xs:string" />
         <xs:attribute name="OrderNumber" type="xs:string" />
         <xs:attribute name="IsRailMounted" type="xs:boolean" />
         <xs:attribute name="WidthInMillimeter" type="xs:float" />
         <xs:attribute name="DefaultLanguage" type="xs:string" />
         <xs:attribute name="Hash" type="xs:string" />
+        <xs:attribute name="NonRegRelevantDataVersion" type="xs:integer" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Attribute">
+    <xs:complexContent>
+      <xs:extension base="Identified">
+        <xs:attribute name="Name" type="xs:string" use="required" />
+        <xs:attribute name="Value" type="xs:string" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -1026,7 +1139,7 @@
     <xs:complexContent>
       <xs:extension base="Identified">
         <xs:sequence>
-          <xs:element name="ApplicationProgramRef" type="Reference" minOccurs="0" maxOccurs="1" />
+          <xs:element name="ApplicationProgramRef" type="Reference" minOccurs="0" maxOccurs="unbounded" />
           <xs:element name="RegistrationInfo" type="RegistrationInfo" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
         <xs:attribute name="MediumTypes" type="xs:string" use="required" />
