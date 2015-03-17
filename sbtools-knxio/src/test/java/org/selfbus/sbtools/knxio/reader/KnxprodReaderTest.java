@@ -1,5 +1,7 @@
 package org.selfbus.sbtools.knxio.reader;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.io.File;
 import java.io.InputStream;
 
@@ -27,16 +29,28 @@ public class KnxprodReaderTest
       LOGGER.info("Master: {}", doc);
    }
 
- @Test
- public void readXml_Catalog()
- {
-    KnxprodReader reader = new KnxprodReader();
-    InputStream in = CLASS_LOADER.getResourceAsStream("KnxprodReaderTest.Catalog.xml");
-    KnxDocument doc = reader.readXml(in);
-    Assert.assertNotNull(doc);
+   @Test
+   public void readXml_Catalog11()
+   {
+      KnxprodReader reader = new KnxprodReader();
+      InputStream in = CLASS_LOADER.getResourceAsStream("KnxprodReaderTest.Catalog11.xml");
+      KnxDocument doc = reader.readXml(in);
+      Assert.assertNotNull(doc);
 
-    LOGGER.info("Catalog: {}", doc);
- }
+      LOGGER.info("Catalog11: {}", doc);
+   }
+
+   @Test
+   public void readXml_Catalog12()
+   {
+      KnxprodReader reader = new KnxprodReader();
+      InputStream in = CLASS_LOADER.getResourceAsStream("KnxprodReaderTest.Catalog12.xml");
+      KnxDocument doc = reader.readXml(in);
+      assertNotNull(doc);
+      // assertTrue(doc instanceof KnxDocument12);
+
+      LOGGER.info("Catalog12: {}", doc);
+   }
 
    @Test
    public void readXml_Hardware()
@@ -44,7 +58,7 @@ public class KnxprodReaderTest
       KnxprodReader reader = new KnxprodReader();
       InputStream in = CLASS_LOADER.getResourceAsStream("KnxprodReaderTest.Hardware.xml");
       KnxDocument doc = reader.readXml(in);
-      Assert.assertNotNull(doc);
+      assertNotNull(doc);
 
       LOGGER.info("Hardware: {}", doc);
    }

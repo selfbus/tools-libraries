@@ -4,7 +4,8 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
-import org.selfbus.sbtools.common.internal.I18n;
+import org.selfbus.sbtools.knxio.internal.I18n;
+import org.selfbus.sbtools.knxio.model.common.Labeled;
 
 /**
  * Types of communication objects.
@@ -14,7 +15,7 @@ import org.selfbus.sbtools.common.internal.I18n;
  */
 @XmlType
 @XmlEnum
-public enum ComObjectSize
+public enum ComObjectSize implements Labeled
 {
    /**
     * 1 bit.
@@ -126,6 +127,7 @@ public enum ComObjectSize
    /**
     * @return The label
     */
+   @Override
    public String getLabel()
    {
       return label;
@@ -148,10 +150,10 @@ public enum ComObjectSize
    }
 
    /**
-    * Get the object type from the object type's ordinal number.
+    * Get the enum value from the ordinal number.
     *
     * @param ordinal The ordinal number to process.
-    * @return The object type.
+    * @return The enum value.
     */
    static public ComObjectSize valueOf(int ordinal)
    {
@@ -165,13 +167,30 @@ public enum ComObjectSize
    }
 
    /**
+    * Get the enum value for the specified bit size.
+    *
+    * @param bitSize The bit size
+    * @return The enum value, null if no matching value was found.
+    */
+   static public ComObjectSize valueForBitSize(int bitSize)
+   {
+      for (ComObjectSize o : ComObjectSize.values())
+      {
+         if (o.getBitSize() == bitSize)
+            return o;
+      }
+
+      return null;
+   }
+
+   /**
     * Constructor.
     *
     * @param bitLength - the number of bits of the object type.
     */
    private ComObjectSize(int bitLength)
    {
-      this.label = I18n.getMessage("ObjectSize." + name());
+      this.label = I18n.getMessage("ComObjectSize." + name());
       this.vdName = bitLength > 7 ? Integer.toString(bitLength >> 3) + " Byte" : Integer.toString(bitLength) + " Bit";
       this.bitLength = bitLength;
    }
@@ -183,7 +202,7 @@ public enum ComObjectSize
     */
    private ComObjectSize(int bitLength, String vdName)
    {
-      this.label = I18n.getMessage("ObjectSize." + name());
+      this.label = I18n.getMessage("ComObjectSize." + name());
       this.vdName = vdName;
       this.bitLength = bitLength;
    }

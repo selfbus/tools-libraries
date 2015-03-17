@@ -18,6 +18,16 @@ public class DynamicPart
    @XmlElement(name = "Channel", namespace = Namespaces.KNX)
    private Channel channel;
 
+   public Channel getChannel()
+   {
+      return channel;
+   }
+
+   public void setChannel(Channel channel)
+   {
+      this.channel = channel;
+   }
+
    @Override
    public String toString()
    {

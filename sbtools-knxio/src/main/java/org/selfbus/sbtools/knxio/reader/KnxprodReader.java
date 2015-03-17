@@ -46,7 +46,7 @@ public class KnxprodReader
    /**
     * The name of the schema file
     */
-   public static final String SCHEMA_FILE_NAME = "org.selfbus.sbtools.knxio/knx.xsd";
+   public static final String SCHEMA_FILE_NAME = "org.selfbus.sbtools.knxio/knx_all.xsd";
 
    /**
     * Read a ZIP file.

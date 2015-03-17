@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
-import org.selfbus.sbtools.common.internal.I18n;
+import org.selfbus.sbtools.knxio.internal.I18n;
 
 /**
  * Types of management models.

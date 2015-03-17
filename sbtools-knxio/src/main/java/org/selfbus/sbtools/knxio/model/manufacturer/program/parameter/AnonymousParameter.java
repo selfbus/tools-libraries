@@ -31,7 +31,7 @@ public class AnonymousParameter extends Identified implements ParameterElement
 
    @XmlIDREF
    @XmlAttribute(name = "ParameterType")
-   private ParameterType parameterType;
+   private ParameterType type;
 
    @XmlAttribute(name = "Access")
    private Access access = Access.READ_WRITE;
@@ -72,14 +72,14 @@ public class AnonymousParameter extends Identified implements ParameterElement
       this.suffixText = suffixText;
    }
 
-   public ParameterType getParameterType()
+   public ParameterType getType()
    {
-      return parameterType;
+      return type;
    }
 
-   public void setParameterType(ParameterType parameterType)
+   public void setType(ParameterType type)
    {
-      this.parameterType = parameterType;
+      this.type = type;
    }
 
    public Access getAccess()
@@ -119,7 +119,7 @@ public class AnonymousParameter extends Identified implements ParameterElement
          .appendSuper(super.toString())
          .append("name", name)
          .append("text", text)
-         .append("parameterType", parameterType == null ? null : parameterType.getId())
+         .append("parameterType", type == null ? null : type.getId())
          .append("access", access)
          .append("value", value)
          .append("legacyPatchAlways", legacyPatchAlways)

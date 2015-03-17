@@ -20,7 +20,7 @@ import com.jgoodies.binding.beans.Model;
 /**
  * A KNX-XML document.
  */
-@XmlRootElement(namespace = Namespaces.KNX, name = "knx")
+@XmlRootElement(namespace = Namespaces.KNX)
 @XmlType(propOrder = {})
 @XmlAccessorType(XmlAccessType.NONE)
 public class KnxDocument extends Model

@@ -14,6 +14,8 @@ import org.selfbus.sbtools.knxio.model.common.ObjectPriority;
 @XmlAccessorType(XmlAccessType.NONE)
 public class ComObject extends AbstractComObject
 {
+   private static final long serialVersionUID = 7493578424294404383L;
+
    @XmlAttribute(name = "Name")
    private String name;
 
@@ -25,6 +27,46 @@ public class ComObject extends AbstractComObject
 
    @XmlAttribute(name = "Priority")
    private ObjectPriority priority = ObjectPriority.LOW;
+
+   public String getName()
+   {
+      return name;
+   }
+
+   public void setName(String name)
+   {
+      this.name = name;
+   }
+
+   public Integer getNumber()
+   {
+      return number;
+   }
+
+   public void setNumber(Integer number)
+   {
+      this.number = number;
+   }
+
+   public ComObjectSize getSize()
+   {
+      return size;
+   }
+
+   public void setSize(ComObjectSize size)
+   {
+      this.size = size;
+   }
+
+   public ObjectPriority getPriority()
+   {
+      return priority;
+   }
+
+   public void setPriority(ObjectPriority priority)
+   {
+      this.priority = priority;
+   }
 
    @Override
    public String toString()

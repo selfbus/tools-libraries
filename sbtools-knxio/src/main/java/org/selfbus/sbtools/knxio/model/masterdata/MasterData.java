@@ -67,6 +67,54 @@ public class MasterData
       this.signature = signature;
    }
 
+   /**
+    * Get the default datapoint type for a specific bit-size.
+    *
+    * @param sizeInBit The size in bit
+    * @return The default datapoint type
+    */
+   public DatapointType getDefaultDatapointTypeBySize(int sizeInBit)
+   {
+      DatapointType result = null;
+
+      for (DatapointType type : datapointTypes)
+      {
+         if (type.getSizeInBit() == sizeInBit)
+         {
+            if (result == null || type.isDefault())
+               result = type;
+         }
+      }
+      return result;
+   }
+
+   /**
+    * Get a specific datapoint type.
+    *
+    * @param id The Id of the datapoint type
+    * @return The datapoint type
+    */
+   public DatapointType getDatapointType(String id)
+   {
+      for (DatapointType type : datapointTypes)
+      {
+         if (id.equals(type.getId()))
+            return type;
+      }
+      return null;
+   }
+
+   /**
+    * Get the datapoint type for a datapoint subtype.
+    *
+    * @param subId The Id of the datapoint subtype
+    * @return The datapoint type
+    */
+   public DatapointType getDatapointTypeBySubId(String subId)
+   {
+      return getDatapointType(DatapointType.subtypeToType(subId));
+   }
+
    public List<DatapointType> getDatapointTypes()
    {
       return datapointTypes;

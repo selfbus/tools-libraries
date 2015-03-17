@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
-import org.selfbus.sbtools.common.internal.I18n;
+import org.selfbus.sbtools.knxio.internal.I18n;
 
 /**
  * Priority of communication objects.
@@ -14,7 +14,7 @@ import org.selfbus.sbtools.common.internal.I18n;
  */
 @XmlType
 @XmlEnum
-public enum ObjectPriority
+public enum ObjectPriority implements Labeled
 {
    /**
     * System priority. This is the highest priority. It is reserved for system management
@@ -41,7 +41,7 @@ public enum ObjectPriority
    @XmlEnumValue("Low")
    LOW;
 
-   private final String name;
+   private final String label;
 
    /**
     * @return the id
@@ -54,9 +54,10 @@ public enum ObjectPriority
    /**
     * @return the name
     */
-   public String getName()
+   @Override
+   public String getLabel()
    {
-      return name;
+      return label;
    }
 
    /**
@@ -64,7 +65,7 @@ public enum ObjectPriority
     */
    private ObjectPriority()
    {
-      this.name = I18n.getMessage("ObjectPriority." + name());
+      this.label = I18n.getMessage("ObjectPriority." + name());
    }
 
    /**

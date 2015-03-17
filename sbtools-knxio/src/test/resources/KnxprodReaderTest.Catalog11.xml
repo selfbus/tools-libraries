@@ -1,15 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<KNX xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" CreatedBy="knxconv"
-  ToolVersion="4.0.1837.35879" xmlns="http://knx.org/xml/project/11">
+<KNX xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema" CreatedBy="knxconv"
+     ToolVersion="4.0.1233.35000" xmlns="http://knx.org/xml/project/11">
   <ManufacturerData>
     <Manufacturer RefId="M-0083">
       <Catalog>
-        <CatalogSection Id="M-0083_CS-KO.2001" Name="Kommunikation" Number="KO 01" VisibleDescription=""
+        <CatalogSection Id="M-0083_CS-KO.2001" Name="Section" Number="KO 01" VisibleDescription=""
           DefaultLanguage="de-DE">
-          <CatalogSection Id="M-0083_CS-KO.2001-KO.20U.2001" Name="USB" Number="KO U 01"
+          <CatalogSection Id="M-0083_CS-KO.2001-KO.20U.2001" Name="Sub section" Number="KO U 01"
             VisibleDescription="" DefaultLanguage="de-DE">
-            <CatalogItem Id="M-0083_H-USB.200000.2F1-1-O0072_HP_CI-KNX.20USB.20Interface-1" Name="KNX USB Interface"
-              Number="1" ProductRefId="M-0083_H-USB.200000.2F1-1-O0072_P-KNX.20USB.20Interface" Hardware2ProgramRefId="M-0083_H-USB.200000.2F1-1-O0072_HP"
+            <CatalogItem Id="M-0083_H-USB.200000.2F1-1-O0072_HP_CI-KNX.20USB.20Interface-1" Name="Item"
+              Number="1" ProductRefId="M-0083_H-USB.200000.2F1-1-O0072_P-KNX.20USB.20Interface"
+              Hardware2ProgramRefId="M-0083_H-USB.200000.2F1-1-O0072_HP"
               DefaultLanguage="de-DE" />
           </CatalogSection>
         </CatalogSection>
@@ -18,17 +20,17 @@
         <Language Identifier="de-DE">
           <TranslationUnit RefId="M-0083_CS-KO.2001">
             <TranslationElement RefId="M-0083_CS-KO.2001">
-              <Translation AttributeName="Name" Text="Kommunikation" />
+              <Translation AttributeName="Name" Text="Section label" />
             </TranslationElement>
           </TranslationUnit>
           <TranslationUnit RefId="M-0083_CS-KO.2001-KO.20U.2001">
             <TranslationElement RefId="M-0083_CS-KO.2001-KO.20U.2001">
-              <Translation AttributeName="Name" Text="USB" />
+              <Translation AttributeName="Name" Text="Sub section label" />
             </TranslationElement>
           </TranslationUnit>
           <TranslationUnit RefId="M-0083_H-USB.200000.2F1-1-O0072_HP_CI-KNX.20USB.20Interface-1">
             <TranslationElement RefId="M-0083_H-USB.200000.2F1-1-O0072_HP_CI-KNX.20USB.20Interface-1">
-              <Translation AttributeName="Name" Text="USB Interface" />
+              <Translation AttributeName="Name" Text="Item label" />
             </TranslationElement>
           </TranslationUnit>
         </Language>

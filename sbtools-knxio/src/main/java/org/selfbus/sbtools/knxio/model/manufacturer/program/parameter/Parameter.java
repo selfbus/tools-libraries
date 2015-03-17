@@ -17,8 +17,20 @@ import org.selfbus.sbtools.knxio.model.manufacturer.program.memory.MemoryLocatio
 @XmlAccessorType(XmlAccessType.NONE)
 public class Parameter extends AnonymousParameter
 {
+   private static final long serialVersionUID = 8552431629259326041L;
+
    @XmlElement(name = "Memory", namespace = Namespaces.KNX)
    private MemoryLocation memory;
+
+   public MemoryLocation getMemory()
+   {
+      return memory;
+   }
+
+   public void setMemory(MemoryLocation memory)
+   {
+      this.memory = memory;
+   }
 
    @Override
    public String toString()
