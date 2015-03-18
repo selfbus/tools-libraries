@@ -56,6 +56,12 @@ public enum AddressSpace
    RELATIVE_MEMORY,
 
    /**
+    * Relative memory by object type address.
+    */
+   @XmlEnumValue("RelativeMemoryByObjectType")
+   RELATIVE_MEMORY_BY_OBJECT_TYPE,
+
+   /**
     * Constant address.
     */
    @XmlEnumValue("Constant")

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<xs:schema version="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  attributeFormDefault="unqualified" elementFormDefault="qualified">
+<xs:schema version="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
 
   <xs:element name="KNX" type="KnxDocument" />
 
@@ -14,9 +13,7 @@
   </xs:complexType>
 
 
-  <!--
-         Common Types 
-    -->
+  <!-- Common Types -->
 
   <xs:complexType name="Identified" abstract="true">
     <xs:attribute name="Id" type="xs:string" use="required" />
@@ -40,6 +37,7 @@
       <xs:element name="LdCtrlLoadImageMem" type="LdCtrlLoadImageMem" />
       <xs:element name="LdCtrlLoadImageProp" type="LdCtrlLoadImageProp" />
       <xs:element name="LdCtrlMapError" type="LdCtrlMapError" />
+      <xs:element name="LdCtrlMasterReset" type="LdCtrlMasterReset" />
       <xs:element name="LdCtrlMerge" type="LdCtrlMerge" />
       <xs:element name="LdCtrlRelSegment" type="LdCtrlRelSegment" />
       <xs:element name="LdCtrlRestart" type="LdCtrlRestart" />
@@ -55,157 +53,283 @@
     </xs:choice>
   </xs:complexType>
 
+  <xs:complexType name="AbstractLdCtrl">
+    <xs:attribute name="Occurrence" type="xs:boolean" />
+  </xs:complexType>
+
+  <xs:complexType name="AbstractIndexedLdCtrl">
+    <xs:complexContent>
+      <xs:extension base="AbstractLdCtrl">
+        <xs:attribute name="ObjType" type="xs:integer" />
+        <xs:attribute name="LsmIdx" type="xs:integer" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:complexType name="LdCtrlClearLCFilterTable">
-    <xs:attribute name="UseFunctionProp" type="xs:boolean" />
+    <xs:complexContent>
+      <xs:extension base="AbstractLdCtrl">
+        <xs:attribute name="UseFunctionProp" type="xs:boolean" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="LdCtrlMasterReset">
+    <xs:complexContent>
+      <xs:extension base="AbstractLdCtrl">
+        <xs:attribute name="EraseCode" type="xs:integer" />
+        <xs:attribute name="ChannelNumber" type="xs:integer" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="LdCtrlLoadImageProp">
-    <xs:attribute name="ObjIdx" type="xs:integer" use="required" />
-    <xs:attribute name="PropId" type="xs:integer" use="required" />
-    <xs:attribute name="Count" type="xs:integer" />
+    <xs:complexContent>
+      <xs:extension base="AbstractLdCtrl">
+        <xs:attribute name="ObjType" type="xs:integer" />
+        <xs:attribute name="ObjIdx" type="xs:integer" />
+        <xs:attribute name="PropId" type="xs:integer" use="required" />
+        <xs:attribute name="Count" type="xs:integer" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="LdCtrlWriteProp">
-    <xs:attribute name="ObjType" type="xs:integer" />
-    <xs:attribute name="ObjIdx" type="xs:integer" />
-    <xs:attribute name="PropId" type="xs:integer" use="required" />
-    <xs:attribute name="Count" type="xs:integer" />
-    <xs:attribute name="StartElement" type="xs:integer" />
-    <xs:attribute name="InlineData" type="xs:hexBinary" />
-    <xs:attribute name="Verify" type="xs:boolean" />
+    <xs:complexContent>
+      <xs:extension base="AbstractLdCtrl">
+        <xs:attribute name="ObjType" type="xs:integer" />
+        <xs:attribute name="ObjIdx" type="xs:integer" />
+        <xs:attribute name="PropId" type="xs:integer" use="required" />
+        <xs:attribute name="Count" type="xs:integer" />
+        <xs:attribute name="StartElement" type="xs:integer" />
+        <xs:attribute name="InlineData" type="xs:hexBinary" />
+        <xs:attribute name="Verify" type="xs:boolean" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="LdCtrlWriteRelMem">
-    <xs:attribute name="ObjIdx" type="xs:integer" use="required" />
-    <xs:attribute name="Offset" type="xs:integer" use="required" />
-    <xs:attribute name="Size" type="xs:integer" use="required" />
-    <xs:attribute name="AppliesTo" type="xs:string" />
-    <xs:attribute name="Verify" type="xs:boolean" />
+    <xs:complexContent>
+      <xs:extension base="AbstractLdCtrl">
+        <xs:attribute name="ObjType" type="xs:integer" />
+        <xs:attribute name="ObjIdx" type="xs:integer" />
+        <xs:attribute name="Offset" type="xs:integer" use="required" />
+        <xs:attribute name="Size" type="xs:integer" use="required" />
+        <xs:attribute name="AppliesTo" type="xs:string" />
+        <xs:attribute name="Verify" type="xs:boolean" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="LdCtrlRelSegment">
-    <xs:attribute name="LsmIdx" type="xs:integer" use="required" />
-    <xs:attribute name="Size" type="xs:integer" use="required" />
-    <xs:attribute name="Mode" type="xs:integer" use="required" />
-    <xs:attribute name="Fill" type="xs:integer" use="required" />
-    <xs:attribute name="AppliesTo" type="xs:string" />
+    <xs:complexContent>
+      <xs:extension base="AbstractIndexedLdCtrl">
+        <xs:attribute name="Size" type="xs:integer" use="required" />
+        <xs:attribute name="Mode" type="xs:integer" use="required" />
+        <xs:attribute name="Fill" type="xs:integer" use="required" />
+        <xs:attribute name="AppliesTo" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="LdCtrlMapError">
-    <xs:attribute name="OriginalError" type="xs:integer" use="required" />
-    <xs:attribute name="MappedError" type="xs:integer" use="required" />
+    <xs:complexContent>
+      <xs:extension base="AbstractLdCtrl">
+        <xs:attribute name="OriginalError" type="xs:integer" use="required" />
+        <xs:attribute name="MappedError" type="xs:integer" use="required" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="LdCtrlMerge">
-    <xs:attribute name="MergeId" type="xs:integer" use="required" />
+    <xs:complexContent>
+      <xs:extension base="AbstractLdCtrl">
+        <xs:attribute name="MergeId" type="xs:integer" use="required" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="LdCtrlCompareMem">
-    <xs:attribute name="Address" type="xs:integer" use="required" />
-    <xs:attribute name="Size" type="xs:integer" use="required" />
-    <xs:attribute name="InlineData" type="xs:hexBinary" use="required" />
+    <xs:complexContent>
+      <xs:extension base="AbstractLdCtrl">
+        <xs:attribute name="Address" type="xs:integer" use="required" />
+        <xs:attribute name="Size" type="xs:integer" use="required" />
+        <xs:attribute name="InlineData" type="xs:hexBinary" use="required" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="LdCtrlTaskCtrl1">
-    <xs:attribute name="LsmIdx" type="xs:integer" use="required" />
-    <xs:attribute name="Address" type="xs:integer" />
-    <xs:attribute name="Count" type="xs:integer" />
+    <xs:complexContent>
+      <xs:extension base="AbstractIndexedLdCtrl">
+        <xs:attribute name="Address" type="xs:integer" />
+        <xs:attribute name="Count" type="xs:integer" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="LdCtrlTaskCtrl2">
-    <xs:attribute name="LsmIdx" type="xs:integer" use="required" />
-    <xs:attribute name="Callback" type="xs:integer" />
-    <xs:attribute name="Address" type="xs:integer" />
-    <xs:attribute name="Seg0" type="xs:integer" />
-    <xs:attribute name="Seg1" type="xs:integer" />
+    <xs:complexContent>
+      <xs:extension base="AbstractIndexedLdCtrl">
+        <xs:attribute name="Callback" type="xs:integer" />
+        <xs:attribute name="Address" type="xs:integer" />
+        <xs:attribute name="Seg0" type="xs:integer" />
+        <xs:attribute name="Seg1" type="xs:integer" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="LdCtrlSetControlVariable">
-    <xs:attribute name="Name" type="xs:string" use="required" />
-    <xs:attribute name="Value" type="xs:string" use="required" />
+    <xs:complexContent>
+      <xs:extension base="AbstractLdCtrl">
+        <xs:attribute name="Name" type="xs:string" use="required" />
+        <xs:attribute name="Value" type="xs:string" use="required" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="LdCtrlWriteMem">
-    <xs:attribute name="AddressSpace" type="AddressSpace" />
-    <xs:attribute name="Address" type="xs:integer" use="required" />
-    <xs:attribute name="Size" type="xs:integer" use="required" />
-    <xs:attribute name="Verify" type="xs:boolean" />
-    <xs:attribute name="InlineData" type="xs:hexBinary" />
+    <xs:complexContent>
+      <xs:extension base="AbstractLdCtrl">
+        <xs:attribute name="AddressSpace" type="AddressSpace" />
+        <xs:attribute name="Address" type="xs:integer" use="required" />
+        <xs:attribute name="Size" type="xs:integer" use="required" />
+        <xs:attribute name="Verify" type="xs:boolean" />
+        <xs:attribute name="InlineData" type="xs:hexBinary" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="LdCtrlLoadImageMem">
-    <xs:attribute name="Address" type="xs:integer" use="required" />
-    <xs:attribute name="Size" type="xs:integer" use="required" />
+    <xs:complexContent>
+      <xs:extension base="AbstractLdCtrl">
+        <xs:attribute name="Address" type="xs:integer" use="required" />
+        <xs:attribute name="Size" type="xs:integer" use="required" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="LdCtrlTaskPtr">
-    <xs:attribute name="LsmIdx" type="xs:integer" use="required" />
-    <xs:attribute name="InitPtr" type="xs:integer" />
-    <xs:attribute name="SavePtr" type="xs:integer" />
-    <xs:attribute name="SerialPtr" type="xs:integer" />
+    <xs:complexContent>
+      <xs:extension base="AbstractIndexedLdCtrl">
+        <xs:attribute name="InitPtr" type="xs:integer" />
+        <xs:attribute name="SavePtr" type="xs:integer" />
+        <xs:attribute name="SerialPtr" type="xs:integer" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="LdCtrlConnect">
+    <xs:complexContent>
+      <xs:extension base="AbstractLdCtrl">
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="LdCtrlDisconnect">
+    <xs:complexContent>
+      <xs:extension base="AbstractLdCtrl">
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="LdCtrlCompareProp">
-    <xs:attribute name="ObjIdx" type="xs:integer" use="required" />
-    <xs:attribute name="PropId" type="xs:integer" use="required" />
-    <xs:attribute name="InlineData" type="xs:hexBinary" />
+    <xs:complexContent>
+      <xs:extension base="AbstractLdCtrl">
+        <xs:attribute name="ObjIdx" type="xs:integer" use="required" />
+        <xs:attribute name="PropId" type="xs:integer" use="required" />
+        <xs:attribute name="InlineData" type="xs:hexBinary" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="LdCtrlUnload">
-    <xs:attribute name="LsmIdx" type="xs:integer" />
-    <xs:attribute name="ObjType" type="xs:integer" />
-    <xs:attribute name="Occurrence" type="xs:integer" />
+    <xs:complexContent>
+      <xs:extension base="AbstractIndexedLdCtrl">
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="LdCtrlLoad">
-    <xs:attribute name="LsmIdx" type="xs:integer" />
-    <xs:attribute name="ObjType" type="xs:integer" />
+    <xs:complexContent>
+      <xs:extension base="AbstractIndexedLdCtrl">
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="LdCtrlAbsSegment">
-    <xs:attribute name="LsmIdx" type="xs:integer" use="required" />
-    <xs:attribute name="SegType" type="xs:integer" use="required" />
-    <xs:attribute name="Address" type="xs:integer" use="required" />
-    <xs:attribute name="Size" type="xs:integer" use="required" />
-    <xs:attribute name="Access" type="xs:integer" />
-    <xs:attribute name="MemType" type="xs:integer" />
-    <xs:attribute name="SegFlags" type="xs:integer" />
+    <xs:complexContent>
+      <xs:extension base="AbstractIndexedLdCtrl">
+        <xs:attribute name="SegType" type="xs:integer" use="required" />
+        <xs:attribute name="Address" type="xs:integer" use="required" />
+        <xs:attribute name="Size" type="xs:integer" use="required" />
+        <xs:attribute name="Access" type="xs:integer" />
+        <xs:attribute name="MemType" type="xs:integer" />
+        <xs:attribute name="SegFlags" type="xs:integer" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="LdCtrlTaskSegment">
-    <xs:attribute name="LsmIdx" type="xs:integer" use="required" />
-    <xs:attribute name="Address" type="xs:integer" use="required" />
+    <xs:complexContent>
+      <xs:extension base="AbstractIndexedLdCtrl">
+        <xs:attribute name="Address" type="xs:integer" use="required" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="LdCtrlLoadCompleted">
-    <xs:attribute name="LsmIdx" type="xs:integer" />
-    <xs:attribute name="ObjType" type="xs:integer" />
+    <xs:complexContent>
+      <xs:extension base="AbstractIndexedLdCtrl">
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="LdCtrlRestart">
+    <xs:complexContent>
+      <xs:extension base="AbstractLdCtrl">
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="LdCtrlDelay">
-    <xs:attribute name="MilliSeconds" type="xs:integer" use="required" />
+    <xs:complexContent>
+      <xs:extension base="AbstractLdCtrl">
+        <xs:attribute name="MilliSeconds" type="xs:integer" use="required" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
 
-  <!--
-         Master Data 
-    -->
+  <!-- Master Data -->
 
   <xs:complexType name="MasterData">
-    <xs:sequence>
+    <xs:all>
       <xs:element name="DatapointTypes" minOccurs="0" maxOccurs="1">
         <xs:complexType>
           <xs:sequence>
             <xs:element name="DatapointType" type="DatapointType" minOccurs="0" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="InterfaceObjectTypes" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="InterfaceObjectType" minOccurs="0" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="InterfaceObjectProperties" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="InterfaceObjectProperty" minOccurs="0" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="PropertyDataTypes" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="PropertyDataType" type="PropertyDataType" minOccurs="0" maxOccurs="unbounded" />
           </xs:sequence>
         </xs:complexType>
       </xs:element>
@@ -230,11 +354,63 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
-      <xs:element name="Languages" type="Languages" minOccurs="0" maxOccurs="1" />      
-    </xs:sequence>
+      <xs:element name="FunctionalBlocks" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="FunctionalBlock" type="FunctionalBlock" minOccurs="0" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="ProductLanguages" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Language" type="ProductLanguage" minOccurs="0" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="Languages" type="Languages" minOccurs="0" maxOccurs="1" />
+    </xs:all>
     <xs:attribute name="Id" type="xs:string" />
     <xs:attribute name="Version" type="xs:integer" />
     <xs:attribute name="Signature" type="xs:base64Binary" />
+  </xs:complexType>
+
+  <xs:complexType name="ProductLanguage">
+    <xs:attribute name="Identifier" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="FunctionalBlock">
+    <xs:complexContent>
+      <xs:extension base="Identified">
+        <xs:sequence>
+          <xs:element name="Parameters" type="FunctionalBlockParameters" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="Name" type="xs:string" use="required" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="FunctionalBlockParameters">
+    <xs:sequence>
+      <xs:element name="Parameter" type="FunctionalBlockParameter" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="ObjectType" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="FunctionalBlockParameter">
+    <xs:attribute name="Property" type="xs:string" use="required" />
+    <xs:attribute name="Description" type="xs:string" />
+  </xs:complexType>
+
+  <xs:complexType name="PropertyDataType">
+    <xs:complexContent>
+      <xs:extension base="Identified">
+        <xs:attribute name="Number" type="xs:integer" use="required" />
+        <xs:attribute name="Name" type="xs:string" use="required" />
+        <xs:attribute name="Size" type="xs:integer" />
+        <xs:attribute name="ReadSize" type="xs:integer" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="DatapointType">
@@ -262,9 +438,13 @@
   <xs:complexType name="DatapointSubtype">
     <xs:complexContent>
       <xs:extension base="Identified">
+        <xs:sequence>
+          <xs:element name="Format" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
         <xs:attribute name="Number" type="xs:integer" use="required" />
         <xs:attribute name="Name" type="xs:string" use="required" />
         <xs:attribute name="Text" type="xs:string" use="required" />
+        <xs:attribute name="PDT" type="xs:string" />
         <xs:attribute name="Default" type="xs:boolean" />
       </xs:extension>
     </xs:complexContent>
@@ -408,6 +588,7 @@
     <xs:attribute name="InterfaceObjectRef" type="xs:integer" />
     <xs:attribute name="PropertyID" type="xs:integer" />
     <xs:attribute name="StartAddress" type="xs:integer" />
+    <xs:attribute name="Occurrence" type="xs:integer" />
   </xs:complexType>
 
   <xs:simpleType name="AddressSpace">
@@ -422,6 +603,7 @@
       <xs:enumeration value="Pointer" />
       <xs:enumeration value="Property" />
       <xs:enumeration value="RelativeMemory" />
+      <xs:enumeration value="RelativeMemoryByObjectType" />
       <xs:enumeration value="StandardMemory" />
       <xs:enumeration value="SystemProperty" />
     </xs:restriction>
@@ -457,7 +639,7 @@
       <xs:enumeration value="Unload" />
     </xs:restriction>
   </xs:simpleType>
-  
+
   <xs:complexType name="MemorySegment">
     <xs:all>
       <xs:element name="Location" type="MemorySegmentLocation" minOccurs="0" maxOccurs="1" />
@@ -467,7 +649,7 @@
     <xs:attribute name="Length" type="xs:integer" use="required" />
     <xs:attribute name="Optional" type="xs:boolean" />
   </xs:complexType>
-  
+
   <xs:complexType name="MemorySegmentLocation">
     <xs:attribute name="AddressSpace" type="AddressSpace" use="required" />
     <xs:attribute name="StartAddress" type="xs:integer" use="required" />
@@ -478,14 +660,14 @@
       <xs:enumeration value="EEPROM" />
     </xs:restriction>
   </xs:simpleType>
-  
+
   <xs:complexType name="InterfaceObject">
     <xs:sequence>
       <xs:element name="Property" type="InterfaceObjectProperty" minOccurs="0" maxOccurs="unbounded" />
     </xs:sequence>
     <xs:attribute name="ObjectType" type="xs:integer" use="required" />
   </xs:complexType>
-  
+
   <xs:complexType name="InterfaceObjectProperty">
     <xs:attribute name="PropertyID" type="xs:integer" use="required" />
     <xs:attribute name="PropertyDataType" type="xs:string" use="required" />
@@ -520,6 +702,7 @@
           <xs:element name="RSAKeyValue" type="RSAKeyValue" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="Number" type="xs:integer" />
+        <xs:attribute name="Revoked" type="xs:boolean" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -532,9 +715,7 @@
   </xs:complexType>
 
 
-  <!--
-         Manufacturer Data 
-    -->
+  <!-- Manufacturer Data -->
 
   <xs:complexType name="ManufacturerData">
     <xs:sequence>
@@ -1155,7 +1336,7 @@
     <xs:attribute name="RegistrationDate" type="xs:date" />
     <xs:attribute name="RegistrationSignature" type="xs:base64Binary" />
   </xs:complexType>
- 
+
   <xs:complexType name="Catalog">
     <xs:sequence>
       <xs:element name="CatalogSection" minOccurs="0" maxOccurs="unbounded" />
@@ -1169,7 +1350,7 @@
           <xs:element name="CatalogItem" minOccurs="0" maxOccurs="unbounded" />
           <xs:element name="CatalogSection" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
-        
+
         <xs:attribute name="Name" type="xs:string" use="required" />
         <xs:attribute name="Number" type="xs:string" />
         <xs:attribute name="VisibleDescription" type="xs:string" />

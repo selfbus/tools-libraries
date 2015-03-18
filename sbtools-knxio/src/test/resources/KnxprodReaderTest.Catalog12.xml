@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<KNX xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema" CreatedBy="ETS5"
+     ToolVersion="5.0.861.1234" xmlns="http://knx.org/xml/project/12">
+  <ManufacturerData>
+    <Manufacturer RefId="M-0008">
+      <Catalog>
+        <CatalogSection Id="M-0008_CS-PB" Name="Section" Number="PB" VisibleDescription="" DefaultLanguage="de-DE" NonRegRelevantDataVersion="0">
+          <CatalogSection Id="M-0008_CS-PB-P3" Name="Sub section" Number="P3" VisibleDescription="" DefaultLanguage="de-DE" NonRegRelevantDataVersion="0">
+            <CatalogItem Id="M-0008_H-8.20.2F.2F.20zxy3.20xx-1_HP-10D7-11-A0E5-O000A_CI-5133.2000-1" Name="Item" Number="1"
+                         VisibleDescription="Item description" ProductRefId="M-0008_H-8.20.2F.2F.20zxy3.20xx-1_P-5133.2000"
+                         Hardware2ProgramRefId="M-0008_H-8.20.2F.2F.20zxy3.20xx-1_HP-10D7-11-A0E5-O000A"
+                         DefaultLanguage="de-DE" NonRegRelevantDataVersion="0" />
+          </CatalogSection>
+        </CatalogSection>
+      </Catalog>
+    </Manufacturer>
+  </ManufacturerData>
+</KNX>

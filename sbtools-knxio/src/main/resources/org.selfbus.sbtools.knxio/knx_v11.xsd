@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+  attributeFormDefault="unqualified" elementFormDefault="qualified"
+  targetNamespace="http://knx.org/xml/project/11"
+  xmlns="http://knx.org/xml/project/11">
+
+  <xs:include schemaLocation="knx_common.xsd" />
+
+</xs:schema>
